@@ -17,7 +17,7 @@ basePath: /api/v1
 schemes:
   - https
 paths:
-  /projects:
+  /project:
     post:
       tags:
         - project
@@ -29,16 +29,33 @@ paths:
       produces:
         - application/json
       parameters:
-        - in: body
-          name: body
+        - name: project
+          in: body
           description: Project object that needs to be added to the DQF tools
           required: true
           schema:
             $ref: "#/definitions/Project"
       responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Project"
         "405":
           description: Invalid input
+          schema:
+            type: string
+          headers:
+            X-Rate-Limit-Limit:
+              description: The number of allowed requests in the current period
+              type: integer
+            X-Rate-Limit-Remaining:
+              description: The number of remaining requests in the current period
+              type: integer
+            X-Rate-Limit-Reset:
+              description: The number of seconds left in the current period
+              type: integer
       security:
+        - api_key: []
         - dqf_auth:
           - write_projects
           - read_projects
@@ -54,12 +71,16 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: project
           description: Project object that needs to be added to the DQF tools
           required: true
           schema:
             $ref: "#/definitions/Project"
       responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Project"      
         "405":
           description: Validation exception
         "404":
@@ -67,37 +88,7 @@ paths:
         "400":
           description: Invalid ID supplied
       security:
-        - dqf_auth:
-          - write_projects
-          - read_projects
-  /projects/findByStatus:
-    get:
-      tags:
-        - project
-      summary: Finds Projects by status
-      description: Multiple status values can be provided with comma seperated strings
-      operationId: findProjectsByStatus
-      produces:
-        - application/json
-      parameters:
-        - in: query
-          name: status
-          description: Status values that need to be considered for filter
-          required: true
-          type: array
-          items:
-            type: string
-          collectionFormat: multi
-      responses:
-        "200":
-          description: successful operation
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Project"
-        "400":
-          description: Invalid status value
-      security:
+        - api_key: []
         - dqf_auth:
           - write_projects
           - read_projects
@@ -106,7 +97,7 @@ paths:
       tags:
         - project
       summary: Find project by ID
-      description: Returns a project when ID < 10.  ID > 10 or nonintegers will simulate API error conditions
+      description: Returns a project
       operationId: getProjectById
       produces:
         - application/json
@@ -131,39 +122,6 @@ paths:
         - dqf_auth:
           - write_projects
           - read_projects
-    post:
-      tags:
-        - project
-      summary: Updates a project in the DQF tools with form data
-      description: ""
-      operationId: updateProjectWithForm
-      consumes:
-        - application/x-www-form-urlencoded
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: projectId
-          description: ID of project that needs to be updated
-          required: true
-          type: string
-        - in: formData
-          name: name
-          description: Updated name of the project
-          required: true
-          type: string
-        - in: formData
-          name: status
-          description: Updated status of the project
-          required: true
-          type: string
-      responses:
-        "405":
-          description: Invalid input
-      security:
-        - dqf_auth:
-          - write_projects
-          - read_projects
     delete:
       tags:
         - project
@@ -185,6 +143,10 @@ paths:
           type: integer
           format: int64
       responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Project"      
         "400":
           description: Invalid project value
       security:
@@ -214,12 +176,16 @@ paths:
             $ref: "#/definitions/Task"
         "400":
           description: Invalid Task
+      security:
+        - dqf_auth:
+          - write_tasks
+          - read_tasks         
   /task/{taskId}:
     get:
       tags:
         - task
       summary: Find task by ID
-      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
+      description: Returns a complete task
       operationId: getTaskById
       produces:
         - application/json
@@ -238,12 +204,16 @@ paths:
             $ref: "#/definitions/Task"
         "400":
           description: Invalid ID supplied
+      security:
+        - dqf_auth:
+          - write_tasks
+          - read_tasks          
     delete:
       tags:
         - task
       summary: Delete task order by ID
-      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
-      operationId: deleteOrder
+      description: Delete a task
+      operationId: deleteTask
       produces:
         - application/json
       parameters:
@@ -253,10 +223,18 @@ paths:
           required: true
           type: string
       responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Task"      
         "404":
           description: Task not found
         "400":
           description: Invalid ID supplied
+      security:
+        - dqf_auth:
+          - write_tasks
+          - read_tasks         
   /document:
       post:
         tags:
@@ -276,12 +254,16 @@ paths:
             schema:
               $ref: "#/definitions/Document"
         responses:
+          "200":
+            description: successful operation
+            schema:
+              $ref: "#/definitions/Document"           
           "405":
             description: Invalid input
         security:
           - dqf_auth:
             - write_projects
-            - read_projects  
+            - read_projects
   /users:
     post:
       tags:
@@ -299,8 +281,10 @@ paths:
           schema:
             $ref: "#/definitions/User"
       responses:
-        default:
+        "200":
           description: successful operation
+          schema:
+            $ref: "#/definitions/Document"          
   /users/createWithArray:
     post:
       tags:
@@ -462,6 +446,8 @@ securityDefinitions:
     scopes:
       write_projects: modify projects in your account
       read_projects: read your projects
+      write_tasks: modify tasks in your account
+      read_tasks: read your tasks      
 definitions:
   ProjectType:
     properties:
@@ -484,40 +470,41 @@ definitions:
         example: DQF Productivity test
       quality level:
         type: string
-      sourcelanguage:
+        example: Full
+      source language:
         type: string
         example: English
-      targetlanguage:
+      target language:
         type: string
         example: Dutch
       company:
         type: string
-        example: Dutch
-      contentType: 
+        example: TAUS
+      content type: 
         type: string
-        example: Dutch
+        example: Legal
       industry:
         type: string
-        example: Dutch
+        example: Software
       technology:
         type: string
-        example: Dutch
+        example: 
       mtengine:
         type: string
-        example: Dutch
-      toolname:
+        example: Google
+      tool name:
         type: string
-        example: Dutch
-      versionnmr:
+        example: Trados
+      version nmr:
         type: string
-        example: Dutch
-      projectmanager name:
+        example: 5.3.0
+      project manager name:
         type: string
-        example: Dutch
-      translatorsnames:
+        example: User 
+      translator(s) names:
         type: string
-        example: Dutch
-      translatorsemails:
+        example: Translator 1
+      translator(s) emails:
         type: string
         example: Dutch
       creationtime:
@@ -534,10 +521,8 @@ definitions:
         example: Dutch
       segmentorigin:        
         type: string
-        example: Dutch       
-      status:
-        type: string
-        description: project status in the DQF tools
+        example: human, MT, TM, MT+human, TM+human
+        description: human, MT, TM, MT+human, TM+human
   Task:
     properties:
       id:
