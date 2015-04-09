@@ -25,78 +25,34 @@ paths:
       parameters:
         - name: name
           in: query
-          description: project name in the DQF tools
+          description: Project name in the DQF tools
           required: true
           type: string
         - name: quality_level
           in: query
-          description: productivity quality level - Please specify 1 for "Good Enough" and 2 "Similar or equal to human translation".
+          description: The id of the quality level of the translation. Use the GET(/qualitylevel) to get a list of the quality levels from the database.
           required: true
-          type: integer
-          format: int32
-          default: 1
-          enum:
-            - 1
-            - 2
+          type: integer            
         - name: process
           in: query
-          description: the process or mode of translation. Options are Human, MT+PE, TM+Human, MT+PE+Human, MT+PE+TM+Human   
+          description: The id of the process used for the translation. Use the GET(/process) to get a list of processes from the database. For example, Human, MT+PE, TM+Human, MT+PE+Human, MT+PE+TM+Human.
           required: true
-          type: string
-          enum:
-            - Human
-            - MT+PE
-            - TM+Human
-            - MT+PE+Human
-            - MT+PE+TM+Human          
+          type: integer
         - name: source_language
           in: query
-          description: source language of the project.  Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR).
+          description: Source language of the project.  Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR).
           required: true
           type: string
         - name: contentType
           in: query
-          description: project content type
+          description: The id of the content type of the translation. Use the GET(/contenttype) to get a list of content types from the database.
           required: true
-          type: string
-          enum:
-            - Audio/Video Content
-            - DGT Documents
-            - Marketing Material
-            - Online Help
-            - Social Media
-            - Training Material
-            - User Documentation
-            - User Interface Text
-            - Website Content
-            - Knowledge Base
-            - Legal
+          type: integer
         - name: industry
           in: query
-          description: project industry
+          description: The id of the industry of the translation. Use the GET(/industry) to get a list of industries from the database.
           required: true
-          type: string
-          enum:
-            - Automotive
-            - Chemicals
-            - Computer Hardware
-            - Computer Software
-            - Consumer Electronics
-            - Energy, Water and Utilities
-            - Financials
-            - Healthcare
-            - Industrial Electronics
-            - Industrial Manufacturing
-            - Legal Services
-            - Leisure, Tourism and Arts
-            - Medical Equipment and Supplies
-            - Pharmaceuticals and Biotechnology
-            - Professional and Business Services
-            - Public Sector
-            - Stores and Retail Distribution
-            - Telecommunications
-            - Undefined Sector
-            - Religion
+          type: integer
       responses:
         "200":
           description: successful operation. Returns the project id.
@@ -122,7 +78,7 @@ paths:
           format: int64
       responses:
         "200":
-          description: successful operation. Returns the project details.
+          description: Successful operation. Returns the project details.
         "400":
           description: Invalid ID supplied
         "405":
@@ -150,18 +106,23 @@ paths:
           format: int64      
         - name: target_language
           in: query
-          description: target language of the project. Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR).
+          description: The target language of the project. Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR).
+          required: true
+          type: string
+        - name: file_name
+          in: query
+          description: The name of the file that needs to be translated into the target language.
           required: true
           type: string
         - name: translator_id
           in: query
-          description: id of the translator. Use the POST(/translator) method to add a new translator or the GET(/translator) method to get the id of a translators from the database.
+          description: The id of the translator. Use the POST(/translator) method to add a new translator or the GET(/translator) method to get the id of a translators from the database.
           required: true
           type: integer
           format: int64
       responses:
         "200":
-          description: successful operation. Returns a taskid for each translator that has been assigned with a target language in the project.
+          description: Successful operation. Returns a taskid for each translator that has been assigned with a target language in the project.
         "400":
           description: Invalid ID supplied
         "404":
@@ -180,18 +141,18 @@ paths:
       parameters:
         - name: projectid
           in: path
-          description: project id in the DQF tools
+          description: The project id in the DQF tools
           required: true
           type: integer
           format: int64      
         - in: path
           name: taskid
-          description: task id belonging to a project in the DQF tools 
+          description: The task id belonging to a project in the DQF tools 
           required: true
           type: string
       responses:
         "200":
-          description: successful operation. Returns the language pair and the translator for each task.
+          description: Successful operation. Returns the language pair and the translator for each task.
         "400":
           description: Invalid ID supplied
         "404":
@@ -205,19 +166,19 @@ paths:
         - segment
       summary: Add segments for a task
       description: A complete translated target segment can be submitted together with the source and the temporary translated segment for a particular task of a project. The translation time, the TM fuzzy match, and the technologies used can be submitted as well.
-      operationId: addTask
+      operationId: addSegment
       produces:
         - application/json
       parameters:
         - name: projectid
           in: path
-          description: project id in the DQF tools
+          description: The project id in the DQF tools
           required: true
           type: integer
           format: int64
         - in: path
           name: taskid
-          description: ID of task that the segment needs to be added
+          description: The id of task that the segment needs to be added.
           required: true
           type: string          
         - name: source_segment
@@ -227,40 +188,45 @@ paths:
           type: string
         - name: target_segment
           in: query
-          description: The MT output or TM match or empty segment
+          description: The MT output or TM match or empty segment.
           required: true
           type: string
         - name: new_target_segment
           in: query
-          description: Output of the translator
+          description: The output of the translator.
           required: true
           type: string
         - name: time
           in: query
-          description: The translation time in ms
+          description: The translation time in milliseconds.
           required: false
           type: number
           format: float
         - name: tm_match
           in: query
-          description: The TM match (percentage)
+          description: The TM match (percentage).
           required: false
           type: integer
           minimum: 0
           maximum: 100          
-        - name: cat_tms
+        - name: cat_tm
           in: query
-          description: The id of the CAT tool and TMS used for the translation of the segment. Use the GET(/technology?technology=cattms) to get a list of CAT tools and TMS from the database.
+          description: The id of the CAT tool and TM used for the translation of the segment. Use the GET(/cattm) to get a list of CAT tools and TM from the database.
           required: true
           type: integer
         - name: mtengine
           in: query
-          description: The id of the MT Engine used for the translation of the segment. Use the GET(/technology?technology=mtengines) to get a list of MT Engines from the database.
+          description: The id of the MT Engine used for the translation of the segment. Use the GET(/mtengine) to get a list of MT Engines from the database.
           required: true
           type: integer
+        - name: mt_engine_version
+          in: query
+          description: The version of the MT engine.
+          required: false
+          type: string
       responses:
         "200":
-          description: successful operation. Returns the segmentid.
+          description: Successful operation. Returns the segmentid.
         "400":
           description: Invalid ID supplied
         "404":
@@ -271,44 +237,50 @@ paths:
     put:
       tags:
         - task
+        - segment
       summary: Update a segment of a task
       description: An already submitted translated segment can be updated. The time with be added to the segment already submitted.
-      operationId: addTask
+      operationId: updateSegment
       produces:
         - application/json
       parameters:
         - name: projectid
           in: path
-          description: project id in the DQF tools
+          description: The project id in the DQF tools.
           required: true
           type: integer
           format: int64
         - in: path
           name: taskid
-          description: ID of task in the DQF tools
+          description: The id of task in the DQF tools.
           required: true
           type: string
         - in: path
           name: segmentid
-          description: ID of segment that needs to be updated
+          description: The id of segment that needs to be updated.
           required: true
           type: string          
         - name: new_target_segment
           in: query
-          description: New output of the translator
+          description: The new output of the translator.
           required: true
           type: string
         - name: time
           in: query
-          description: The new translation time
+          description: The new translation time in milliseconds.
           required: false
           type: number
           format: float
         - name: mtengine
           in: query
-          description: The id of the MT Engine used for the translation of the segment. Use the GET(/technology?technology=mtengines) to get a list of MT Engines from the database.
+          description: The id of the MT Engine used for the translation of the segment. Use the GET(/mtengine) to get a list of MT Engines from the database.
           required: true
           type: integer
+        - name: mt_engine_version
+          in: query
+          description: The version of the MT engine.
+          required: false
+          type: string          
       responses:
         "200":
           description: successful operation. Returns the segmentid.
@@ -405,18 +377,18 @@ paths:
       parameters:
         - in: query
           name: name
-          description: Add description
+          description: The name of the translator
           required: false
           type: string 
         - in: query
           name: email
-          description: Add description
+          description: The email of the translator
           required: true
           type: string
           format: email
       responses:
         "200":
-          description: successful operation. Returns the id of the translator.
+          description: Successful operation. Returns the id of the translator.
         "400":
           description: Invalid
         "404":
@@ -440,31 +412,121 @@ paths:
           format: email
       responses:
         "200":
-          description: successful operation - Returns the ID of the translator
+          description: Successful operation - Returns the ID of the translator
         "400":
           description: Invalid
         "404":
           description: Not found
         "405":
           description: Validation exception
-  /technology:
+  /cattm:
     get:
       tags:
-        - technology
-      summary: Get the CAT/TM tools or MT engines available.
-      description: Get a list of the CAT/TM tools or MT Engines currently existing in the DQF database. Please contact us if your CAT/TM tool or MT engine is not available.
-      operationId: getCatTmMt
+        - attributes
+        - CAT+TM
+      summary: Get the CAT/TM tools available.
+      description: Get a list of the CAT/TM tools currently existing in the DQF database. Please contact us if your CAT/TM tool is not available.
+      operationId: getCATTM
       produces:
         - application/json
-      parameters:
-        - in: query
-          name: technology
-          description: For valid response try "mtengines" or "cattms" to get the required list.
-          required: true
-          type: string
       responses:
         "200":
-          description: successful operation - Returns the ID and the name of the technologies.
+          description: successful operation - Returns the ID and the names of the CAT+TM.
+        "400":
+          description: Invalid
+        "404":
+          description: Not found
+        "405":
+          description: Validation exception
+  /mtengine:
+    get:
+      tags:
+        - attributes
+        - MT engines
+      summary: Get the MT engines available.
+      description: Get a list of the MT Engines currently existing in the DQF database. Please contact us if your MT engine is not available.
+      operationId: getMTengines
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation - Returns the ID and the names of the MT engines.
+        "400":
+          description: Invalid
+        "404":
+          description: Not found
+        "405":
+          description: Validation exception
+  /qualitylevel:
+    get:
+      tags:
+        - attributes
+        - quality level
+      summary: Get the translation quality levels for the project set up.
+      description: Get a list of the available quality levels in the DQF database.
+      operationId: getQualityLevel
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation - Returns the IDs and the names of the quality levels.
+        "400":
+          description: Invalid
+        "404":
+          description: Not found
+        "405":
+          description: Validation exception
+  /process:
+    get:
+      tags:
+        - attributes
+        - process
+      summary: Get the Productivity processes for the project set up.
+      description: Get a list of the productivity processes currently available in the DQF database.
+      operationId: getProcess
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation - Returns the IDs and the names of the processes.
+        "400":
+          description: Invalid
+        "404":
+          description: Not found
+        "405":
+          description: Validation exception
+  /contenttype:
+    get:
+      tags:
+        - attributes
+        - content type
+      summary: Get the content types for the project set up.
+      description: Get a list of the content types currently available in the DQF database.
+      operationId: contentType
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Successful operation - Returns the IDs and the names of the content types.
+        "400":
+          description: Invalid
+        "404":
+          description: Not found
+        "405":
+          description: Validation exception
+  /industry:
+    get:
+      tags:
+        - attributes
+        - industry
+      summary: Get the industries list for the project set up.
+      description: Get a list of the industries currently available in the DQF database.
+      operationId: getIndustry
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation - Returns the IDs and the names of the industries.
         "400":
           description: Invalid
         "404":
