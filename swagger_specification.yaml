@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   description: |
     This is the TAUS DQF API server.
-  version: "1.1.0"
+  version: "0.9"
   title: TAUS DQF
   termsOfService: https://www.taus.net/taus-terms-of-use
   contact:
@@ -14,6 +14,11 @@ host: dqf.taus.net
 basePath: /api/v1
 schemes:
   - https
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
 paths:
   /productivityProject:
     post:
@@ -60,6 +65,8 @@ paths:
           description: Invalid
         "405":
           description: Validation exception
+      security:
+        - api_key: []
   /productivityProject/{projectid}:
     get:
       tags:
@@ -85,6 +92,8 @@ paths:
           description: Validation exception
         "404":
           description: Project not found
+      security:
+        - api_key: []        
   /productivityProject/{projectid}/task:
     post:
       tags:
@@ -129,6 +138,8 @@ paths:
           description: Project not found
         "405":
           description: Validation exception
+      security:
+        - api_key: []          
   /productivityProject/{projectid}/task/{taskid}:
     get:
       tags:
@@ -159,6 +170,8 @@ paths:
           description: Project-Task not found
         "405":
           description: Validation exception
+      security:
+        - api_key: []          
   /productivityProject/{projectid}/task/{taskid}/segment:
     post:
       tags:
@@ -233,6 +246,8 @@ paths:
           description: Project-Task not found
         "405":
           description: Validation exception
+      security:
+        - api_key: []        
   /productivityProject/{projectid}/task/{taskid}/segment/{segmentid}:
     put:
       tags:
@@ -290,6 +305,8 @@ paths:
           description: Project-Task-Segment not found
         "405":
           description: Validation exception
+      security:
+        - api_key: []      
   /productivityProject/{projectid}/task/{taskid}/raw_file:
     post:
       tags:
@@ -363,60 +380,6 @@ paths:
           description: Invalid ID supplied
         "404":
           description: Project-Task not found
-        "405":
-          description: Validation exception
-  /translator:
-    post:
-      tags:
-        - translator
-      summary: Create a translator
-      description: Add translators to the database for new and upcoming projects. This can only be done by the logged in user.
-      operationId: createTranslator
-      produces:
-        - application/json
-      parameters:
-        - in: query
-          name: name
-          description: The name of the translator
-          required: false
-          type: string 
-        - in: query
-          name: email
-          description: The email of the translator
-          required: true
-          type: string
-          format: email
-      responses:
-        "200":
-          description: Successful operation. Returns the id of the translator.
-        "400":
-          description: Invalid
-        "404":
-          description: Not found
-        "405":
-          description: Validation exception
-    get:
-      tags:
-        - translator
-      summary: Get translator by email
-      description: An existing translator in the database can be found and used for new or updated tasks.
-      operationId: getTranslatorByEmail
-      produces:
-        - application/json
-      parameters:
-        - in: query
-          name: email
-          description: The email of the translator that needs to be found.
-          required: true
-          type: string
-          format: email
-      responses:
-        "200":
-          description: Successful operation - Returns the ID of the translator
-        "400":
-          description: Invalid
-        "404":
-          description: Not found
         "405":
           description: Validation exception
   /cattm:
@@ -534,7 +497,8 @@ paths:
         "405":
           description: Validation exception
 securityDefinitions:
-  dqf_auth:
-    type: oauth2
-    authorizationUrl: http://dqf.taus.net/api/oauth/dialog
-    flow: implicit
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+    description: Project Managers can find their api key under their profile in DQF after they register with TAUS. Translators will receive their api key in an email the first time they will work on a task or when they install a plugin.
