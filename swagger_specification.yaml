@@ -14,7 +14,6 @@ host: dqf.taus.net
 basePath: /api/v1
 schemes:
   - https
-  - http
 consumes:
   - application/json
 produces:
