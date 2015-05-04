@@ -93,7 +93,8 @@ paths:
         "404":
           description: Project not found
       security:
-        - api_key: []        
+        - api_key: []
+        - project_key: []
   /productivityProject/{projectid}/task:
     post:
       tags:
@@ -139,7 +140,8 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []          
+        - api_key: []
+        - project_key: []
   /productivityProject/{projectid}/task/{taskid}:
     get:
       tags:
@@ -171,7 +173,8 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []          
+        - api_key: []
+        - project_key: []
   /productivityProject/{projectid}/task/{taskid}/segment:
     post:
       tags:
@@ -247,7 +250,8 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []        
+        - api_key: []
+        - project_key: []
   /productivityProject/{projectid}/task/{taskid}/segment/{segmentid}:
     put:
       tags:
@@ -306,82 +310,8 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []      
-  /productivityProject/{projectid}/task/{taskid}/raw_file:
-    post:
-      tags:
-        - document
-      summary: Upload an raw translated XLIFF file
-      description: After a project has been created and translators have been assigned to it, a XLIFF Version 1.2 file can be uploaded which contains all the source and the TM or MT translated segments for a DQF task. This way these segments won't be submitted one by one but all together.
-      operationId: addRawDocument
-      consumes:
-        - multipart/form-data
-      produces:
-        - application/json
-      parameters:
-        - name: projectid
-          in: path
-          description: project id in the DQF tools
-          required: true
-          type: integer
-          format: int64
-        - in: path
-          name: taskid
-          description: ID of pet that needs to be fetched
-          required: true
-          type: integer
-          format: int64
-        - in: formData
-          name: raw_file
-          description: XLIFF Version 1.2 Document object that needs to be added to the DQF tools
-          required: true
-          type: file
-      responses:
-        "200":
-          description: successful operation.
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Project-Task not found
-        "405":
-          description: Validation exception
-  /productivityProject/{projectid}/task/{taskid}/updated_file:
-    post:
-      tags:
-        - document
-      summary: Upload an updated translated XLIFF file
-      description: After a project has been created, translators have been assigned to it and a raw translated file has been uploaded, a XLIFF Version 1.2 file can be uploaded which contains all the source segments and the final segments translated by the translator for a DQF task. This way these segmetns won't be submitted one by one but all together.
-      operationId: addUpdatedDocument
-      consumes:
-        - multipart/form-data
-      produces:
-        - application/json
-      parameters:
-        - name: projectid
-          in: path
-          description: project id in the DQF tools
-          required: true
-          type: integer
-          format: int64
-        - in: path
-          name: taskid
-          description: ID of pet that needs to be fetched
-          required: true
-          type: string
-        - in: formData
-          name: updated_file
-          description: XLIFF Version 1.2 Document object that needs to be added to the DQF tools
-          required: true
-          type: file
-      responses:
-        "200":
-          description: successful operation.
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Project-Task not found
-        "405":
-          description: Validation exception
+        - api_key: []
+        - project_key: []
   /cattm:
     get:
       tags:
@@ -502,3 +432,8 @@ securityDefinitions:
     name: api_key
     in: header
     description: Project Managers can find their api key under their profile in DQF after they register with TAUS. Translators will receive their api key in an email the first time they will work on a task or when they install a plugin.
+  project_key:
+    type: apiKey
+    name: project_key
+    in: header
+    description: The Project key will be returned every time a new project is submitted to DQF. This key will authorize authenticated translators to create tasks under the project. Only the project manager that created the project and the translator assigned to a task or that created the task will be able to access the task data.
