@@ -125,7 +125,7 @@ paths:
           type: string
         - name: translator_id
           in: query
-          description: The id of the translator. Use the POST(/translator) method to add a new translator or the GET(/translator) method to get the id of a translators from the database.
+          description: The id of the translator. Use the GET(/translator) method to get the id of a translators from the database.
           required: true
           type: integer
           format: int64
@@ -311,7 +311,65 @@ paths:
       security:
         - api_key: []
         - project_key: []
-  /cattm:
+  /translator:
+    post:
+      tags:
+        - translator
+      summary: Create a translator
+      description: Add translators to the database for new and upcoming projects. This can only be done by the logged in user.
+      operationId: createTranslator
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: name
+          description: The name of the translator
+          required: false
+          type: string 
+        - in: query
+          name: email
+          description: The email of the translator
+          required: true
+          type: string
+          format: email
+      responses:
+        "200":
+          description: Successful operation. Returns the id of the translator.
+        "400":
+          description: Invalid
+        "404":
+          description: Not found
+        "405":
+          description: Validation exception
+      security:
+        - project_key: []
+    get:
+      tags:
+        - translator
+      summary: Get translator by email
+      description: An existing translator in the database can be found and used for new or updated tasks.
+      operationId: getTranslatorByEmail
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: email
+          description: The email of the translator that needs to be found.
+          required: true
+          type: string
+          format: email
+      responses:
+        "200":
+          description: Successful operation - Returns the ID of the translator
+        "400":
+          description: Invalid
+        "404":
+          description: Not found
+        "405":
+          description: Validation exception
+      security:
+        - api_key: []
+  /cattm/:
     get:
       tags:
         - attributes
@@ -330,7 +388,7 @@ paths:
           description: Not found
         "405":
           description: Validation exception
-  /mtengine:
+  /mtengine/:
     get:
       tags:
         - attributes
@@ -349,7 +407,7 @@ paths:
           description: Not found
         "405":
           description: Validation exception
-  /qualitylevel:
+  /qualitylevel/:
     get:
       tags:
         - attributes
@@ -368,7 +426,7 @@ paths:
           description: Not found
         "405":
           description: Validation exception
-  /process:
+  /process/:
     get:
       tags:
         - attributes
@@ -387,7 +445,7 @@ paths:
           description: Not found
         "405":
           description: Validation exception
-  /contenttype:
+  /contenttype/:
     get:
       tags:
         - attributes
@@ -406,7 +464,7 @@ paths:
           description: Not found
         "405":
           description: Validation exception
-  /industry:
+  /industry/:
     get:
       tags:
         - attributes
