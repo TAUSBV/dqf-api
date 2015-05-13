@@ -133,7 +133,7 @@ paths:
         "405":
           description: Validation exception
       security:
-        - DQF_TRASLATOR_KEY: []
+        - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}:
     get:
@@ -166,7 +166,7 @@ paths:
         "405":
           description: Validation exception
       security:
-        - DQF_TRASLATOR_KEY: []
+        - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}/segment:
     post:
@@ -243,7 +243,7 @@ paths:
         "405":
           description: Validation exception
       security:
-        - DQF_TRASLATOR_KEY: []
+        - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}/segment/{segmentid}:
     put:
@@ -303,14 +303,14 @@ paths:
         "405":
           description: Validation exception
       security:
-        - DQF_TRASLATOR_KEY: []
+        - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
   /translator:
     post:
       tags:
         - translator
       summary: Create a translator
-      description: Translators can submit their name and email to get the DQF_TRASLATOR_KEY send to them through email.
+      description: Translators can submit their name and email to get the DQF_TRANSLATOR_KEY send to them through email.
       operationId: createTranslator
       produces:
         - application/json
@@ -475,9 +475,9 @@ securityDefinitions:
     name: DQF_PMANAGER_KEY
     in: header
     description: Project Managers can find their api key under their profile in the DQF tools after they register with TAUS.
-  DQF_TRASLATOR_KEY:
+  DQF_TRANSLATOR_KEY:
     type: apiKey
-    name: DQF_TRASLATOR_KEY
+    name: DQF_TRANSLATOR_KEY
     in: header
     description: Translators will receive their api key in an email the first time they will work on a task or when they install a plugin by submitting their name and email.  
   DQF_PROJECT_KEY:
