@@ -65,7 +65,7 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []
+        - DQF_PMANAGER_KEY: []
   /productivityProject/{projectid}:
     get:
       tags:
@@ -92,15 +92,15 @@ paths:
         "404":
           description: Project not found
       security:
-        - api_key: []
-        - project_key: []
+        - DQF_PMANAGER_KEY: []
+        - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task:
     post:
       tags:
         - project
         - task
       summary: Add target languages and translators to a project.
-      description: Add target languages and assign translators for each language pair to an initialized project by specifying its id. A task will be created for each translator assigned to a language pair.
+      description: Add target languages and assign translators for each language pair to an initialized project by specifying its id. A task will be created for each time the translator adds a new language pair.
       operationId: assignTask
       consumes:
         - application/json
@@ -123,12 +123,6 @@ paths:
           description: The name of the file that needs to be translated into the target language.
           required: true
           type: string
-        - name: translator_id
-          in: query
-          description: The id of the translator. Use the GET(/translator) method to get the id of a translators from the database.
-          required: true
-          type: integer
-          format: int64
       responses:
         "200":
           description: Successful operation. Returns a taskid for each translator that has been assigned with a target language in the project.
@@ -139,8 +133,8 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []
-        - project_key: []
+        - DQF_TRASLATOR_KEY: []
+        - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}:
     get:
       tags:
@@ -172,8 +166,8 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []
-        - project_key: []
+        - DQF_TRASLATOR_KEY: []
+        - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}/segment:
     post:
       tags:
@@ -224,14 +218,14 @@ paths:
           type: integer
           minimum: 0
           maximum: 100          
-        - name: cat_tm
+        - name: cattool
           in: query
-          description: The id of the CAT tool and TM used for the translation of the segment. Use the GET(/cattm) to get a list of CAT tools and TM from the database.
+          description: The id of the CAT tool used for the translation of the segment. Use the GET(/cattools/) to get a list of CAT tools from the database.
           required: true
           type: integer
         - name: mtengine
           in: query
-          description: The id of the MT Engine used for the translation of the segment. Use the GET(/mtengine) to get a list of MT Engines from the database.
+          description: The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.
           required: true
           type: integer
         - name: mt_engine_version
@@ -249,8 +243,8 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []
-        - project_key: []
+        - DQF_TRASLATOR_KEY: []
+        - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}/segment/{segmentid}:
     put:
       tags:
@@ -291,7 +285,7 @@ paths:
           format: float
         - name: mtengine
           in: query
-          description: The id of the MT Engine used for the translation of the segment. Use the GET(/mtengine) to get a list of MT Engines from the database.
+          description: The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.
           required: true
           type: integer
         - name: mt_engine_version
@@ -309,14 +303,14 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []
-        - project_key: []
+        - DQF_TRASLATOR_KEY: []
+        - DQF_PROJECT_KEY: []
   /translator:
     post:
       tags:
         - translator
       summary: Create a translator
-      description: Add translators to the database for new and upcoming projects. This can only be done by the logged in user.
+      description: Translators can submit their name and email to get the DQF_TRASLATOR_KEY send to them through email.
       operationId: createTranslator
       produces:
         - application/json
@@ -341,26 +335,17 @@ paths:
           description: Not found
         "405":
           description: Validation exception
-      security:
-        - project_key: []
     get:
       tags:
         - translator
-      summary: Get translator by email
-      description: An existing translator in the database can be found and used for new or updated tasks.
-      operationId: getTranslatorByEmail
+      summary: Get translators
+      description: A project manager can find the traslators assigned to his projects.
+      operationId: getProjectTranslators
       produces:
         - application/json
-      parameters:
-        - in: query
-          name: email
-          description: The email of the translator that needs to be found.
-          required: true
-          type: string
-          format: email
       responses:
         "200":
-          description: Successful operation - Returns the ID of the translator
+          description: Successful operation
         "400":
           description: Invalid
         "404":
@@ -368,27 +353,28 @@ paths:
         "405":
           description: Validation exception
       security:
-        - api_key: []
-  /cattm/:
+        - DQF_PMANAGER_KEY: []
+        - DQF_PROJECT_KEY: []
+  /cattools/:
     get:
       tags:
         - attributes
-        - CAT+TM
-      summary: Get the CAT/TM tools available.
-      description: Get a list of the CAT/TM tools currently existing in the DQF database. Please contact us if your CAT/TM tool is not available.
-      operationId: getCATTM
+        - CAT
+      summary: Get the CAT tools available.
+      description: Get a list of the CAT tools currently existing in the DQF database. Please contact us if your CAT tool is not available.
+      operationId: getCATTools
       produces:
         - application/json
       responses:
         "200":
-          description: successful operation - Returns the ID and the names of the CAT+TM.
+          description: successful operation - Returns the IDs and the names of the CAT tools.
         "400":
           description: Invalid
         "404":
           description: Not found
         "405":
           description: Validation exception
-  /mtengine/:
+  /mtengines/:
     get:
       tags:
         - attributes
@@ -484,13 +470,18 @@ paths:
         "405":
           description: Validation exception
 securityDefinitions:
-  api_key:
+  DQF_PMANAGER_KEY:
     type: apiKey
-    name: api_key
+    name: DQF_PMANAGER_KEY
     in: header
-    description: Project Managers can find their api key under their profile in DQF after they register with TAUS. Translators will receive their api key in an email the first time they will work on a task or when they install a plugin.
-  project_key:
+    description: Project Managers can find their api key under their profile in the DQF tools after they register with TAUS.
+  DQF_TRASLATOR_KEY:
     type: apiKey
-    name: project_key
+    name: DQF_TRASLATOR_KEY
     in: header
-    description: The Project key will be returned every time a new project is submitted to DQF. This key will authorize authenticated translators to create tasks under the project. Only the project manager that created the project and the translator assigned to a task or that created the task will be able to access the task data.
+    description: Translators will receive their api key in an email the first time they will work on a task or when they install a plugin by submitting their name and email.  
+  DQF_PROJECT_KEY:
+    type: apiKey
+    name: DQF_PROJECT_KEY
+    in: header
+    description: The Project key will be returned every time a new project is submitted to the DQF tools. This key will authorize authenticated translators to create tasks under the project. Only the project manager that created the project and the translator assigned to a task or that created the task will be able to access the task data.
