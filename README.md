@@ -48,7 +48,7 @@ Upon successful project creation (HTTP status code 200) you get sent a `project_
 ## Creating a task within a productivity project
 If you now log on to the DQF web interface as a project manager, you will see the newly added project, but with a status of "Initializing...". This is because no productivity tasks are yet added to the project. You need to invite translators to sign up for the productivity project (e.g. by email or via your CAT tool interface) and ask them for their translator key.
 
-The `project_key` and translator key are then used to create a specific task with a `HTTP POST` to the `/task` end point. In our example we are creating a task for the target language German and specifying the document name 'foobar' using `HTTP POST` to
+The `project_key` and translator key are then used to create a specific task with a `HTTP POST` to the `/project/<project id>/task` end point. In our example we are creating a task for the target language German and specifying the document name 'foobar' using `HTTP POST` to
 ```
 http://dqf.ta-us.net/api/v1/productivityProject/<project_id>/task?target_language=de-DE&file_name=foobar
 ```
@@ -57,5 +57,17 @@ You need to supply the `project_key` in the HTTP header variable `DQF_PROJECT_KE
 Upon successful creation of the task (HTTP status code 200), the HTTP response header will contain a `task_id` you need to retain.
 
 ## Add segment
+Even with the task added, the project in the DQF project overview will still show the status "Initializing..." because no translation segments have been added to the project yet.
 
-## Update segment
+Adding translation segments can be done with an `HTTP POST` to the API end point `/project/<project id>/task/<task id>/segment`. For example a `HTTP POST` to
+```
+http://dqf.ta-us.net/api/v1/productivityProject/<project id>/task/<task id>/segment?source_segment=The+car+key+is+black.&target_segment=Der+Schl%FCssel+ist+schwarz.&new_target_segment=Der+Autoscchl%FCssel+ist+schwarz.&time=12000&cattool=13&tm_match=0&mtengine=5&mt_engine_version=""
+```
+creates a post-edited segment in DQF. The source of the segment was "The car key is black." and the machine translation from Bing Translator was "The key is black.". The segment was post-edited using MemoQ to "Der Autoschlüssel ist schwarz." within 12 seconds. Note that the segment text needs to be URL-escaped, in this case the German umlaut ü, otherwise there will be misencoded characters in the database.
+
+## Viewing reports
+In the DQF web interface the status of the project has now changed to "Active" in the project overview and you can start viewing reports on the project, for example our post-editing rate for this project is 1500 words/hour.
+
+More segments can be added as described above and segments can be updated when the translator returns to edit a segment again.
+
+There are also more API end points to query the data which you can find in the reference documentation.
