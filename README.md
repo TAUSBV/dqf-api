@@ -27,7 +27,11 @@ Most other calls in the API require authorization. In DQF there are two user rol
 To get the project manager API key log into your DQF account on https://dqf.taus.net and click on your user name. This will display your project manager information and API key.
 
 ### Translator API key
-For the translator API key submit a `HTTP POST` request with your name and email address to `http://dqf.ta-us.net/api/v1/translator?name=Johnny%20Rocket&email=johnny@example.com`. This will create a translator account for you and send the translator API key to the specified email address. If you forget the key, you can repeat this call and the email will be sent again.
+For the translator API key submit a `HTTP POST` request with your name and email address to 
+```
+http://dqf.ta-us.net/api/v1/translator?name=Johnny%20Rocket&email=johnny@example.com
+```
+This will create a translator account for you and send the translator API key to the specified email address. If you forget the key, you can repeat this call and the email will be sent again.
 
 ## Creating a productivity project
 DQF provides comparison, quality evaluation and productivity projects. Project managers can now create productivity projects directly from a CAT tool that supports the DQF API (other project types still have to be created in the web interface).
@@ -36,7 +40,21 @@ In order to create a project you have to submit a number of project parameters a
 ```
 http://dqf.ta-us.net/api/v1/productivityProject?name=My+first+DQF+productivity+project&quality_level=1&process=2&source_language=en-US&contentType=1&industry=1
 ```
-## Create task
+
+In order to authorize yourself as a project manager permitted to create projects, you need to add the project manager API key as a header variable named `DQF_PMANAGER_KEY` to the HTTP request.
+
+Upon successful project creation (HTTP status code 200) you get sent a `project_id` and `project_key` in the HTTP response header, which you need to note in order to be able to reference the created project later (you will not be able to retrieve these later!).
+
+## Creating a task within a productivity project
+If you now log on to the DQF web interface as a project manager, you will see the newly added project, but with a status of "Initializing...". This is because no productivity tasks are yet added to the project. You need to invite translators to sign up for the productivity project (e.g. by email or via your CAT tool interface) and ask them for their translator key.
+
+The `project_key` and translator key are then used to create a specific task with a `HTTP POST` to the `/task` end point. In our example we are creating a task for the target language German and specifying the document name 'foobar' using `HTTP POST` to
+```
+http://dqf.ta-us.net/api/v1/productivityProject/<project_id>/task?target_language=de-DE&file_name=foobar
+```
+You need to supply the `project_key` in the HTTP header variable `DQF_PROJECT_KEY` and the translator id in the HTTP header variable `DQF_TRANSLATOR_KEY`.
+
+Upon successful creation of the task (HTTP status code 200), the HTTP response header will contain a `task_id` you need to retain.
 
 ## Add segment
 
