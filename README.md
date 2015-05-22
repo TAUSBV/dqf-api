@@ -29,8 +29,15 @@ To get the project manager API key log into your DQF account on https://dqf.taus
 ### Translator API key
 For the translator API key submit a `HTTP POST` request with your name and email address to `http://dqf.ta-us.net/api/v1/translator?name=Johnny%20Rocket&email=johnny@example.com`. This will create a translator account for you and send the translator API key to the specified email address. If you forget the key, you can repeat this call and the email will be sent again.
 
-## Create project
-## Create translator
+## Creating a productivity project
+DQF provides comparison, quality evaluation and productivity projects. Project managers can now create productivity projects directly from a CAT tool that supports the DQF API (other project types still have to be created in the web interface).
+
+In order to create a project you have to submit a number of project parameters as URL parameters in a `HTTP POST` request. For example to create a project named "My first DQF productivity project" for audio/video content in the automotive industry, using the post-edited machine translation,  expecting a "good enough" quality level, with the source language American English you would use the following URL:
+```
+http://dqf.ta-us.net/api/v1/productivityProject?name=My+first+DQF+productivity+project&quality_level=1&process=2&source_language=en-US&contentType=1&industry=1
+```
 ## Create task
+
 ## Add segment
+
 ## Update segment
