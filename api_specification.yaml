@@ -6,7 +6,7 @@ info:
   title: TAUS DQF
   termsOfService: https://www.taus.net/taus-terms-of-use
   contact:
-    name: dqf-api@taus.net
+    name: dqf@taus.net
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -14,8 +14,6 @@ host: dqf.taus.net
 basePath: /api/v1
 schemes:
   - https
-consumes:
-  - application/json
 produces:
   - application/json
 paths:
@@ -59,11 +57,15 @@ paths:
           type: integer
       responses:
         "200":
-          description: successful operation. Returns the project id.
+          description: Successful operation. The project id and the project_key will be included in the response Headers.
         "400":
-          description: Invalid
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
         "405":
-          description: Validation exception
+          description: Method Not Allowed or missing parameters        
       security:
         - DQF_PMANAGER_KEY: []
   /productivityProject/{projectid}:
@@ -72,7 +74,7 @@ paths:
         - project
       summary: Find project by ID
       description: Read a project by specifying its id.
-      operationId: getProjectById
+      operationId: findProjectById
       produces:
         - application/json
       parameters:
@@ -84,32 +86,27 @@ paths:
           format: int64
       responses:
         "200":
-          description: Successful operation. Returns the project details.
-        "400":
-          description: Invalid ID supplied
-        "405":
-          description: Validation exception
-        "404":
-          description: Project not found
+          description: Successful operation. Returns the productivity project.
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
       security:
         - DQF_PMANAGER_KEY: []
-        - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task:
     post:
       tags:
         - project
         - task
       summary: Add target languages and translators to a project.
-      description: Add target languages and assign translators for each language pair to an initialized project by specifying its id. A task will be created for each time the translator adds a new language pair.
+      description: Add target languages and assign translators for each language pair to an initialized project by specifying its id. A task will be created for each translator assigned to a language pair.
       operationId: assignTask
-      consumes:
-        - application/json
       produces:
         - application/json
       parameters:
         - in: path
           name: projectid
-          description: ID of project that a new task has to be added
+          description: ID of project that a new task has to be added.
           required: true
           type: integer
           format: int64      
@@ -125,13 +122,15 @@ paths:
           type: string
       responses:
         "200":
-          description: Successful operation. Returns a taskid for each translator that has been assigned with a target language in the project.
+          description: Successful operation. The task id will be included in the response Headers.
         "400":
-          description: Invalid ID supplied
-        "404":
-          description: Project not found
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
         "405":
-          description: Validation exception
+          description: Method Not Allowed or missing parameters        
       security:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
@@ -141,7 +140,7 @@ paths:
         - task
       summary: Find task by ID
       description: Find the translator and the language pair of each task.
-      operationId: getTaskById
+      operationId: findTaskById
       produces:
         - application/json
       parameters:
@@ -160,11 +159,11 @@ paths:
         "200":
           description: Successful operation. Returns the language pair and the translator for each task.
         "400":
-          description: Invalid ID supplied
+          description: Wrong parameters
         "404":
           description: Project-Task not found
         "405":
-          description: Validation exception
+          description: Method Not Allowed or missing parameters
       security:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
@@ -235,13 +234,15 @@ paths:
           type: string
       responses:
         "200":
-          description: Successful operation. Returns the segmentid.
+          description: Successful operation. The segment id will be included in the response Headers.
         "400":
-          description: Invalid ID supplied
-        "404":
-          description: Project-Task not found
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
         "405":
-          description: Validation exception
+          description: Method Not Allowed or missing parameters        
       security:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
@@ -295,13 +296,15 @@ paths:
           type: string          
       responses:
         "200":
-          description: successful operation. Returns the segmentid.
+          description: Successful operation.
         "400":
-          description: Invalid ID supplied
-        "404":
-          description: Project-Task-Segment not found
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
         "405":
-          description: Validation exception
+          description: Method Not Allowed or missing parameters          
       security:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
@@ -330,11 +333,13 @@ paths:
         "200":
           description: Successful operation. Returns the id of the translator.
         "400":
-          description: Invalid
-        "404":
-          description: Not found
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
         "405":
-          description: Validation exception
+          description: Method Not Allowed or missing parameters
     get:
       tags:
         - translator
@@ -347,11 +352,13 @@ paths:
         "200":
           description: Successful operation
         "400":
-          description: Invalid
-        "404":
-          description: Not found
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
         "405":
-          description: Validation exception
+          description: Method Not Allowed or missing parameters
       security:
         - DQF_PMANAGER_KEY: []
         - DQF_PROJECT_KEY: []
@@ -367,13 +374,9 @@ paths:
         - application/json
       responses:
         "200":
-          description: successful operation - Returns the IDs and the names of the CAT tools.
+          description: Successful operation - Returns the IDs and the names of the CAT tools.
         "400":
-          description: Invalid
-        "404":
-          description: Not found
-        "405":
-          description: Validation exception
+          description: Bad request
   /mtengines/:
     get:
       tags:
@@ -388,11 +391,7 @@ paths:
         "200":
           description: successful operation - Returns the ID and the names of the MT engines.
         "400":
-          description: Invalid
-        "404":
-          description: Not found
-        "405":
-          description: Validation exception
+          description: Bad request
   /qualitylevel/:
     get:
       tags:
@@ -407,11 +406,7 @@ paths:
         "200":
           description: successful operation - Returns the IDs and the names of the quality levels.
         "400":
-          description: Invalid
-        "404":
-          description: Not found
-        "405":
-          description: Validation exception
+          description: Bad request
   /process/:
     get:
       tags:
@@ -424,13 +419,9 @@ paths:
         - application/json
       responses:
         "200":
-          description: successful operation - Returns the IDs and the names of the processes.
+          description: Successful operation - Returns the IDs and the names of the processes.
         "400":
-          description: Invalid
-        "404":
-          description: Not found
-        "405":
-          description: Validation exception
+          description: Bad request
   /contenttype/:
     get:
       tags:
@@ -445,11 +436,7 @@ paths:
         "200":
           description: Successful operation - Returns the IDs and the names of the content types.
         "400":
-          description: Invalid
-        "404":
-          description: Not found
-        "405":
-          description: Validation exception
+          description: Bad request
   /industry/:
     get:
       tags:
@@ -462,13 +449,9 @@ paths:
         - application/json
       responses:
         "200":
-          description: successful operation - Returns the IDs and the names of the industries.
+          description: Successful operation - Returns the IDs and the names of the industries.
         "400":
-          description: Invalid
-        "404":
-          description: Not found
-        "405":
-          description: Validation exception
+          description: Bad request
 securityDefinitions:
   DQF_PMANAGER_KEY:
     type: apiKey
@@ -484,4 +467,4 @@ securityDefinitions:
     type: apiKey
     name: DQF_PROJECT_KEY
     in: header
-    description: The Project key will be returned every time a new project is submitted to the DQF tools. This key will authorize authenticated translators to create tasks under the project. Only the project manager that created the project and the translator assigned to a task or that created the task will be able to access the task data.
+    description: The Project key will be returned every time a new project is submitted to the DQF tools. This key will authorize authenticated translators to create tasks under the project. Only the project manager that created the project and the translator assigned to a task or created the task will be able to access the task data.

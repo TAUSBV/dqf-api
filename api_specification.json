@@ -1,0 +1,698 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the TAUS DQF API server.\n",
+        "version": "0.9",
+        "title": "TAUS DQF",
+        "termsOfService": "https://www.taus.net/taus-terms-of-use",
+        "contact": {
+            "name": "dqf@taus.net"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "dqf.taus.net",
+    "basePath": "/api/v1",
+    "schemes": [
+        "https"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/productivityProject": {
+            "post": {
+                "tags": [
+                    "project"
+                ],
+                "summary": "Create a new project",
+                "description": "Initialize a new project that is sent to the DQF tools. Project attributes include name of project, quality level, process or mode of translation, source language, content type and industry. To add target languages and assign translators to a project use the POST(/productivityProject/{projectid}/task) method.",
+                "operationId": "addProject",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Project name in the DQF tools",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "quality_level",
+                        "in": "query",
+                        "description": "The id of the quality level of the translation. Use the GET(/qualitylevel) to get a list of the quality levels from the database.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "process",
+                        "in": "query",
+                        "description": "The id of the process used for the translation. Use the GET(/process) to get a list of processes from the database. For example, Human, MT+PE, TM+Human, MT+PE+Human, MT+PE+TM+Human.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "source_language",
+                        "in": "query",
+                        "description": "Source language of the project.  Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR).",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "contentType",
+                        "in": "query",
+                        "description": "The id of the content type of the translation. Use the GET(/contenttype) to get a list of content types from the database.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "industry",
+                        "in": "query",
+                        "description": "The id of the industry of the translation. Use the GET(/industry) to get a list of industries from the database.",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation. The project id and the project_key will be included in the response Headers."
+                    },
+                    "400": {
+                        "description": "Wrong parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Access is not permitted"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed or missing parameters"
+                    }
+                },
+                "security": [
+                    {
+                        "DQF_PMANAGER_KEY": []
+                    }
+                ]
+            }
+        },
+        "/productivityProject/{projectid}": {
+            "get": {
+                "tags": [
+                    "project"
+                ],
+                "summary": "Find project by ID",
+                "description": "Read a project by specifying its id.",
+                "operationId": "findProjectById",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectid",
+                        "description": "ID of project that needs to be fetched",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation. Returns the productivity project."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Access is not permitted"
+                    }
+                },
+                "security": [
+                    {
+                        "DQF_PMANAGER_KEY": []
+                    }
+                ]
+            }
+        },
+        "/productivityProject/{projectid}/task": {
+            "post": {
+                "tags": [
+                    "project",
+                    "task"
+                ],
+                "summary": "Add target languages and translators to a project.",
+                "description": "Add target languages and assign translators for each language pair to an initialized project by specifying its id. A task will be created for each translator assigned to a language pair.",
+                "operationId": "assignTask",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectid",
+                        "description": "ID of project that a new task has to be added.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "target_language",
+                        "in": "query",
+                        "description": "The target language of the project. Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR).",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "file_name",
+                        "in": "query",
+                        "description": "The name of the file that needs to be translated into the target language.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation. The task id will be included in the response Headers."
+                    },
+                    "400": {
+                        "description": "Wrong parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Access is not permitted"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed or missing parameters"
+                    }
+                },
+                "security": [
+                    {
+                        "DQF_TRANSLATOR_KEY": []
+                    },
+                    {
+                        "DQF_PROJECT_KEY": []
+                    }
+                ]
+            }
+        },
+        "/productivityProject/{projectid}/task/{taskid}": {
+            "get": {
+                "tags": [
+                    "task"
+                ],
+                "summary": "Find task by ID",
+                "description": "Find the translator and the language pair of each task.",
+                "operationId": "findTaskById",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectid",
+                        "in": "path",
+                        "description": "The project id in the DQF tools",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "taskid",
+                        "description": "The task id belonging to a project in the DQF tools",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation. Returns the language pair and the translator for each task."
+                    },
+                    "400": {
+                        "description": "Wrong parameters"
+                    },
+                    "404": {
+                        "description": "Project-Task not found"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed or missing parameters"
+                    }
+                },
+                "security": [
+                    {
+                        "DQF_TRANSLATOR_KEY": []
+                    },
+                    {
+                        "DQF_PROJECT_KEY": []
+                    }
+                ]
+            }
+        },
+        "/productivityProject/{projectid}/task/{taskid}/segment": {
+            "post": {
+                "tags": [
+                    "task",
+                    "segment"
+                ],
+                "summary": "Add segments for a task",
+                "description": "A complete translated target segment can be submitted together with the source and the temporary translated segment for a particular task of a project. The translation time, the TM fuzzy match, and the technologies used can be submitted as well.",
+                "operationId": "addSegment",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectid",
+                        "in": "path",
+                        "description": "The project id in the DQF tools",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "taskid",
+                        "description": "The id of task that the segment needs to be added.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "source_segment",
+                        "in": "query",
+                        "description": "The source segment",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "target_segment",
+                        "in": "query",
+                        "description": "The MT output or TM match or empty segment.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "new_target_segment",
+                        "in": "query",
+                        "description": "The output of the translator.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "time",
+                        "in": "query",
+                        "description": "The translation time in milliseconds.",
+                        "required": false,
+                        "type": "number",
+                        "format": "float"
+                    },
+                    {
+                        "name": "tm_match",
+                        "in": "query",
+                        "description": "The TM match (percentage).",
+                        "required": false,
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    {
+                        "name": "cattool",
+                        "in": "query",
+                        "description": "The id of the CAT tool used for the translation of the segment. Use the GET(/cattools/) to get a list of CAT tools from the database.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "mtengine",
+                        "in": "query",
+                        "description": "The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "mt_engine_version",
+                        "in": "query",
+                        "description": "The version of the MT engine.",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation. The segment id will be included in the response Headers."
+                    },
+                    "400": {
+                        "description": "Wrong parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Access is not permitted"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed or missing parameters"
+                    }
+                },
+                "security": [
+                    {
+                        "DQF_TRANSLATOR_KEY": []
+                    },
+                    {
+                        "DQF_PROJECT_KEY": []
+                    }
+                ]
+            }
+        },
+        "/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}": {
+            "put": {
+                "tags": [
+                    "task",
+                    "segment"
+                ],
+                "summary": "Update a segment of a task",
+                "description": "An already submitted translated segment can be updated. The time with be added to the segment already submitted.",
+                "operationId": "updateSegment",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectid",
+                        "in": "path",
+                        "description": "The project id in the DQF tools.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "taskid",
+                        "description": "The id of task in the DQF tools.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "segmentid",
+                        "description": "The id of segment that needs to be updated.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "new_target_segment",
+                        "in": "query",
+                        "description": "The new output of the translator.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "time",
+                        "in": "query",
+                        "description": "The new translation time in milliseconds.",
+                        "required": false,
+                        "type": "number",
+                        "format": "float"
+                    },
+                    {
+                        "name": "mtengine",
+                        "in": "query",
+                        "description": "The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "mt_engine_version",
+                        "in": "query",
+                        "description": "The version of the MT engine.",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation."
+                    },
+                    "400": {
+                        "description": "Wrong parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Access is not permitted"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed or missing parameters"
+                    }
+                },
+                "security": [
+                    {
+                        "DQF_TRANSLATOR_KEY": []
+                    },
+                    {
+                        "DQF_PROJECT_KEY": []
+                    }
+                ]
+            }
+        },
+        "/translator": {
+            "post": {
+                "tags": [
+                    "translator"
+                ],
+                "summary": "Create a translator",
+                "description": "Translators can submit their name and email to get the DQF_TRANSLATOR_KEY send to them through email.",
+                "operationId": "createTranslator",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of the translator",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "description": "The email of the translator",
+                        "required": true,
+                        "type": "string",
+                        "format": "email"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation. Returns the id of the translator."
+                    },
+                    "400": {
+                        "description": "Wrong parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Access is not permitted"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed or missing parameters"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "translator"
+                ],
+                "summary": "Get translators",
+                "description": "A project manager can find the traslators assigned to his projects.",
+                "operationId": "getProjectTranslators",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Wrong parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Access is not permitted"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed or missing parameters"
+                    }
+                },
+                "security": [
+                    {
+                        "DQF_PMANAGER_KEY": []
+                    },
+                    {
+                        "DQF_PROJECT_KEY": []
+                    }
+                ]
+            }
+        },
+        "/cattools/": {
+            "get": {
+                "tags": [
+                    "attributes",
+                    "CAT"
+                ],
+                "summary": "Get the CAT tools available.",
+                "description": "Get a list of the CAT tools currently existing in the DQF database. Please contact us if your CAT tool is not available.",
+                "operationId": "getCATTools",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation - Returns the IDs and the names of the CAT tools."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/mtengines/": {
+            "get": {
+                "tags": [
+                    "attributes",
+                    "MT engines"
+                ],
+                "summary": "Get the MT engines available.",
+                "description": "Get a list of the MT Engines currently existing in the DQF database. Please contact us if your MT engine is not available.",
+                "operationId": "getMTengines",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation - Returns the ID and the names of the MT engines."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/qualitylevel/": {
+            "get": {
+                "tags": [
+                    "attributes",
+                    "quality level"
+                ],
+                "summary": "Get the translation quality levels for the project set up.",
+                "description": "Get a list of the available quality levels in the DQF database.",
+                "operationId": "getQualityLevel",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation - Returns the IDs and the names of the quality levels."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/process/": {
+            "get": {
+                "tags": [
+                    "attributes",
+                    "process"
+                ],
+                "summary": "Get the Productivity processes for the project set up.",
+                "description": "Get a list of the productivity processes currently available in the DQF database.",
+                "operationId": "getProcess",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation - Returns the IDs and the names of the processes."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/contenttype/": {
+            "get": {
+                "tags": [
+                    "attributes",
+                    "content type"
+                ],
+                "summary": "Get the content types for the project set up.",
+                "description": "Get a list of the content types currently available in the DQF database.",
+                "operationId": "contentType",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation - Returns the IDs and the names of the content types."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/industry/": {
+            "get": {
+                "tags": [
+                    "attributes",
+                    "industry"
+                ],
+                "summary": "Get the industries list for the project set up.",
+                "description": "Get a list of the industries currently available in the DQF database.",
+                "operationId": "getIndustry",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation - Returns the IDs and the names of the industries."
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "DQF_PMANAGER_KEY": {
+            "type": "apiKey",
+            "name": "DQF_PMANAGER_KEY",
+            "in": "header",
+            "description": "Project Managers can find their api key under their profile in the DQF tools after they register with TAUS."
+        },
+        "DQF_TRANSLATOR_KEY": {
+            "type": "apiKey",
+            "name": "DQF_TRANSLATOR_KEY",
+            "in": "header",
+            "description": "Translators will receive their api key in an email the first time they will work on a task or when they install a plugin by submitting their name and email."
+        },
+        "DQF_PROJECT_KEY": {
+            "type": "apiKey",
+            "name": "DQF_PROJECT_KEY",
+            "in": "header",
+            "description": "The Project key will be returned every time a new project is submitted to the DQF tools. This key will authorize authenticated translators to create tasks under the project. Only the project manager that created the project and the translator assigned to a task or created the task will be able to access the task data."
+        }
+    }
+}
