@@ -14,6 +14,8 @@ For the API reference, you can find a live API reference allowing you to try out
 
 For API testing and client development it is recommendable to use a REST API test tool. We like to use the Google Chrome extensions [Advanced REST Client](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo) and [Postman](https://chrome.google.com/webstore/detail/postman-rest-client/fdmmgilgnpjigdojojpjoooidkmcomcm).
 
+We also provide an interactive UI to try out the API functions: https://dqf.taus.net/assets/api/v1/index.html
+
 ## Query industries, MT engines and CAT tools
 While you need authorization for most end points of the DQF API, there are a few reference list end points that don't. So these are a good opportunity to make the first calls to the API. For example you can send `HTTP GET` requests to retrieve a list of industries, machine translation engines and CAT (computer aided translation) tools that we maintain in DQF:
 * http://dqf.taus.net/api/v1/industry/
