@@ -16,11 +16,10 @@ PUT /api/v1/productivityProject/{project_id}/task/{task_id}/translator
 ```
 GET /api/v1/translator/
 ```
-- Method for Project Managers to retrieve translator information.
+- Method for Project Managers to retrieve translator information. Issue [#40](https://github.com/TAUSBV/dqf-api/issues/40)
 ```
 GET /api/v1/translator
 ```
-Issue [#40](https://github.com/TAUSBV/dqf-api/issues/40)
 - Method for translators to update own information. Issue [#5](https://github.com/TAUSBV/dqf-api/issues/5)
 ```
 PUT /api/v1/translator/{translator_id}
@@ -50,7 +49,7 @@ PUT /api/v1/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}
 ```
 
 ### Fixed
-- Resolved the issue about uploading segments with the entity &#39; throws a error from the service. 
+- Resolved the issue about throwing an error from the service when uploading segments with the entity &#39;.
 Issue [#33](https://github.com/TAUSBV/dqf-api/issues/33)
 - Server error when clicking on link of project without tasks.
 Issue [#43](https://github.com/TAUSBV/dqf-api/issues/43)
