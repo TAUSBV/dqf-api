@@ -56,7 +56,7 @@ The `project_key` and translator key are then used to create a specific task wit
 ```
 http://dqf.taus.net/api/v1/productivityProject/<project_id>/task?target_language=de-DE&file_name=foobar
 ```
-You need to supply the `project_key` in the HTTP header variable `DQF_PROJECT_KEY` and the translator id in the HTTP header variable `DQF_TRANSLATOR_KEY`.
+You need to supply the `project_key` in the HTTP header variable `DQF_PROJECT_KEY` and the translator key in the HTTP header variable `DQF_TRANSLATOR_KEY`. Instead of the translator key you can also submit the project manager key in the HTTP header `DQF_PMANAGER_KEY` for authorization.
 
 Upon successful creation of the task (HTTP status code 200), the HTTP response header will contain a `task_id` you need to retain.
 
@@ -67,7 +67,9 @@ Adding translation segments can be done with an `HTTP POST` to the API end point
 ```
 http://dqf.taus.net/api/v1/productivityProject/<project id>/task/<task id>/segment?source_segment=The+car+key+is+black.&target_segment=Der+Schl%FCssel+ist+schwarz.&new_target_segment=Der+Autoscchl%FCssel+ist+schwarz.&time=12000&cattool=13&tm_match=0&mtengine=5&mt_engine_version=""
 ```
-creates a post-edited segment in DQF. The source of the segment was "The car key is black." and the machine translation from Bing Translator was "The key is black.". The segment was post-edited using MemoQ to "Der Autoschlüssel ist schwarz." within 12 seconds. Note that the segment text needs to be URL-escaped, in this case the German umlaut ü, otherwise there will be misencoded characters in the database.
+creates a post-edited segment in DQF. The request needs to be authorized by supplying the `project_key` in the HTTP header variable `DQF_PROJECT_KEY` and the translator key in the HTTP header variable `DQF_TRANSLATOR_KEY`.
+
+The source of the segment was "The car key is black." and the machine translation from Bing Translator was "The key is black.". The segment was post-edited using MemoQ to "Der Autoschlüssel ist schwarz." within 12 seconds. Note that the segment text needs to be URL-escaped, in this case the German umlaut ü, otherwise there will be misencoded characters in the database.
 
 ## Viewing reports
 In the DQF web interface the status of the project has now changed to "Active" in the project overview and you can start viewing reports on the project, for example our post-editing rate for this project is 1500 words/hour.
