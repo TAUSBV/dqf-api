@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased 1.0](https://github.com/TAUSBV/dqf-api/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22DQF+API+v1.0%22)
+## [1.0](https://github.com/TAUSBV/dqf-api/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22DQF+API+v1.0%22)
 ### Added
 - Method for Project Managers to find the tasks of a Project. Get the task IDs of a project by specifying the project id. Issue [#31](https://github.com/TAUSBV/dqf-api/issues/31)
 ```
@@ -11,6 +11,10 @@ GET /api/v1/productivityProject/{project_id}/task/
 - Method to update the translator of a task. Issue [#19](https://github.com/TAUSBV/dqf-api/issues/19)
 ```
 PUT /api/v1/productivityProject/{project_id}/task/{task_id}/translator
+```
+- Method for Project managers to retrieve own information. Issue [#59](https://github.com/TAUSBV/dqf-api/issues/59)
+```
+GET /api/v1/projectmanager/
 ```
 - Method for translators to retrieve own information. Issue [#40](https://github.com/TAUSBV/dqf-api/issues/40)
 ```

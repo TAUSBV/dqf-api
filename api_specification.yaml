@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   description: |
     This is the TAUS DQF API server.
-  version: "0.9"
+  version: "1.0"
   title: TAUS DQF
   termsOfService: https://www.taus.net/taus-terms-of-use
   contact:
@@ -21,10 +21,15 @@ paths:
     post:
       tags:
         - project
-      summary: Create a new project
+      summary: Add a new project to dqf
       description: Initialize a new project that is sent to the DQF tools. Project attributes include name of project, quality level, process or mode of translation, source language, content type and industry. To add target languages and assign translators to a project use the POST(/productivityProject/{projectid}/task) method.
       operationId: addProject
       parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The user API key
+          required: true
+          type: string
         - name: name
           in: query
           description: Project name in the DQF tools
@@ -73,11 +78,21 @@ paths:
       tags:
         - project
       summary: Find project by ID
-      description: Read a project by specifying its id.
+      description: Project Managers and Translators can read a project by specifying its id. Either the DQF_PMANAGER_KEY or the DQF_TRANSLATOR_KEY need to be passed with the request, not both!!!
       operationId: findProjectById
       produces:
         - application/json
       parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The PM API key. Only if a PM needs to access the project information
+          required: true
+          type: string
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The Translator API key. Only if the Translator is part of the project.
+          required: true
+          type: string
         - in: path
           name: projectid
           description: ID of project that needs to be fetched
@@ -87,6 +102,38 @@ paths:
       responses:
         "200":
           description: Successful operation. Returns the productivity project.
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
+      security:
+        - DQF_PMANAGER_KEY: []
+        - DQF_TRANSLATOR_KEY: []
+  /productivityProject/{projectid}/task/:
+    get:
+      tags:
+        - project
+        - task
+      summary: Find the tasks of a Project
+      description: Get the task IDs of a project by specifying the project id.
+      operationId: findProjectTasks
+      produces:
+        - application/json
+      parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The PM API key.
+          required: true
+          type: string
+        - in: path
+          name: projectid
+          description: ID of project that needs to be fetched
+          required: true
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successful operation. Returns a list of the tasks of the project.
         "401":
           description: Unauthorized
         "403":
@@ -104,6 +151,19 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The Project Manager API key. Only if the Project Manager creates the task.
+          required: true
+          type: string
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The Translator API key. Only if the Translator creates the task.
+          type: string
+        - name: DQF_PROJECT_KEY
+          in: header
+          description: The project API key.
+          type: string
         - in: path
           name: projectid
           description: ID of project that a new task has to be added.
@@ -120,9 +180,15 @@ paths:
           description: The name of the file that needs to be translated into the target language.
           required: true
           type: string
+        - in: query
+          name: translatorid
+          description: Only if the Project Manager creates the task. Project Managers can assign tasks directly to translators by specifying the translator ID. Use the GET(/api/v1/translator) method to find the translator ID.
+          required: false
+          type: integer
+          format: int64          
       responses:
         "200":
-          description: Successful operation. The task id will be included in the response Headers.
+          description: Successful operation. Returns a taskid for each translator that has been assigned with a target language in the project.
         "400":
           description: Wrong parameters
         "401":
@@ -132,6 +198,7 @@ paths:
         "405":
           description: Method Not Allowed or missing parameters        
       security:
+        - DQF_PMANAGER_KEY: []
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}:
@@ -139,11 +206,26 @@ paths:
       tags:
         - task
       summary: Find task by ID
-      description: Find the translator and the language pair of each task.
+      description: Read a task by specifying its id. Either the DQF_PMANAGER_KEY or the DQF_TRANSLATOR_KEY need to be passed with the request, not both!!!
       operationId: findTaskById
       produces:
         - application/json
       parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The PM API key. Only if a PM needs to access the project information
+          required: true
+          type: string
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The Translator API key. Only if the Translator is part of the project.
+          required: true
+          type: string
+        - name: DQF_PROJECT_KEY
+          in: header
+          description: The project API key.
+          required: true
+          type: string
         - name: projectid
           in: path
           description: The project id in the DQF tools
@@ -154,7 +236,8 @@ paths:
           name: taskid
           description: The task id belonging to a project in the DQF tools 
           required: true
-          type: string
+          type: integer
+          format: int64
       responses:
         "200":
           description: Successful operation. Returns the language pair and the translator for each task.
@@ -165,7 +248,61 @@ paths:
         "405":
           description: Method Not Allowed or missing parameters
       security:
+        - DQF_PMANAGER_KEY: []
         - DQF_TRANSLATOR_KEY: []
+        - DQF_PROJECT_KEY: []
+  /productivityProject/{project_id}/task/{task_id}/translator:
+    put:
+      tags:
+        - project
+        - task
+        - translator
+      summary: Update the translator of a task.
+      description: Update the translator of a task by specifying the task id.
+      operationId: updateTaskTranslatorById
+      produces:
+        - application/json
+      parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The Project Manager API key. Only if the Project Manager creates the task.
+          required: true
+          type: string
+        - name: DQF_PROJECT_KEY
+          in: header
+          description: The project API key.
+          type: string
+        - in: path
+          name: project_id
+          description: ID of the project that the task belongs.
+          required: true
+          type: integer
+          format: int64
+        - in: path
+          name: task_id
+          description: ID of the task that needs to be updated.
+          required: true
+          type: integer
+          format: int64          
+        - in: query
+          name: translatorid
+          description: Project Managers can update task translators directly by specifying the translator ID. Use the GET(/api/v1/translator) method to find the translator ID.
+          required: true
+          type: integer
+          format: int64          
+      responses:
+        "200":
+          description: Successful operation.
+        "400":
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
+        "405":
+          description: Method Not Allowed or missing parameters        
+      security:
+        - DQF_PMANAGER_KEY: []
         - DQF_PROJECT_KEY: []
   /productivityProject/{projectid}/task/{taskid}/segment:
     post:
@@ -178,6 +315,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The translator API key.
+          required: true
+          type: string
+        - name: DQF_PROJECT_KEY
+          in: header
+          description: The project API key.
+          required: true
+          type: string
         - name: projectid
           in: path
           description: The project id in the DQF tools
@@ -257,6 +404,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The translator API key.
+          required: true
+          type: string
+        - name: DQF_PROJECT_KEY
+          in: header
+          description: The project API key.
+          required: true
+          type: string
         - name: projectid
           in: path
           description: The project id in the DQF tools.
@@ -273,27 +430,44 @@ paths:
           description: The id of segment that needs to be updated.
           required: true
           type: string          
+        - name: source_segment
+          in: query
+          description: The source segment
+          required: false
+          type: string
+        - name: target_segment
+          in: query
+          description: The MT output or TM match or empty segment.
+          required: false
+          type: string
         - name: new_target_segment
           in: query
           description: The new output of the translator.
-          required: true
+          required: false
           type: string
         - name: time
           in: query
-          description: The new translation time in milliseconds.
-          required: false
+          description: The translation time in milliseconds.
+          required: true
           type: number
           format: float
+        - name: tm_match
+          in: query
+          description: The TM match (percentage).
+          required: false
+          type: integer
+          minimum: 0
+          maximum: 100
         - name: mtengine
           in: query
-          description: The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.
+          description: The id of the new MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.
           required: true
           type: integer
         - name: mt_engine_version
           in: query
-          description: The version of the MT engine.
+          description: The version of the updated MT engine.
           required: false
-          type: string          
+          type: string
       responses:
         "200":
           description: Successful operation.
@@ -308,6 +482,34 @@ paths:
       security:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
+  /projectmanager/:
+    get:
+      tags:
+        - projectmanager
+      summary: Project managers - Retrieve own information
+      description: The Project managers will be able to retrieve the id,name and email of their own.
+      operationId: getProjectManagerInfo
+      produces:
+        - application/json
+      parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The Project manager API key.
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Successful operation. Returns the Project manager information.
+        "400":
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
+        "405":
+          description: Method Not Allowed or missing parameters        
+      security:
+        - DQF_PMANAGER_KEY: [] 
   /translator:
     post:
       tags:
@@ -343,11 +545,34 @@ paths:
     get:
       tags:
         - translator
-      summary: Get translators
-      description: A project manager can find the traslators assigned to his projects.
-      operationId: getProjectTranslators
+      summary: Project Managers - Retrieve translator information
+      description: The project manager will be able to retrieve the id,name and email of a translator.
+      operationId: getPMTranslators
       produces:
         - application/json
+      parameters:
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The translator API key.
+          required: true
+          type: string
+        - in: query
+          name: translatorid
+          description: The id of the translator
+          required: false
+          type: integer
+          format: int64
+        - in: query
+          name: name
+          description: The name of the translator
+          required: false
+          type: string 
+        - in: query
+          name: email
+          description: The email of the translator
+          required: false
+          type: string
+          format: email
       responses:
         "200":
           description: Successful operation
@@ -359,6 +584,118 @@ paths:
           description: Access is not permitted
         "405":
           description: Method Not Allowed or missing parameters
+      security:
+        - DQF_PMANAGER_KEY: []
+  /translator/:
+    get:
+      tags:
+        - translator
+      summary: Translators - Retrieve own information
+      description: The translators will be able to retrieve the id,name and email of their own.
+      operationId: getTranslatorInfo
+      produces:
+        - application/json
+      parameters:
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The Translator API key.
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Successful operation. Returns the translator information.
+        "400":
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
+        "405":
+          description: Method Not Allowed or missing parameters        
+      security:
+        - DQF_TRANSLATOR_KEY: []
+  /translator/{translator_id}:
+    put:
+      tags:
+        - translator
+      summary: Translators - Update own information
+      description: The translators will be able to update their own name and email.
+      operationId: updateTranslatorInfo
+      produces:
+        - application/json
+      parameters:
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The Translator API key.
+          required: true
+          type: string
+        - name: translator_id
+          in: path
+          description: The translator id in the DQF tools.
+          required: true
+          type: string
+        - in: query
+          name: name
+          description: The new name of the translator
+          required: false
+          type: string 
+        - in: query
+          name: email
+          description: The new email of the translator
+          required: false
+          type: string
+          format: email
+      responses:
+        "200":
+          description: Successful operation. Returns the updated translator information.
+        "400":
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
+        "405":
+          description: Method Not Allowed or missing parameters        
+      security:
+        - DQF_TRANSLATOR_KEY: []
+  /translator/{project_id}/:
+    get:
+      tags:
+        - project
+        - translator
+      summary: Find the translators of a project
+      description: The project manager will be able to get all the translator names and email that worked on a project.
+      operationId: getPMProjectTranslators
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: project_id
+          description: ID of project that needs to be fetched
+          required: true
+          type: integer
+          format: int64        
+        - name: DQF_PMANAGER_KEY
+          in: header
+          description: The PM API key.
+          required: true
+          type: string
+        - name: DQF_PROJECT_KEY
+          in: header
+          description: The project API key.
+          required: true
+          type: string          
+      responses:
+        "200":
+          description: Successful operation.
+        "400":
+          description: Wrong parameters
+        "401":
+          description: Unauthorized
+        "403":
+          description: Access is not permitted
+        "405":
+          description: Method Not Allowed or missing parameters        
       security:
         - DQF_PMANAGER_KEY: []
         - DQF_PROJECT_KEY: []
