@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   description: |
     This is the TAUS DQF API server.
-  version: "1.0"
+  version: "1.1"
   title: TAUS DQF
   termsOfService: https://www.taus.net/taus-terms-of-use
   contact:
@@ -756,7 +756,7 @@ paths:
         - application/json
       responses:
         "200":
-          description: Successful operation - Returns the IDs and the names of the processes.
+          description: Successful operation - Returns the IDs, the names and the availability of the processes(api_supported) through the API.
         "400":
           description: Bad request
   /contenttype/:
@@ -787,6 +787,21 @@ paths:
       responses:
         "200":
           description: Successful operation - Returns the IDs and the names of the industries.
+        "400":
+          description: Bad request
+  /languages/:
+    get:
+      tags:
+        - attributes
+        - languages
+      summary: Get a language list for the project set up.
+      description: Get a list of the supported languages currently available in the DQF database.
+      operationId: getLanguages
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Successful operation - Returns a list of DQF language identifiers (ISO 639 2-letter-language identifier"-"ISO 3166 two-letter country identifier).
         "400":
           description: Bad request
 securityDefinitions:

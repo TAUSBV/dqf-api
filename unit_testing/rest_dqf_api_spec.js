@@ -350,6 +350,9 @@ frisby.create('Get CAT Tools list')
 		archive: 0,
 		id: 31,
 		name: 'XTRF',
+		archive: 0,
+		id: 32,
+		name: 'Lingotek',
 		archive: 0
     })
 .toss()
@@ -614,14 +617,19 @@ frisby.create('Get process list')
     .expectJSON('?',{
 		id: 5,
 		name: 'Human',
+		api_supported: 1,
 		id: 2,
 		name: 'MT+PE',
+		api_supported: 1,
 		id: 1,
 		name: 'MT+PE+Human',
+		api_supported: 0,
 		id: 3,
 		name: 'MT+PE+TM+Human',
+		api_supported: 1,
 		id: 4,
-		name: 'TM+Human'
+		name: 'TM+Human',
+		api_supported: 1
     })
 .toss()
 
@@ -638,4 +646,93 @@ frisby.create('Get Quality level list')
 		id: 2,
 		name: 'Similar or equal to human translation'
    })
+.toss()
+
+
+//Operations about languages
+//Test the GET Languages endpoint		
+frisby.create('Get Language list')
+  .get(url +'api/v1/languages/')
+    .expectStatus(200)
+    .expectHeader('Content-Type', 'application/json')
+    .expectJSON([
+		"af-ZA",
+		"ar-EG",
+		"ar-SA",
+		"ar-AE",
+		"ar-AR",
+		"eu-ES",
+		"be-BY",
+		"bg-BG",
+		"zh-HK",
+		"zh-CN",
+		"zh-TW",
+		"hr-HR",
+		"cs-CZ",
+		"da-DK",
+		"nl-BE",
+		"nl-NL",
+		"en-AU",
+		"en-CA",
+		"en-ZA",
+		"en-GB",
+		"en-US",
+		"et-EE",
+		"fa-IR",
+		"fi-FI",
+		"fr-BE",
+		"fr-CA",
+		"fr-FR",
+		"el-GR",
+		"ht-HT",
+		"hu-HU",
+		"is-IS",
+		"id-ID",
+		"ja-JP",
+		"ko-KR",
+		"lv-LV",
+		"lt-LT",
+		"mk-MK",
+		"ms-MY",
+		"mt-MT",
+		"nb-NO",
+		"nn-NO",
+		"pl-PL",
+		"pt-BR",
+		"pt-PT",
+		"ro-RO",
+		"ru-RU",
+		"sk-SK",
+		"sl-SI",
+		"es-EM",
+		"es-XL",
+		"es-MX",
+		"es-ES",
+		"sv-SE",
+		"th-TH",
+		"tr-TR",
+		"uk-UA",
+		"vi-VN",
+		"cy-GB",
+		"sq-AL",
+		"sm-SM",
+		"hy-AM",
+		"az-AZ",
+		"ka-GE",
+		"ce-CE",
+		"to-TO",
+		"fj-FJ",
+		"ty-TY",
+		"sw-SW",
+		"mg-MG",
+		"hi-IN",
+		"cb-CB",
+		"it-IT",
+		"de-DE",
+		"he-IL",
+		"ca-ES",
+		"gl-ES",
+		"es-US",
+		"mn-MN"
+   ])
 .toss()

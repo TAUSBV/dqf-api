@@ -2,6 +2,27 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1](https://github.com/TAUSBV/dqf-api/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22DQF+API+v1.1%22)
+### Added
+- Method to return a list of DQF supported language identifiers (ISO 639 2-letter-language identifier'-'ISO 3166 two-letter country identifier). Issue [#64](https://github.com/TAUSBV/dqf-api/issues/64)
+```
+GET /api/v1/languages/
+```
+- "Lingotek" was added to the list of CAT tools. Issue [#81](https://github.com/TAUSBV/dqf-api/issues/81)
+
+### Changed
+- Method to return the supported productivity processes. The api_supported field has been added. Issue [#75](https://github.com/TAUSBV/dqf-api/issues/75)
+```
+GET /api/v1/process/
+```
+
+### Fixed
+- Method to add Projects and tasks. Now the source and target languages will first be validated against the DQF supported language list.
+Issue [#78](https://github.com/TAUSBV/dqf-api/issues/78)
+- Creating a new task for project won't reset the status of project from "Active" to "Initializing"
+Issue [#21](https://github.com/TAUSBV/dqf-api/issues/21)
+
+
 ## [1.0](https://github.com/TAUSBV/dqf-api/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22DQF+API+v1.0%22)
 ### Added
 - Method for Project Managers to find the tasks of a Project. Get the task IDs of a project by specifying the project id. Issue [#31](https://github.com/TAUSBV/dqf-api/issues/31)
@@ -58,6 +79,7 @@ Issue [#33](https://github.com/TAUSBV/dqf-api/issues/33)
 - Server error when clicking on link of project without tasks.
 Issue [#43](https://github.com/TAUSBV/dqf-api/issues/43)
 
+
 ## [0.9] - 2015-06-01
 ### Added
 - Method to add a new project to DQF
@@ -100,7 +122,7 @@ GET /api/v1/cattools/
 ```
 GET /api/v1/mtengines/
 ```
-- Method to return the Productivity Quality Levels
+- Method to return the productivity processes
 ```
 GET /api/v1/process/
 ```
