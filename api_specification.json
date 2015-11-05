@@ -503,21 +503,21 @@
                         "name": "source_segment",
                         "in": "query",
                         "description": "The source segment",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "target_segment",
                         "in": "query",
                         "description": "The MT output or TM match or empty segment.",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "new_target_segment",
                         "in": "query",
                         "description": "The output of the translator.",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
