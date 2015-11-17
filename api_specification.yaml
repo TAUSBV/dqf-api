@@ -355,8 +355,8 @@ paths:
           in: query
           description: The translation time in milliseconds.
           required: false
-          type: number
-          format: float
+          type: integer
+          format: int64
         - name: tm_match
           in: query
           description: The TM match (percentage).
@@ -449,8 +449,8 @@ paths:
           in: query
           description: The translation time in milliseconds.
           required: true
-          type: number
-          format: float
+          type: integer
+          format: int64
         - name: tm_match
           in: query
           description: The TM match (percentage).
@@ -558,8 +558,8 @@ paths:
           in: query
           description: The review time in milliseconds.
           required: false
-          type: number
-          format: float
+          type: integer
+          format: int64
         - name: characterPosStart
           in: query
           description: Character position where the error substring starts.
@@ -581,8 +581,8 @@ paths:
           in: query
           description: The edit time in milliseconds.
           required: false
-          type: number
-          format: float          
+          type: integer
+          format: int64          
       responses:
         '200':
           description: Successful operation. The review id will be included in the response Headers.
