@@ -489,7 +489,7 @@ paths:
         - segment
         - errorreview
       summary: Add error review for a segment
-      description: 'A complete translated target segment can be submitted together with the source and the temporary translated segment for a particular task of a project. The translation time, the TM fuzzy match, and the technologies used can be submitted as well.'
+      description: 'Used to add error review for existing segment. Can be used to submit error description and/or proofread corrected target text.'
       operationId: addErrorReview
       produces:
         - application/json
@@ -519,6 +519,118 @@ paths:
         - in: path
           name: segmentid
           description: The id of the segment that the error review needs to be added to.
+          required: true
+          type: integer
+          format: int64
+        - name: errorLevel1Id
+          in: query
+          description: Id of the top level error type.
+          required: false
+          type: integer
+          format: int64
+        - name: errorLevel2Id
+          in: query
+          description: Id of the second level error type.
+          required: false
+          type: integer
+          format: int64
+        - name: severity
+          in: query
+          description: The severity of the error.
+          required: false
+          type: string
+          enum: 
+          - critical
+          - major
+          - minor
+          - neutral
+        - name: kudos
+          in: query
+          description: Indicates whether reviewed segment earned kudos.
+          type: boolean
+          default: false
+        - name: comment
+          in: query
+          description: Written comment on the reviewed error.
+          required: false
+          type: string 
+        - name: time
+          in: query
+          description: The review time in milliseconds.
+          required: false
+          type: integer
+          format: int64
+        - name: characterPosStart
+          in: query
+          description: Character position where the error substring starts.
+          required: false
+          type: integer
+          format: int64
+        - name: characterPosEnd
+          in: query
+          description: Character position where the error substring ends.
+          required: false
+          type: integer
+          format: int64
+        - name: editedText
+          in: query
+          description: Segment target text edited during error review.
+          required: false
+          type: string 
+      responses:
+        '200':
+          description: Successful operation. The review id will be included in the response Headers.
+        '400':
+          description: Wrong parameters
+        '401':
+          description: Unauthorized
+        '403':
+          description: Access is not permitted
+        '405':
+          description: Method Not Allowed or missing parameters
+  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review/{reviewid}':
+    put:
+      tags:
+        - task
+        - segment
+        - errorreview
+      summary: Update error review for a segment
+      description: 'Used to update error review for existing segment. Can be used to submit error description and/or proofread corrected target text.'
+      operationId: updateErrorReview
+      produces:
+        - application/json
+      parameters:
+        - name: DQF_TRANSLATOR_KEY
+          in: header
+          description: The translator API key.
+          required: true
+          type: string
+        - name: DQF_PROJECT_KEY
+          in: header
+          description: The project API key.
+          required: true
+          type: string
+        - name: projectid
+          in: path
+          description: The project id in DQF tools.
+          required: true
+          type: integer
+          format: int64
+        - in: path
+          name: taskid
+          description: The id of the task of the reviewed segment.
+          required: true
+          type: integer
+          format: int64
+        - in: path
+          name: segmentid
+          description: The id of the segment that the error review needs to be added to.
+          required: true
+          type: integer
+          format: int64
+        - name: reviewid
+          in: path
+          description: The id of the error review that needs to be updated.
           required: true
           type: integer
           format: int64
