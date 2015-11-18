@@ -554,7 +554,7 @@ paths:
           description: Written comment on the reviewed error.
           required: false
           type: string 
-        - name: reviewTime
+        - name: time
           in: query
           description: The review time in milliseconds.
           required: false
@@ -577,12 +577,6 @@ paths:
           description: Segment target text edited during error review.
           required: false
           type: string 
-        - name: editTime
-          in: query
-          description: The edit time in milliseconds.
-          required: false
-          type: integer
-          format: int64          
       responses:
         '200':
           description: Successful operation. The review id will be included in the response Headers.
