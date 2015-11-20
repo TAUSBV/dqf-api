@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     This is the TAUS DQF API server.
-  version: '1.1'
+  version: '1.2'
   title: TAUS DQF
   termsOfService: 'https://www.taus.net/taus-terms-of-use'
   contact:
@@ -379,6 +379,22 @@ paths:
           description: The version of the MT engine.
           required: false
           type: string
+        - name: segment_origin
+          in: query
+          description: The origin of the segment.
+          required: false
+          type: string
+          enum: 
+          - mt
+          - tm
+          - termbase
+          - other
+          - none
+        - name: segment_origin_detail
+          in: query
+          description: A string describing details of the segment origin, for example a translation memory name.
+          required: false
+          type: string
       responses:
         '200':
           description: Successful operation. The segment id will be included in the response Headers.
@@ -466,6 +482,22 @@ paths:
         - name: mt_engine_version
           in: query
           description: The version of the updated MT engine.
+          required: false
+          type: string
+        - name: segment_origin
+          in: query
+          description: The origin of the segment.
+          required: false
+          type: string
+          enum: 
+          - mt
+          - tm
+          - termbase
+          - other
+          - none
+        - name: segment_origin_detail
+          in: query
+          description: A string describing details of the segment origin, for example a translation memory name.
           required: false
           type: string
       responses:
