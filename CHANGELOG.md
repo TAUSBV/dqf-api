@@ -2,6 +2,25 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2](https://github.com/TAUSBV/dqf-api/milestones/DQF%20API%20v2)
+### Added
+- Method to add error review for existing segment. Can be used to submit error description and/or proofread corrected target text.
+```
+POST /api/v1/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review
+```
+- Method to update error review for existing segment. Can be used to submit error description and/or proofread corrected target text.
+```
+PUT /api/v1/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review/{reviewid}
+```
+- Method to get a list of top level errors in error hierarchy currently available in the DQF database.
+```
+GET /api/v1/errorLevel1/
+```
+- Method to Get a list of second level errors in error hierarchy currently available in the DQF database for a certain top level error.
+```
+GET /api/v1/errorLevel1/{errorLevel1}/errorLevel2/
+```
+
 ## [1.1](https://github.com/TAUSBV/dqf-api/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22DQF+API+v1.1%22)
 ### Added
 - Method to return a list of DQF supported language identifiers (ISO 639 2-letter-language identifier'-'ISO 3166 two-letter country identifier). Issue [#64](https://github.com/TAUSBV/dqf-api/issues/64)

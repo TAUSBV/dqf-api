@@ -1547,7 +1547,7 @@
                     "errorreview"
                 ],
                 "summary": "Get list of top level errors in error hierarchy",
-                "description": "Get a list of list of top level errors in error hierarchy currently available in the DQF database.",
+                "description": "Get a list of top level errors in error hierarchy currently available in the DQF database.",
                 "operationId": "getErrorLevel1",
                 "produces": [
                     "application/json"
@@ -1569,7 +1569,7 @@
                     "errorreview"
                 ],
                 "summary": "Get list of second level errors in error hierarchy",
-                "description": "Get a list of list of second level errors in error hierarchy currently available in the DQF database for a certain top level error.",
+                "description": "Get a list of second level errors in error hierarchy currently available in the DQF database for a certain top level error.",
                 "operationId": "getErrorLevel2",
                 "produces": [
                     "application/json"
