@@ -20,6 +20,11 @@ GET /api/v1/errorLevel1/
 ```
 GET /api/v1/errorLevel1/{errorLevel1}/errorLevel2/
 ```
+- "Unbabel" was added to the list of CAT tools. Issue [#93](https://github.com/TAUSBV/dqf-api/issues/93)
+
+### Changed
+- Segment origin was added on the segment level of the API . Issue [TAUS-DQF-30](https://github.com/TAUSBV/taus-dqf/issues/30)
+
 
 ## [1.1](https://github.com/TAUSBV/dqf-api/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22DQF+API+v1.1%22)
 ### Added
