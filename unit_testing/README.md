@@ -14,4 +14,7 @@ More information on how to install and run frisby tests can be found [here](http
   * `var project_manager_key = '';`
   * `var translator_key = '';`
 
+* Install jasmine-node
+  * npm install -g jasmine-node
+  
 * Run the frisby tests from CLI with `jasmine-node rest_dqf_api_spec.js` or `jasmine-node rest_dqf_api_spec.js --junitreport` to generate test run reports in JUnit XML format.
