@@ -446,16 +446,6 @@ paths:
           description: The id of segment for which a new version should be added.
           required: true
           type: string
-        - name: source_segment
-          in: query
-          description: The source segment
-          required: false
-          type: string
-        - name: target_segment
-          in: query
-          description: The MT output or TM match or empty segment.
-          required: false
-          type: string
         - name: new_target_segment
           in: query
           description: The new output of the translator.
@@ -467,39 +457,6 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: tm_match
-          in: query
-          description: The TM match (percentage).
-          required: false
-          type: integer
-          minimum: 0
-          maximum: 100
-        - name: mtengine
-          in: query
-          description: The id of the new MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.
-          required: true
-          type: integer
-        - name: mt_engine_version
-          in: query
-          description: The version of the MT engine.
-          required: false
-          type: string
-        - name: segment_origin
-          in: query
-          description: The origin of the segment.
-          required: false
-          type: string
-          enum: 
-          - mt
-          - tm
-          - termbase
-          - other
-          - none
-        - name: segment_origin_detail
-          in: query
-          description: A string describing details of the segment origin, for example a translation memory name.
-          required: false
-          type: string
       responses:
         '200':
           description: Successful operation.
