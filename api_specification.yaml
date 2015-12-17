@@ -410,13 +410,13 @@ paths:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
   '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}':
-    put:
+    post:
       tags:
         - task
         - segment
-      summary: Update a segment of a task
-      description: An already submitted translated segment can be updated. The time with be added to the segment already submitted.
-      operationId: updateSegment
+      summary: Add a new version of a segment of a task
+      description: An already submitted translated segment cannot be updated. New segment versions can be added with this end point.
+      operationId: addSegmentVersion
       produces:
         - application/json
       parameters:
@@ -443,7 +443,7 @@ paths:
           type: string
         - in: path
           name: segmentid
-          description: The id of segment that needs to be updated.
+          description: The id of segment for which a new version should be added.
           required: true
           type: string
         - name: source_segment
@@ -481,7 +481,7 @@ paths:
           type: integer
         - name: mt_engine_version
           in: query
-          description: The version of the updated MT engine.
+          description: The version of the MT engine.
           required: false
           type: string
         - name: segment_origin
@@ -514,7 +514,7 @@ paths:
       security:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
-  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review':
+  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/{versionid}/review':
     post:
       tags:
         - task
@@ -551,6 +551,12 @@ paths:
         - in: path
           name: segmentid
           description: The id of the segment that the error review needs to be added to.
+          required: true
+          type: integer
+          format: int64
+        - in: path
+          name: versionid
+          description: The version id of the segment that the error review needs to be added to.
           required: true
           type: integer
           format: int64
@@ -620,7 +626,7 @@ paths:
           description: Access is not permitted
         '405':
           description: Method Not Allowed or missing parameters
-  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review/{reviewid}':
+  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/{versionid}/review/{reviewid}':
     put:
       tags:
         - task
@@ -656,7 +662,13 @@ paths:
           format: int64
         - in: path
           name: segmentid
-          description: The id of the segment that the error review needs to be added to.
+          description: The id of the segment that the error review needs to be updated.
+          required: true
+          type: integer
+          format: int64
+        - in: path
+          name: versionid
+          description: The version id of the segment that the error review needs to be updated.
           required: true
           type: integer
           format: int64
