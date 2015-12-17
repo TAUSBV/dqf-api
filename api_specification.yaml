@@ -610,11 +610,6 @@ paths:
           required: false
           type: integer
           format: int64
-        - name: editedText
-          in: query
-          description: Segment target text edited during error review.
-          required: false
-          type: string 
       responses:
         '200':
           description: Successful operation. The review id will be included in the response Headers.
@@ -728,11 +723,6 @@ paths:
           required: false
           type: integer
           format: int64
-        - name: editedText
-          in: query
-          description: Segment target text edited during error review.
-          required: false
-          type: string 
       responses:
         '200':
           description: Successful operation. The review id will be included in the response Headers.
