@@ -517,15 +517,9 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: errorLevel1Id
+        - name: errorLevelId
           in: query
-          description: Id of the top level error type.
-          required: false
-          type: integer
-          format: int64
-        - name: errorLevel2Id
-          in: query
-          description: Id of the second level error type.
+          description: Id of the error type.
           required: false
           type: integer
           format: int64
@@ -630,15 +624,9 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: errorLevel1Id
+        - name: errorLevelId
           in: query
-          description: Id of the top level error type.
-          required: false
-          type: integer
-          format: int64
-        - name: errorLevel2Id
-          in: query
-          description: Id of the second level error type.
+          description: Id of the error type.
           required: false
           type: integer
           format: int64
@@ -1013,41 +1001,19 @@ paths:
           description: 'Successful operation - Returns a list of DQF language identifiers (ISO 639 2-letter-language identifier"-"ISO 3166 two-letter country identifier).'
         '400':
           description: Bad request
-  /errorLevel1/:
+  /errorLevels/:
     get:
       tags:
         - attributes
         - errorreview
-      summary: Get list of top level errors in error hierarchy
-      description: Get a list of top level errors in error hierarchy currently available in the DQF database.
-      operationId: getErrorLevel1
+      summary: Get a list of all error categories.
+      description: Get a list of list of top level and their sub-level errors in error hierarchy currently available in the DQF database.
+      operationId: getErrorLevels
       produces:
         - application/json
       responses:
         '200':
           description: Successful operation - Returns the IDs and the descriptions of the top level errors.
-        '400':
-          description: Bad request
-  /errorLevel1/{errorLevel1}/errorLevel2/:
-    get:
-      tags:
-        - attributes
-        - errorreview
-      summary: Get list of second level errors in error hierarchy
-      description: Get a list of second level errors in error hierarchy currently available in the DQF database for a certain top level error.
-      operationId: getErrorLevel2
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: errorLevel1
-          description: ID of top error level for which second level entries need to be fetched.
-          required: true
-          type: integer
-          format: int64
-      responses:
-        '200':
-          description: Successful operation - Returns the IDs and the descriptions of the second level errors.
         '400':
           description: Bad request
 securityDefinitions:

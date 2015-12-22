@@ -608,14 +608,14 @@
             }
         },
         "/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}": {
-            "put": {
+            "post": {
                 "tags": [
                     "task",
                     "segment"
                 ],
-                "summary": "Update a segment of a task",
-                "description": "An already submitted translated segment can be updated. The time with be added to the segment already submitted.",
-                "operationId": "updateSegment",
+                "summary": "Add a new version of a segment of a task",
+                "description": "An already submitted translated segment cannot be updated. New segment versions can be added with this end point.",
+                "operationId": "addSegmentVersion",
                 "produces": [
                     "application/json"
                 ],
@@ -652,22 +652,8 @@
                     {
                         "in": "path",
                         "name": "segmentid",
-                        "description": "The id of segment that needs to be updated.",
+                        "description": "The id of segment for which a new version should be added.",
                         "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "source_segment",
-                        "in": "query",
-                        "description": "The source segment",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "target_segment",
-                        "in": "query",
-                        "description": "The MT output or TM match or empty segment.",
-                        "required": false,
                         "type": "string"
                     },
                     {
@@ -684,50 +670,6 @@
                         "required": true,
                         "type": "integer",
                         "format": "int64"
-                    },
-                    {
-                        "name": "tm_match",
-                        "in": "query",
-                        "description": "The TM match (percentage).",
-                        "required": false,
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 100
-                    },
-                    {
-                        "name": "mtengine",
-                        "in": "query",
-                        "description": "The id of the new MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "mt_engine_version",
-                        "in": "query",
-                        "description": "The version of the updated MT engine.",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "segment_origin",
-                        "in": "query",
-                        "description": "The origin of the segment.",
-                        "required": false,
-                        "type": "string",
-                        "enum": [
-                            "mt",
-                            "tm",
-                            "termbase",
-                            "other",
-                            "none"
-                        ]
-                    },
-                    {
-                        "name": "segment_origin_detail",
-                        "in": "query",
-                        "description": "A string describing details of the segment origin, for example a translation memory name.",
-                        "required": false,
-                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -757,7 +699,7 @@
                 ]
             }
         },
-        "/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review": {
+        "/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/{versionid}/review": {
             "post": {
                 "tags": [
                     "task",
@@ -810,17 +752,17 @@
                         "format": "int64"
                     },
                     {
-                        "name": "errorLevel1Id",
-                        "in": "query",
-                        "description": "Id of the top level error type.",
-                        "required": false,
+                        "in": "path",
+                        "name": "versionid",
+                        "description": "The version id of the segment that the error review needs to be added to.",
+                        "required": true,
                         "type": "integer",
                         "format": "int64"
                     },
                     {
-                        "name": "errorLevel2Id",
+                        "name": "errorLevelId",
                         "in": "query",
-                        "description": "Id of the second level error type.",
+                        "description": "Id of the error type.",
                         "required": false,
                         "type": "integer",
                         "format": "int64"
@@ -875,13 +817,6 @@
                         "required": false,
                         "type": "integer",
                         "format": "int64"
-                    },
-                    {
-                        "name": "editedText",
-                        "in": "query",
-                        "description": "Segment target text edited during error review.",
-                        "required": false,
-                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -903,7 +838,7 @@
                 }
             }
         },
-        "/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review/{reviewid}": {
+        "/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/{versionid}/review/{reviewid}": {
             "put": {
                 "tags": [
                     "task",
@@ -950,7 +885,15 @@
                     {
                         "in": "path",
                         "name": "segmentid",
-                        "description": "The id of the segment that the error review needs to be added to.",
+                        "description": "The id of the segment that the error review needs to be updated.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "versionid",
+                        "description": "The version id of the segment that the error review needs to be updated.",
                         "required": true,
                         "type": "integer",
                         "format": "int64"
@@ -964,17 +907,9 @@
                         "format": "int64"
                     },
                     {
-                        "name": "errorLevel1Id",
+                        "name": "errorLevelId",
                         "in": "query",
-                        "description": "Id of the top level error type.",
-                        "required": false,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "name": "errorLevel2Id",
-                        "in": "query",
-                        "description": "Id of the second level error type.",
+                        "description": "Id of the error type.",
                         "required": false,
                         "type": "integer",
                         "format": "int64"
@@ -1029,13 +964,6 @@
                         "required": false,
                         "type": "integer",
                         "format": "int64"
-                    },
-                    {
-                        "name": "editedText",
-                        "in": "query",
-                        "description": "Segment target text edited during error review.",
-                        "required": false,
-                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -1540,53 +1468,21 @@
                 }
             }
         },
-        "/errorLevel1/": {
+        "/errorLevels/": {
             "get": {
                 "tags": [
                     "attributes",
                     "errorreview"
                 ],
-                "summary": "Get list of top level errors in error hierarchy",
-                "description": "Get a list of top level errors in error hierarchy currently available in the DQF database.",
-                "operationId": "getErrorLevel1",
+                "summary": "Get a list of all error categories.",
+                "description": "Get a list of list of top level and their sub-level errors in error hierarchy currently available in the DQF database.",
+                "operationId": "getErrorLevels",
                 "produces": [
                     "application/json"
                 ],
                 "responses": {
                     "200": {
                         "description": "Successful operation - Returns the IDs and the descriptions of the top level errors."
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    }
-                }
-            }
-        },
-        "/errorLevel1/{errorLevel1}/errorLevel2/": {
-            "get": {
-                "tags": [
-                    "attributes",
-                    "errorreview"
-                ],
-                "summary": "Get list of second level errors in error hierarchy",
-                "description": "Get a list of second level errors in error hierarchy currently available in the DQF database for a certain top level error.",
-                "operationId": "getErrorLevel2",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "errorLevel1",
-                        "description": "ID of top error level for which second level entries need to be fetched.",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation - Returns the IDs and the descriptions of the second level errors."
                     },
                     "400": {
                         "description": "Bad request"
