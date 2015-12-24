@@ -339,7 +339,7 @@ paths:
         - name: source_segment
           in: query
           description: The source segment
-          required: false
+          required: true
           type: string
         - name: target_segment
           in: query
