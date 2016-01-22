@@ -2,6 +2,31 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3] - 2015-12-24
+### Added
+- Method to get a list of list of top level and their sub-level errors in error hierarchy currently available in the DQF database.
+```
+GET /api/v1/errorLevels/
+```
+### Changed
+- Method to add error review for existing segment. Submit only one errorLevel ID instead of the errorLevel1Id and errorLevel2Id.
+```
+POST /api/v1/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review
+```
+- Method to update error review for existing segment. Submit only one errorLevel ID instead of the errorLevel1Id and errorLevel2Id.
+```
+PUT /api/v1/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review/{reviewid}
+```
+### Removed
+- Method to get a list of top level errors in error hierarchy currently available in the DQF database.
+```
+GET /api/v1/errorLevel1/
+```
+- Method to Get a list of second level errors in error hierarchy currently available in the DQF database for a certain top level error.
+```
+GET /api/v1/errorLevel1/{errorLevel1}/errorLevel2/
+```
+
 ## [1.2](https://github.com/TAUSBV/dqf-api/milestones/DQF%20API%20v2)
 ### Added
 - Method to add error review for existing segment. Can be used to submit error description and/or proofread corrected target text.
