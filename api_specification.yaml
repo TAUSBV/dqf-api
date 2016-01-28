@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     This is the TAUS DQF API server.
-  version: '1.2'
+  version: '1.3'
   title: TAUS DQF
   termsOfService: 'https://www.taus.net/taus-terms-of-use'
   contact:
@@ -410,13 +410,13 @@ paths:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
   '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}':
-    post:
+    put:
       tags:
         - task
         - segment
-      summary: Add a new version of a segment of a task
-      description: An already submitted translated segment cannot be updated. New segment versions can be added with this end point.
-      operationId: addSegmentVersion
+      summary: Update a segment of a task
+      description: An already submitted translated segment can be updated. The time with be added to the segment already submitted.
+      operationId: updateSegment
       produces:
         - application/json
       parameters:
@@ -443,8 +443,18 @@ paths:
           type: string
         - in: path
           name: segmentid
-          description: The id of segment for which a new version should be added.
+          description: The id of segment that needs to be updated.
           required: true
+          type: string
+        - name: source_segment
+          in: query
+          description: The source segment
+          required: false
+          type: string
+        - name: target_segment
+          in: query
+          description: The MT output or TM match or empty segment.
+          required: false
           type: string
         - name: new_target_segment
           in: query
@@ -457,6 +467,39 @@ paths:
           required: true
           type: integer
           format: int64
+        - name: tm_match
+          in: query
+          description: The TM match (percentage).
+          required: false
+          type: integer
+          minimum: 0
+          maximum: 100
+        - name: mtengine
+          in: query
+          description: The id of the new MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.
+          required: true
+          type: integer
+        - name: mt_engine_version
+          in: query
+          description: The version of the updated MT engine.
+          required: false
+          type: string
+        - name: segment_origin
+          in: query
+          description: The origin of the segment.
+          required: false
+          type: string
+          enum: 
+          - mt
+          - tm
+          - termbase
+          - other
+          - none
+        - name: segment_origin_detail
+          in: query
+          description: A string describing details of the segment origin, for example a translation memory name.
+          required: false
+          type: string
       responses:
         '200':
           description: Successful operation.
@@ -471,7 +514,7 @@ paths:
       security:
         - DQF_TRANSLATOR_KEY: []
         - DQF_PROJECT_KEY: []
-  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/{versionid}/review':
+  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review':
     post:
       tags:
         - task
@@ -508,12 +551,6 @@ paths:
         - in: path
           name: segmentid
           description: The id of the segment that the error review needs to be added to.
-          required: true
-          type: integer
-          format: int64
-        - in: path
-          name: versionid
-          description: The version id of the segment that the error review needs to be added to.
           required: true
           type: integer
           format: int64
@@ -561,6 +598,11 @@ paths:
           required: false
           type: integer
           format: int64
+        - name: editedText
+          in: query
+          description: Segment target text edited during error review.
+          required: false
+          type: string 
       responses:
         '200':
           description: Successful operation. The review id will be included in the response Headers.
@@ -572,7 +614,7 @@ paths:
           description: Access is not permitted
         '405':
           description: Method Not Allowed or missing parameters
-  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/{versionid}/review/{reviewid}':
+  '/productivityProject/{projectid}/task/{taskid}/segment/{segmentid}/review/{reviewid}':
     put:
       tags:
         - task
@@ -608,13 +650,7 @@ paths:
           format: int64
         - in: path
           name: segmentid
-          description: The id of the segment that the error review needs to be updated.
-          required: true
-          type: integer
-          format: int64
-        - in: path
-          name: versionid
-          description: The version id of the segment that the error review needs to be updated.
+          description: The id of the segment that the error review needs to be added to.
           required: true
           type: integer
           format: int64
@@ -668,6 +704,11 @@ paths:
           required: false
           type: integer
           format: int64
+        - name: editedText
+          in: query
+          description: Segment target text edited during error review.
+          required: false
+          type: string 
       responses:
         '200':
           description: Successful operation. The review id will be included in the response Headers.
@@ -1013,7 +1054,7 @@ paths:
         - application/json
       responses:
         '200':
-          description: Successful operation - Returns the IDs and the descriptions of the top level errors.
+          description: Successful operation - Returns the IDs and the descriptions of the top level and their sub-level errors.
         '400':
           description: Bad request
 securityDefinitions:
