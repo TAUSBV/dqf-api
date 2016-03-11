@@ -1,0 +1,1125 @@
+swagger: '2.0'
+info:
+  description: |
+    This is the TAUS DQF API server.
+  version: '2.0'
+  title: TAUS DQF API
+  termsOfService: 'https://www.taus.net/taus-terms-of-use'
+  contact:
+    name: dqf@taus.net
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: dqf-api.taus.net
+basePath: /v2
+schemes:
+  - https
+produces:
+  - application/json
+paths:
+  /project:
+    post:
+      tags:
+        - project
+      summary: Add a new project to dqf
+      description: 'Create projects in DQF'
+      operationId: addProject
+      consumes:
+        - application/x-www-form-urlencoded      
+      produces:
+        - application/json
+      parameters:
+        - name: parentid(project_key?)
+          in: header
+          description: 'The parent project id if there is any. If there is no parentid then a main project will be created. Providing a parentid will create jobs to the main project.'
+          required: false
+          type: string
+        - name: name
+          in: formData
+          description: 'The name of the project'
+          required: true
+          type: string
+        - name: quality_level
+          in: formData
+          description: 'The id of the quality level of the translation. Use the GET(/qualitylevel) to get a list of the quality levels from the database.'
+          required: true
+          type: integer
+        - name: process
+          in: formData
+          description: 'The id of the process used for the translation. Use the GET(/process) to get a list of processes from the database. For example, Human, MT+PE, TM+Human, MT+PE+Human, MT+PE+TM+Human.'
+          required: true
+          type: integer
+        - name: cattool
+          in: formData
+          description: 'The id of the CAT tool used for the translation of the segment. Use the GET(/cattools/) to get a list of CAT tools from the database.'
+          required: true
+          type: integer          
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}:
+    get:
+      tags:
+        - project
+      summary: Find project by ID
+      description: 'Users can read a project by specifying its id.'
+      operationId: findProjectById
+      produces:
+        - application/json
+      parameters:
+        - name: projectid
+          in: path
+          description: 'ID of project that needs to be fetched'
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/properties:
+    post:
+      tags:
+        - project
+        - properties
+      summary: Add properties to a project. Properties must be added only on a parent project. Lower level project will inherit the properties from their parent project"
+      description: 'Add properties to an initialized project by specifying its id.'
+      operationId: addProjectProperties
+      consumes:
+        - application/x-www-form-urlencoded      
+      produces:
+        - application/json
+      parameters:
+        - name: projectid
+          in: path
+          description: 'ID of project that a new preperties have to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: source_language
+          in: formData
+          description: "Source language of the project.  Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR)."
+          required: true
+          type: string
+        - name: contentType
+          in: formData
+          description: 'The id of the content type of the translation. Use the GET(/contenttype) to get a list of content types from the database.'
+          required: true
+          type: integer
+        - name: industry
+          in: formData
+          description: 'The id of the industry of the translation. Use the GET(/industry) to get a list of industries from the database.'
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+    put:
+      tags:
+        - project
+        - properties
+      summary: Update the properties of a project."
+      description: 'Update the properties of an initialized project by specifying its id.'
+      operationId: updProjectProperties
+      consumes:
+        - application/x-www-form-urlencoded      
+      produces:
+        - application/json
+      parameters:
+        - name: projectid
+          in: path
+          description: 'ID of project that the properties need to be updated.'
+          required: true
+          type: integer
+          format: int64
+        - name: source_language
+          in: formData
+          description: "Source language of the project.  Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR)."
+          required: true
+          type: string
+        - name: contentType
+          in: formData
+          description: 'The id of the content type of the translation. Use the GET(/contenttype) to get a list of content types from the database.'
+          required: true
+          type: integer
+        - name: industry
+          in: formData
+          description: 'The id of the industry of the translation. Use the GET(/industry) to get a list of industries from the database.'
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+    get:
+      tags:
+        - project
+        - properties
+      summary: Find the properties of a Project
+      description: 'Get the properties of a project by specifying the project id.'
+      operationId: getProjectProperties
+      consumes:
+        - application/x-www-form-urlencoded       
+      produces:
+        - application/json
+      parameters:
+        - name: projectid
+          in: path
+          description: 'ID of project that needs to be fetched'
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/targetLanguage:
+    post:
+      tags:
+        - project
+        - target language
+      summary: Add target languages to a project.
+      description: 'Add target languages to an initialized project by specifying its id.'
+      operationId: addProjectTargetLanguage
+      consumes:
+        - application/x-www-form-urlencoded       
+      produces:
+        - application/json
+      parameters:
+        - name: projectid
+          in: path
+          description: 'ID of project that a new target language has to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: target_language
+          in: formData
+          description: "The target language of the file. Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR)."
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+    get:
+      tags:
+        - project
+        - target language
+      summary: Find the target languages of a Project
+      description: 'Get the target languages of a project by specifying the project id.'
+      operationId: findProjectTargetLangs
+      produces:
+        - application/json
+      parameters:
+        - name: projectid
+          in: path
+          description: 'ID of project that the target languages need to be fetched'
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/file:
+    post:
+      tags:
+        - project
+        - file
+      summary: Add files to a project.
+      description: 'Add files to an initialized project by specifying its id.'
+      operationId: addProjectFile
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: file_uuid
+          in: header
+          description: 'The unique identifier of a file.'
+          required: true
+          type: string      
+        - name: projectid
+          in: path
+          description: 'ID of project that a new file has to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: file_name
+          in: formData
+          description: 'The name of the file that needs to be translated into the target language.'
+          required: true
+          type: string          
+        - name: filetargetlangs
+          in: formData
+          description: 'The target languages that file needs to be translated to.'
+          required: true
+          type: array
+          items:
+            type: string
+            minimum: 1
+      responses:
+        '200':
+          description: 'Successful operation. The file_project_target_langs id will be returned as fileid(need further scoping)'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/file/:
+    get:
+      tags:
+        - project
+        - file
+      summary: Find the files of a project.
+      description: 'Find the files of an initialized project by specifying its id.'
+      operationId: getProjectFiles
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: file_uuid
+          in: header
+          description: 'The unique identifier of a file.'
+          required: true
+          type: string      
+        - name: projectid
+          in: path
+          description: 'ID of project that a new file has to be added.'
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/file/{fileid}/segment:
+    post:
+      tags:
+        - project
+        - file
+        - segment
+      summary: Add a complete translation of a segment.
+      description: 'Add the source, target and edited segment of a translation. Using this method to submit a complete segment prohibits the use of the source, target and edited segment seperate submission.'
+      operationId: addCompleteTranslation
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: segment_uuid
+          in: header
+          description: 'The unique identifier of a segment.'
+          required: true
+          type: string
+        - name: projectid
+          in: path
+          description: 'ID of project that a translation has to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: fileid
+          in: path
+          description: 'The file id that the translation has to be added.'
+          required: true
+          type: string          
+        - name: source_segment
+          in: formData
+          description: 'The source segment of the file.'
+          required: true
+          type: string
+        - name: target_segment
+          in: formData
+          description: 'The MT output or TM match or empty segment.'
+          required: true
+          type: string
+        - name: edited_segment
+          in: formData
+          description: 'The output of the translator.'
+          required: true
+          type: string
+        - name: time
+          in: formData
+          description: 'The translation time in milliseconds.'
+          required: false
+          type: integer
+          format: int64
+        - name: tm_match
+          in: formData
+          description: 'The TM match (percentage).'
+          required: false
+          type: integer
+          minimum: 0
+          maximum: 100
+        - name: mtengine
+          in: formData
+          description: 'The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.'
+          required: true
+          type: integer
+        - name: mt_engine_version
+          in: formData
+          description: 'The version of the MT engine.'
+          required: false
+          type: string
+        - name: segment_origin
+          in: formData
+          description: 'The origin of the segment.'
+          required: false
+          type: string
+          enum: 
+          - mt
+          - tm
+          - termbase
+          - other
+          - none
+        - name: segment_origin_detail
+          in: formData
+          description: 'A string describing details of the segment origin, for example a translation memory name.'
+          required: false
+          type: string
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/file/{fileid}/segment/source_segment:
+    post:
+      tags:
+        - project
+        - file
+        - segment
+      summary: Add source segments on a file of a project.
+      description: 'Add the source segments of a file for translation. Adding the source segments at this point will require the traslation to be submitted on a second step using the POST(/project/{projectid}/file/{fileid}/segment/source_segment/{segmentid}/translation) method.'
+      operationId: addFileSourceSegments
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: segment_uuid
+          in: header
+          description: 'The unique identifier of a segment.'
+          required: true
+          type: string
+        - name: projectid
+          in: path
+          description: 'ID of project that a new source segment has to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: fileid
+          in: path
+          description: 'The file id that the source segment has to be added.'
+          required: true
+          type: string          
+        - name: source_segment
+          in: formData
+          description: 'The source segment of the file.'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/file/{fileid}/segment/source_segment/{segmentid}/translation:
+    post:
+      tags:
+        - project
+        - file
+        - segment
+      summary: Add the translation of a source segment.
+      description: 'Add the translation of a source segment that has already been submitted on a earlier step using the POST(/project/{projectid}/file/{fileid}/segment/source_segment) method.'
+      operationId: addSourceSegmentTranslation
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: segment_uuid
+          in: header
+          description: 'The unique identifier of a segment.'
+          required: true
+          type: string
+        - name: projectid
+          in: path
+          description: 'ID of project that a new translation has to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: fileid
+          in: path
+          description: 'The file id that the translation needs to be added.'
+          required: true
+          type: string
+        - name: segmentid
+          in: path
+          description: 'The segment id the translation needs to be applied.'
+          required: true
+          type: string
+        - name: target_segment
+          in: formData
+          description: 'The MT output or TM match or empty segment.'
+          required: true
+          type: string
+        - name: edited_segment
+          in: formData
+          description: 'The output of the translator.'
+          required: true
+          type: string
+        - name: time
+          in: formData
+          description: 'The translation time in milliseconds.'
+          required: false
+          type: integer
+          format: int64
+        - name: tm_match
+          in: formData
+          description: 'The TM match (percentage).'
+          required: false
+          type: integer
+          minimum: 0
+          maximum: 100
+        - name: mtengine
+          in: formData
+          description: 'The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.'
+          required: true
+          type: integer
+        - name: mt_engine_version
+          in: formData
+          description: 'The version of the MT engine.'
+          required: false
+          type: string
+        - name: segment_origin
+          in: formData
+          description: 'The origin of the segment.'
+          required: false
+          type: string
+          enum: 
+          - mt
+          - tm
+          - termbase
+          - other
+          - none
+        - name: segment_origin_detail
+          in: formData
+          description: 'A string describing details of the segment origin, for example a translation memory name.'
+          required: false
+          type: string
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []        
+  /project/{projectid}/file/{fileid}/segment/{segmentid}:
+    put:
+      tags:
+        - project
+        - file
+        - segment
+      summary: Update a complete translated segment
+      description: 'An already submitted translated segment can be updated. The time with be added to the segment already submitted.'
+      operationId: updateTranslatedSegment
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: segment_uuid
+          in: header
+          description: 'The unique identifier of a segment.'
+          required: true
+          type: string
+        - name: projectid
+          in: path
+          description: ''
+          required: true
+          type: integer
+          format: int64
+        - name: fileid
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: segmentid
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: source_segment
+          in: formData
+          description: 'The source segment'
+          required: false
+          type: string
+        - name: target_segment
+          in: formData
+          description: 'The MT output or TM match or empty segment.'
+          required: false
+          type: string
+        - name: edited_segment
+          in: formData
+          description: 'The new output of the translator.'
+          required: false
+          type: string
+        - name: time
+          in: formData
+          description: 'The translation time in milliseconds.'
+          required: true
+          type: integer
+          format: int64
+        - name: tm_match
+          in: formData
+          description: 'The TM match (percentage).'
+          required: false
+          type: integer
+          minimum: 0
+          maximum: 100
+        - name: mtengine
+          in: formData
+          description: 'The id of the new MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.'
+          required: true
+          type: integer
+        - name: mt_engine_version
+          in: formData
+          description: 'The version of the updated MT engine.'
+          required: false
+          type: string
+        - name: segment_origin
+          in: formData
+          description: 'The origin of the segment.'
+          required: false
+          type: string
+          enum: 
+          - mt
+          - tm
+          - termbase
+          - other
+          - none
+        - name: segment_origin_detail
+          in: formData
+          description: 'A string describing details of the segment origin, for example a translation memory name.'
+          required: false
+          type: string
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/file/{fileid}/segment/{segmentid}/review:
+    post:
+      tags:
+        - project
+        - file
+        - errorreview
+      summary: Add error review for a translation
+      description: 'Used to add error review for a translation of an existing segment. Can be used to submit error description and/or proofread corrected target text.'
+      operationId: addErrorReview
+      produces:
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: segment_uuid
+          in: header
+          description: 'The unique identifier of a file.'
+          required: true
+          type: string
+        - name: projectid
+          in: path
+          description: 'ID of project that a new review has to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: fileid
+          in: path
+          description: 'The file id that the review needs to be added.'
+          required: true
+          type: string
+        - name: segmentid
+          in: path
+          description: 'The source_segment id that the review needs to be added.'
+          required: true
+          type: string
+        - name: errorLevelId
+          in: formData
+          description: 'Id of the error type.'
+          required: false
+          type: integer
+          format: int64
+        - name: severity
+          in: formData
+          description: 'The severity of the error.'
+          required: false
+          type: string
+          enum: 
+          - critical
+          - major
+          - minor
+          - neutral
+        - name: kudos
+          in: formData
+          description: 'Indicates whether reviewed segment earned kudos.'
+          type: boolean
+          default: false
+        - name: comment
+          in: formData
+          description: 'Written comment on the reviewed error.'
+          required: false
+          type: string 
+        - name: time
+          in: formData
+          description: 'The review time in milliseconds.'
+          required: false
+          type: integer
+          format: int64
+        - name: characterPosStart
+          in: formData
+          description: 'Character position where the error substring starts.'
+          required: false
+          type: integer
+          format: int64
+        - name: characterPosEnd
+          in: formData
+          description: 'Character position where the error substring ends.'
+          required: false
+          type: integer
+          format: int64
+        - name: editedText
+          in: formData
+          description: 'Segment target text edited during error review.'
+          required: false
+          type: string 
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /project/{projectid}/file/{fileid}/segment/{segmentid}/review/{reviewid}:
+    put:
+      tags:
+        - file
+        - segment
+        - errorreview
+      summary: Update error review for a segment
+      description: 'Used to update error review for existing segment. Can be used to update error description and/or proofread corrected target text.'
+      operationId: updateErrorReview
+      produces:
+        - application/json
+      parameters:
+        - name: segment_uuid
+          in: header
+          description: 'The unique identifier of a segment.'
+          required: true
+          type: string
+        - name: projectid
+          in: path
+          description: 'ID of project that a new review has to be added.'
+          required: true
+          type: integer
+          format: int64
+        - name: fileid
+          in: path
+          description: 'The file id that the review needs to be added.'
+          required: true
+          type: string
+        - name: segmentid
+          in: path
+          description: 'The source_segment id that the review needs to be added.'
+          required: true
+          type: string
+        - name: reviewid
+          in: path
+          description: 'The id of the error review that needs to be updated.'
+          required: true
+          type: integer
+          format: int64
+        - name: errorLevelId
+          in: formData
+          description: 'Id of the error type.'
+          required: false
+          type: integer
+          format: int64
+        - name: severity
+          in: formData
+          description: 'The severity of the error.'
+          required: false
+          type: string
+          enum: 
+          - critical
+          - major
+          - minor
+          - neutral
+        - name: kudos
+          in: formData
+          description: 'Indicates whether reviewed segment earned kudos.'
+          type: boolean
+          default: false
+        - name: comment
+          in: formData
+          description: 'Written comment on the reviewed error.'
+          required: false
+          type: string 
+        - name: time
+          in: formData
+          description: 'The review time in milliseconds.'
+          required: false
+          type: integer
+          format: int64
+        - name: characterPosStart
+          in: formData
+          description: 'Character position where the error substring starts.'
+          required: false
+          type: integer
+          format: int64
+        - name: characterPosEnd
+          in: formData
+          description: 'Character position where the error substring ends.'
+          required: false
+          type: integer
+          format: int64
+        - name: editedText
+          in: formData
+          description: 'Segment target text edited during error review.'
+          required: false
+          type: string 
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []          
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create a user
+      description: 'Users can submit their name and email to resister for a free TAUS account.'
+      operationId: createUser
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: name
+          description: 'The name of the user'
+          required: false
+          type: string
+        - in: formData
+          name: email
+          description: 'The email of the user'
+          required: true
+          type: string
+          format: email
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+    get:
+      tags:
+        - user
+      summary: Users - Retrieve own information
+      description: 'The Users will be able to retrieve the id, name and email of their own.'
+      operationId: getUserInfo
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation. Returns the User information.'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /user/{project_id}/:
+    get:
+      tags:
+        - project
+        - user
+      summary: Find the users of a project
+      description: 'The project manager will be able to get all the users names and email that worked on a project.'
+      operationId: getProjectUsers
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: project_id
+          description: 'ID of project that needs to be fetched'
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: 'Successful operation'
+        '400':
+          description: 'Wrong parameters'
+        '401':
+          description: 'Unauthorized'
+        '403':
+          description: 'Access is not permitted'
+        '405':
+          description: 'Method Not Allowed or missing parameters'
+      security:
+        - USER_MANAGEMENT_SERVICE: []
+  /cattools/:
+    get:
+      tags:
+        - attributes
+        - CAT
+      summary: Get the CAT tools available.
+      description: 'Get a list of the CAT tools currently existing in the DQF database. Please contact us if your CAT tool is not available.'
+      operationId: getCATTools
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns the IDs and the names of the CAT tools.'
+        '400':
+          description: 'Bad request'
+  /mtengines/:
+    get:
+      tags:
+        - attributes
+        - MT engines
+      summary: Get the MT engines available.
+      description: 'Get a list of the MT Engines currently existing in the DQF database. Please contact us if your MT engine is not available.'
+      operationId: getMTengines
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns the ID and the names of the MT engines.'
+        '400':
+          description: 'Bad request'
+  /qualitylevel/:
+    get:
+      tags:
+        - attributes
+        - quality level
+      summary: Get the translation quality levels for the project set up.
+      description: 'Get a list of the available quality levels in the DQF database.'
+      operationId: getQualityLevel
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns the IDs and the names of the quality levels.'
+        '400':
+          description: 'Bad request'
+  /process/:
+    get:
+      tags:
+        - attributes
+        - process
+      summary: Get the Productivity processes for the project set up.
+      description: 'Get a list of the productivity processes currently available in the DQF database.'
+      operationId: getProcess
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns the IDs, the names and the availability of the processes(api_supported) through the API.'
+        '400':
+          description: 'Bad request'
+  /contenttype/:
+    get:
+      tags:
+        - attributes
+        - content type
+      summary: Get the content types for the project set up.
+      description: 'Get a list of the content types currently available in the DQF database.'
+      operationId: contentType
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns the IDs and the names of the content types.'
+        '400':
+          description: 'Bad request'
+  /industry/:
+    get:
+      tags:
+        - attributes
+        - industry
+      summary: Get the industries list for the project set up.
+      description: 'Get a list of the industries currently available in the DQF database.'
+      operationId: getIndustry
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns the IDs and the names of the industries.'
+        '400':
+          description: 'Bad request'
+  /languages/:
+    get:
+      tags:
+        - attributes
+        - languages
+      summary: Get a language list for the project set up.
+      description: 'Get a list of the supported languages currently available in the DQF database.'
+      operationId: getLanguages
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns a list of DQF language identifiers (ISO 639 2-letter-language identifier"-"ISO 3166 two-letter country identifier).'
+        '400':
+          description: 'Bad request'
+  /errorLevels/:
+    get:
+      tags:
+        - attributes
+        - errorreview
+      summary: Get a list of all error categories.
+      description: 'Get a list of list of top level and their sub-level errors in error hierarchy currently available in the DQF database.'
+      operationId: getErrorLevels
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'Successful operation - Returns the IDs and the descriptions of the top level and their sub-level errors.'
+        '400':
+          description: 'Bad request'
+securityDefinitions:
+  USER_MANAGEMENT_SERVICE:
+    type: basic
+    description: 'The user management service provides a basic authentication mechanism that...'
