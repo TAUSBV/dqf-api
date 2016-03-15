@@ -67,6 +67,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
   /project/{projectid}:
     get:
       tags:
@@ -96,6 +97,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
   /project/{projectid}/properties:
     post:
       tags:
@@ -143,6 +145,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
     put:
       tags:
         - project
@@ -189,6 +192,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
     get:
       tags:
         - project
@@ -220,6 +224,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
   /project/{projectid}/targetLanguage:
     post:
       tags:
@@ -257,6 +262,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
     get:
       tags:
         - project
@@ -286,10 +292,12 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-  /project/{projectid}/file:
+        - API_KEY: []
+  /project/{projectid}/targetLanguage/{targetlangid}/file:
     post:
       tags:
         - project
+        - target language
         - file
       summary: Add files to a project.
       description: 'Add files to an initialized project by specifying its id.'
@@ -310,22 +318,20 @@ paths:
           required: true
           type: integer
           format: int64
+        - name: targetlangid
+          in: path
+          description: 'ID of project target language that a new file has to be translated.'
+          required: true
+          type: integer
+          format: int64          
         - name: file_name
           in: formData
           description: 'The name of the file that needs to be translated into the target language.'
           required: true
-          type: string          
-        - name: filetargetlangs
-          in: formData
-          description: 'The target languages that file needs to be translated to.'
-          required: true
-          type: array
-          items:
-            type: string
-            minimum: 1
+          type: string
       responses:
         '200':
-          description: 'Successful operation. The file_project_target_langs id will be returned as fileid(need further scoping)'
+          description: 'Successful operation. The file_project_target_langs id as job_is will be returned as jobid(needs further scoping)'
         '400':
           description: 'Wrong parameters'
         '401':
@@ -336,7 +342,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-  /project/{projectid}/file/:
+        - API_KEY: []
     get:
       tags:
         - project
@@ -360,6 +366,12 @@ paths:
           required: true
           type: integer
           format: int64
+        - name: targetlangid
+          in: path
+          description: 'ID of project target language that a new file has to be translated.'
+          required: true
+          type: integer
+          format: int64           
       responses:
         '200':
           description: 'Successful operation'
@@ -373,11 +385,12 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-  /project/{projectid}/file/{fileid}/segment:
+        - API_KEY: []
+  /project/{projectid}/job/{jobid}/segment:
     post:
       tags:
         - project
-        - file
+        - job
         - segment
       summary: Add a complete translation of a segment.
       description: 'Add the source, target and edited segment of a translation. Using this method to submit a complete segment prohibits the use of the source, target and edited segment seperate submission.'
@@ -398,7 +411,7 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: fileid
+        - name: jobid
           in: path
           description: 'The file id that the translation has to be added.'
           required: true
@@ -470,14 +483,15 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-  /project/{projectid}/file/{fileid}/segment/source_segment:
+        - API_KEY: []
+  /project/{projectid}/job/{jobid}/segment/source_segment:
     post:
       tags:
         - project
-        - file
+        - job
         - segment
       summary: Add source segments on a file of a project.
-      description: 'Add the source segments of a file for translation. Adding the source segments at this point will require the traslation to be submitted on a second step using the POST(/project/{projectid}/file/{fileid}/segment/source_segment/{segmentid}/translation) method.'
+      description: 'Add the source segments of a file for translation. Adding the source segments at this point will require the traslation to be submitted on a second step using the POST(/project/{projectid}/file/{jobid}/segment/source_segment/{segmentid}/translation) method.'
       operationId: addFileSourceSegments
       consumes:
         - application/x-www-form-urlencoded
@@ -495,7 +509,7 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: fileid
+        - name: jobid
           in: path
           description: 'The file id that the source segment has to be added.'
           required: true
@@ -518,14 +532,15 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-  /project/{projectid}/file/{fileid}/segment/source_segment/{segmentid}/translation:
+        - API_KEY: []
+  /project/{projectid}/job/{jobid}/segment/source_segment/{segmentid}/translation:
     post:
       tags:
         - project
-        - file
+        - job
         - segment
       summary: Add the translation of a source segment.
-      description: 'Add the translation of a source segment that has already been submitted on a earlier step using the POST(/project/{projectid}/file/{fileid}/segment/source_segment) method.'
+      description: 'Add the translation of a source segment that has already been submitted on a earlier step using the POST(/project/{projectid}/file/{jobid}/segment/source_segment) method.'
       operationId: addSourceSegmentTranslation
       consumes:
         - application/x-www-form-urlencoded
@@ -543,7 +558,7 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: fileid
+        - name: jobid
           in: path
           description: 'The file id that the translation needs to be added.'
           required: true
@@ -614,12 +629,13 @@ paths:
         '405':
           description: 'Method Not Allowed or missing parameters'
       security:
-        - USER_MANAGEMENT_SERVICE: []        
-  /project/{projectid}/file/{fileid}/segment/{segmentid}:
+        - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
+  /project/{projectid}/job/{jobid}/segment/{segmentid}:
     put:
       tags:
         - project
-        - file
+        - job
         - segment
       summary: Update a complete translated segment
       description: 'An already submitted translated segment can be updated. The time with be added to the segment already submitted.'
@@ -640,7 +656,7 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: fileid
+        - name: jobid
           in: path
           description: ''
           required: true
@@ -717,11 +733,12 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-  /project/{projectid}/file/{fileid}/segment/{segmentid}/review:
+        - API_KEY: []
+  /project/{projectid}/job/{jobid}/segment/{segmentid}/review:
     post:
       tags:
         - project
-        - file
+        - job
         - errorreview
       summary: Add error review for a translation
       description: 'Used to add error review for a translation of an existing segment. Can be used to submit error description and/or proofread corrected target text.'
@@ -743,7 +760,7 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: fileid
+        - name: jobid
           in: path
           description: 'The file id that the review needs to be added.'
           required: true
@@ -815,10 +832,11 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-  /project/{projectid}/file/{fileid}/segment/{segmentid}/review/{reviewid}:
+        - API_KEY: []
+  /project/{projectid}/job/{jobid}/segment/{segmentid}/review/{reviewid}:
     put:
       tags:
-        - file
+        - job
         - segment
         - errorreview
       summary: Update error review for a segment
@@ -838,7 +856,7 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: fileid
+        - name: jobid
           in: path
           description: 'The file id that the review needs to be added.'
           required: true
@@ -915,7 +933,8 @@ paths:
         '405':
           description: 'Method Not Allowed or missing parameters'
       security:
-        - USER_MANAGEMENT_SERVICE: []          
+        - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []
   /user:
     post:
       tags:
@@ -948,6 +967,8 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+      security:
+        - API_KEY: []          
     get:
       tags:
         - user
@@ -969,6 +990,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []          
   /user/{project_id}/:
     get:
       tags:
@@ -999,6 +1021,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
+        - API_KEY: []          
   /cattools/:
     get:
       tags:
@@ -1029,6 +1052,8 @@ paths:
           description: 'Successful operation - Returns the ID and the names of the MT engines.'
         '400':
           description: 'Bad request'
+      security:
+        - API_KEY: []          
   /qualitylevel/:
     get:
       tags:
@@ -1044,6 +1069,8 @@ paths:
           description: 'Successful operation - Returns the IDs and the names of the quality levels.'
         '400':
           description: 'Bad request'
+      security:
+        - API_KEY: []           
   /process/:
     get:
       tags:
@@ -1059,6 +1086,8 @@ paths:
           description: 'Successful operation - Returns the IDs, the names and the availability of the processes(api_supported) through the API.'
         '400':
           description: 'Bad request'
+      security:
+        - API_KEY: []           
   /contenttype/:
     get:
       tags:
@@ -1074,6 +1103,8 @@ paths:
           description: 'Successful operation - Returns the IDs and the names of the content types.'
         '400':
           description: 'Bad request'
+      security:
+        - API_KEY: []           
   /industry/:
     get:
       tags:
@@ -1089,6 +1120,8 @@ paths:
           description: 'Successful operation - Returns the IDs and the names of the industries.'
         '400':
           description: 'Bad request'
+      security:
+        - API_KEY: []           
   /languages/:
     get:
       tags:
@@ -1104,6 +1137,8 @@ paths:
           description: 'Successful operation - Returns a list of DQF language identifiers (ISO 639 2-letter-language identifier"-"ISO 3166 two-letter country identifier).'
         '400':
           description: 'Bad request'
+      security:
+        - API_KEY: []           
   /errorLevels/:
     get:
       tags:
@@ -1123,3 +1158,8 @@ securityDefinitions:
   USER_MANAGEMENT_SERVICE:
     type: basic
     description: 'The user management service provides a basic authentication mechanism that...'
+  API_KEY:
+    type: apiKey
+    name: API_KEY
+    in: header
+    description: 'The API Key given to the integrators'
