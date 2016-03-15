@@ -225,14 +225,14 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/targetLanguage:
+  /project/{projectid}/job:
     post:
       tags:
         - project
-        - target language
-      summary: Add target languages to a project.
-      description: 'Add target languages to an initialized project by specifying its id.'
-      operationId: addProjectTargetLanguage
+        - job
+      summary: Add target languages and files to a project.
+      description: 'Add target languages and files to an initialized project by specifying its id.'
+      operationId: addProjectJob
       consumes:
         - application/x-www-form-urlencoded       
       produces:
@@ -249,9 +249,14 @@ paths:
           description: "The target language of the file. Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR)."
           required: true
           type: string
+        - name: file_name
+          in: formData
+          description: 'The name of the file that needs to be translated into the target language.'
+          required: true
+          type: string          
       responses:
         '200':
-          description: 'Successful operation'
+          description: 'Successful operation. The file_project_target_langs id will be returned as jobid(needs further scoping)'
         '400':
           description: 'Wrong parameters'
         '401':
@@ -266,10 +271,10 @@ paths:
     get:
       tags:
         - project
-        - target language
-      summary: Find the target languages of a Project
-      description: 'Get the target languages of a project by specifying the project id.'
-      operationId: findProjectTargetLangs
+        - job
+      summary: Find the jobs of a Project
+      description: 'Get the target languages and files of a project by specifying the project id.'
+      operationId: findProjectJobs
       produces:
         - application/json
       parameters:
@@ -293,85 +298,28 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/targetLanguage/{targetlangid}/file:
-    post:
-      tags:
-        - project
-        - target language
-        - file
-      summary: Add files to a project.
-      description: 'Add files to an initialized project by specifying its id.'
-      operationId: addProjectFile
-      consumes:
-        - application/x-www-form-urlencoded
-      produces:
-        - application/json
-      parameters:
-        - name: file_uuid
-          in: header
-          description: 'The unique identifier of a file.'
-          required: true
-          type: string      
-        - name: projectid
-          in: path
-          description: 'ID of project that a new file has to be added.'
-          required: true
-          type: integer
-          format: int64
-        - name: targetlangid
-          in: path
-          description: 'ID of project target language that a new file has to be translated.'
-          required: true
-          type: integer
-          format: int64          
-        - name: file_name
-          in: formData
-          description: 'The name of the file that needs to be translated into the target language.'
-          required: true
-          type: string
-      responses:
-        '200':
-          description: 'Successful operation. The file_project_target_langs id as job_is will be returned as jobid(needs further scoping)'
-        '400':
-          description: 'Wrong parameters'
-        '401':
-          description: 'Unauthorized'
-        '403':
-          description: 'Access is not permitted'
-        '405':
-          description: 'Method Not Allowed or missing parameters'
-      security:
-        - USER_MANAGEMENT_SERVICE: []
-        - API_KEY: []
+  /project/{projectid}/job/{jobid}:
     get:
       tags:
         - project
-        - file
-      summary: Find the files of a project.
-      description: 'Find the files of an initialized project by specifying its id.'
-      operationId: getProjectFiles
-      consumes:
-        - application/x-www-form-urlencoded
+        - job
+      summary: Find the details of a job
+      description: 'Get the target languages and file of a job by specifying its id.'
+      operationId: findProjectJobDetails
       produces:
         - application/json
       parameters:
-        - name: file_uuid
-          in: header
-          description: 'The unique identifier of a file.'
-          required: true
-          type: string      
         - name: projectid
           in: path
-          description: 'ID of project that a new file has to be added.'
+          description: 'ID of project that the target languages need to be fetched'
           required: true
           type: integer
           format: int64
-        - name: targetlangid
+        - name: jobid
           in: path
-          description: 'ID of project target language that a new file has to be translated.'
+          description: 'The job id that a translation has to be added.'
           required: true
-          type: integer
-          format: int64           
+          type: integer          
       responses:
         '200':
           description: 'Successful operation'
@@ -385,7 +333,7 @@ paths:
           description: 'Method Not Allowed or missing parameters'
       security:
         - USER_MANAGEMENT_SERVICE: []
-        - API_KEY: []
+        - API_KEY: []        
   /project/{projectid}/job/{jobid}/segment:
     post:
       tags:
@@ -413,9 +361,9 @@ paths:
           format: int64
         - name: jobid
           in: path
-          description: 'The file id that the translation has to be added.'
+          description: 'The job id that the translation has to be added.'
           required: true
-          type: string          
+          type: integer          
         - name: source_segment
           in: formData
           description: 'The source segment of the file.'
@@ -513,7 +461,7 @@ paths:
           in: path
           description: 'The file id that the source segment has to be added.'
           required: true
-          type: string          
+          type: integer          
         - name: source_segment
           in: formData
           description: 'The source segment of the file.'
@@ -562,7 +510,7 @@ paths:
           in: path
           description: 'The file id that the translation needs to be added.'
           required: true
-          type: string
+          type: integer
         - name: segmentid
           in: path
           description: 'The segment id the translation needs to be applied.'
@@ -660,7 +608,7 @@ paths:
           in: path
           description: ''
           required: true
-          type: string
+          type: integer
         - name: segmentid
           in: path
           description: ''
@@ -764,7 +712,7 @@ paths:
           in: path
           description: 'The file id that the review needs to be added.'
           required: true
-          type: string
+          type: integer
         - name: segmentid
           in: path
           description: 'The source_segment id that the review needs to be added.'
@@ -860,7 +808,7 @@ paths:
           in: path
           description: 'The file id that the review needs to be added.'
           required: true
-          type: string
+          type: integer
         - name: segmentid
           in: path
           description: 'The source_segment id that the review needs to be added.'
