@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     This is the TAUS DQF API server.
-  version: '2.0'
+  version: '3.0'
   title: TAUS DQF API
   termsOfService: 'https://www.taus.net/taus-terms-of-use'
   contact:
@@ -11,7 +11,7 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: dqf-api.taus.net
-basePath: /v2
+basePath: /v3
 schemes:
   - https
 produces:
