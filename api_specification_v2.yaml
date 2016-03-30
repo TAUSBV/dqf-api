@@ -29,9 +29,9 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: parentid(project_key?)
+        - name: parentId(projectKey?)
           in: header
-          description: 'The parent project id if there is any. If there is no parentid then a main project will be created. Providing a parentid will create jobs to the main project.'
+          description: 'The parent project id if there is any. If there is no parentId then a main project will be created. Providing a parentId will create jobs to the main project.'
           required: false
           type: string
         - name: name
@@ -39,9 +39,9 @@ paths:
           description: 'The name of the project'
           required: true
           type: string
-        - name: quality_level
+        - name: qualityLevel
           in: formData
-          description: 'The id of the quality level of the translation. Use the GET(/qualitylevel) to get a list of the quality levels from the database.'
+          description: 'The id of the quality level of the translation. Use the GET(/qualityLevel) to get a list of the quality levels from the database.'
           required: true
           type: integer
         - name: process
@@ -49,9 +49,9 @@ paths:
           description: 'The id of the process used for the translation. Use the GET(/process) to get a list of processes from the database. For example, Human, MT+PE, TM+Human, MT+PE+Human, MT+PE+TM+Human.'
           required: true
           type: integer
-        - name: cattool
+        - name: catTool
           in: formData
-          description: 'The id of the CAT tool used for the translation of the segment. Use the GET(/cattools/) to get a list of CAT tools from the database.'
+          description: 'The id of the CAT tool used for the translation of the segment. Use the GET(/catTool/) to get a list of CAT tools from the database.'
           required: true
           type: integer          
       responses:
@@ -68,7 +68,7 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}:
+  /project/{projectId}:
     get:
       tags:
         - project
@@ -78,7 +78,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that needs to be fetched'
           required: true
@@ -98,7 +98,7 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/properties:
+  /project/{projectId}/properties:
     post:
       tags:
         - project
@@ -111,20 +111,20 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that a new preperties have to be added.'
           required: true
           type: integer
           format: int64
-        - name: source_language
+        - name: sourceLanguage
           in: formData
           description: "Source language of the project.  Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR)."
           required: true
           type: string
         - name: contentType
           in: formData
-          description: 'The id of the content type of the translation. Use the GET(/contenttype) to get a list of content types from the database.'
+          description: 'The id of the content type of the translation. Use the GET(/contentType) to get a list of content types from the database.'
           required: true
           type: integer
         - name: industry
@@ -158,20 +158,20 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that the properties need to be updated.'
           required: true
           type: integer
           format: int64
-        - name: source_language
+        - name: sourceLanguage
           in: formData
           description: "Source language of the project.  Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR)."
           required: true
           type: string
         - name: contentType
           in: formData
-          description: 'The id of the content type of the translation. Use the GET(/contenttype) to get a list of content types from the database.'
+          description: 'The id of the content type of the translation. Use the GET(/contentType) to get a list of content types from the database.'
           required: true
           type: integer
         - name: industry
@@ -205,7 +205,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that needs to be fetched'
           required: true
@@ -225,7 +225,7 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/job:
+  /project/{projectId}/job:
     post:
       tags:
         - project
@@ -238,25 +238,25 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that a new target language has to be added.'
           required: true
           type: integer
           format: int64
-        - name: target_language
+        - name: targetLanguage
           in: formData
           description: "The target language of the file. Use of (two letter language id)-(two letter country identifier) combination. Validity of the id's (ISO 639-1 and ISO 3166 two-letter identifiers). Example (bg-BG, fr-FR, fr-CA, pt-BR)."
           required: true
           type: string
-        - name: file_name
+        - name: fileName
           in: formData
           description: 'The name of the file that needs to be translated into the target language.'
           required: true
           type: string          
       responses:
         '200':
-          description: 'Successful operation. The file_project_target_langs id will be returned as jobid(needs further scoping)'
+          description: 'Successful operation. The fileProjectTargetLangs id will be returned as jobId(needs further scoping)'
         '400':
           description: 'Wrong parameters'
         '401':
@@ -278,7 +278,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that the target languages need to be fetched'
           required: true
@@ -298,7 +298,7 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/job/{jobid}:
+  /project/{projectId}/job/{jobId}:
     get:
       tags:
         - project
@@ -309,13 +309,13 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that the target languages need to be fetched'
           required: true
           type: integer
           format: int64
-        - name: jobid
+        - name: jobId
           in: path
           description: 'The job id that a translation has to be added.'
           required: true
@@ -334,7 +334,7 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []        
-  /project/{projectid}/job/{jobid}/segment:
+  /project/{projectId}/job/{jobId}/segment:
     post:
       tags:
         - project
@@ -348,33 +348,33 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: segment_uuid
+        - name: segmentUuid
           in: header
           description: 'The unique identifier of a segment.'
           required: true
           type: string
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that a translation has to be added.'
           required: true
           type: integer
           format: int64
-        - name: jobid
+        - name: jobId
           in: path
           description: 'The job id that the translation has to be added.'
           required: true
           type: integer          
-        - name: source_segment
+        - name: sourceSegment
           in: formData
           description: 'The source segment of the file.'
           required: true
           type: string
-        - name: target_segment
+        - name: targetSegment
           in: formData
           description: 'The MT output or TM match or empty segment.'
           required: true
           type: string
-        - name: edited_segment
+        - name: editedSegment
           in: formData
           description: 'The output of the translator.'
           required: true
@@ -385,24 +385,24 @@ paths:
           required: false
           type: integer
           format: int64
-        - name: tm_match
+        - name: matchRate
           in: formData
           description: 'The TM match (percentage).'
           required: false
           type: integer
           minimum: 0
           maximum: 100
-        - name: mtengine
+        - name: mtEngine
           in: formData
-          description: 'The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.'
+          description: 'The id of the MT Engine used for the translation of the segment. Use the GET(/mtEngine/) to get a list of MT Engines from the database.'
           required: true
           type: integer
-        - name: mt_engine_version
+        - name: mtEngineVersion
           in: formData
           description: 'The version of the MT engine.'
           required: false
           type: string
-        - name: segment_origin
+        - name: segmentOrigin
           in: formData
           description: 'The origin of the segment.'
           required: false
@@ -413,7 +413,7 @@ paths:
           - termbase
           - other
           - none
-        - name: segment_origin_detail
+        - name: segmentOriginDetail
           in: formData
           description: 'A string describing details of the segment origin, for example a translation memory name.'
           required: false
@@ -432,37 +432,37 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/job/{jobid}/segment/source_segment:
+  /project/{projectId}/job/{jobId}/segment/sourceSegment:
     post:
       tags:
         - project
         - job
         - segment
       summary: Add source segments on a file of a project.
-      description: 'Add the source segments of a file for translation. Adding the source segments at this point will require the traslation to be submitted on a second step using the POST(/project/{projectid}/file/{jobid}/segment/source_segment/{segmentid}/translation) method.'
+      description: 'Add the source segments of a file for translation. Adding the source segments at this point will require the traslation to be submitted on a second step using the POST(/project/{projectId}/file/{jobId}/segment/sourceSegment/{segmentId}/translation) method.'
       operationId: addFileSourceSegments
       consumes:
         - application/x-www-form-urlencoded
       produces:
         - application/json
       parameters:
-        - name: segment_uuid
+        - name: segmentUuid
           in: header
           description: 'The unique identifier of a segment.'
           required: true
           type: string
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that a new source segment has to be added.'
           required: true
           type: integer
           format: int64
-        - name: jobid
+        - name: jobId
           in: path
           description: 'The file id that the source segment has to be added.'
           required: true
           type: integer          
-        - name: source_segment
+        - name: sourceSegment
           in: formData
           description: 'The source segment of the file.'
           required: true
@@ -481,47 +481,47 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/job/{jobid}/segment/source_segment/{segmentid}/translation:
+  /project/{projectId}/job/{jobId}/segment/sourceSegment/{segmentId}/translation:
     post:
       tags:
         - project
         - job
         - segment
       summary: Add the translation of a source segment.
-      description: 'Add the translation of a source segment that has already been submitted on a earlier step using the POST(/project/{projectid}/file/{jobid}/segment/source_segment) method.'
+      description: 'Add the translation of a source segment that has already been submitted on a earlier step using the POST(/project/{projectId}/file/{jobId}/segment/sourceSegment) method.'
       operationId: addSourceSegmentTranslation
       consumes:
         - application/x-www-form-urlencoded
       produces:
         - application/json
       parameters:
-        - name: segment_uuid
+        - name: segmentUuid
           in: header
           description: 'The unique identifier of a segment.'
           required: true
           type: string
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that a new translation has to be added.'
           required: true
           type: integer
           format: int64
-        - name: jobid
+        - name: jobId
           in: path
           description: 'The file id that the translation needs to be added.'
           required: true
           type: integer
-        - name: segmentid
+        - name: segmentId
           in: path
           description: 'The segment id the translation needs to be applied.'
           required: true
           type: string
-        - name: target_segment
+        - name: targetSegment
           in: formData
           description: 'The MT output or TM match or empty segment.'
           required: true
           type: string
-        - name: edited_segment
+        - name: editedSegment
           in: formData
           description: 'The output of the translator.'
           required: true
@@ -532,24 +532,24 @@ paths:
           required: false
           type: integer
           format: int64
-        - name: tm_match
+        - name: matchRate
           in: formData
           description: 'The TM match (percentage).'
           required: false
           type: integer
           minimum: 0
           maximum: 100
-        - name: mtengine
+        - name: mtEngine
           in: formData
-          description: 'The id of the MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.'
+          description: 'The id of the MT Engine used for the translation of the segment. Use the GET(/mtEngine/) to get a list of MT Engines from the database.'
           required: true
           type: integer
-        - name: mt_engine_version
+        - name: mtEngineVersion
           in: formData
           description: 'The version of the MT engine.'
           required: false
           type: string
-        - name: segment_origin
+        - name: segmentOrigin
           in: formData
           description: 'The origin of the segment.'
           required: false
@@ -560,7 +560,7 @@ paths:
           - termbase
           - other
           - none
-        - name: segment_origin_detail
+        - name: segmentOriginDetail
           in: formData
           description: 'A string describing details of the segment origin, for example a translation memory name.'
           required: false
@@ -579,7 +579,7 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/job/{jobid}/segment/{segmentid}:
+  /project/{projectId}/job/{jobId}/segment/{segmentId}:
     put:
       tags:
         - project
@@ -593,38 +593,38 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: segment_uuid
+        - name: segmentUuid
           in: header
           description: 'The unique identifier of a segment.'
           required: true
           type: string
-        - name: projectid
+        - name: projectId
           in: path
           description: ''
           required: true
           type: integer
           format: int64
-        - name: jobid
+        - name: jobId
           in: path
           description: ''
           required: true
           type: integer
-        - name: segmentid
+        - name: segmentId
           in: path
           description: ''
           required: true
           type: string
-        - name: source_segment
+        - name: sourceSegment
           in: formData
           description: 'The source segment'
           required: false
           type: string
-        - name: target_segment
+        - name: targetSegment
           in: formData
           description: 'The MT output or TM match or empty segment.'
           required: false
           type: string
-        - name: edited_segment
+        - name: editedSegment
           in: formData
           description: 'The new output of the translator.'
           required: false
@@ -635,24 +635,24 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: tm_match
+        - name: matchRate
           in: formData
           description: 'The TM match (percentage).'
           required: false
           type: integer
           minimum: 0
           maximum: 100
-        - name: mtengine
+        - name: mtEngine
           in: formData
-          description: 'The id of the new MT Engine used for the translation of the segment. Use the GET(/mtengines/) to get a list of MT Engines from the database.'
+          description: 'The id of the new MT Engine used for the translation of the segment. Use the GET(/mtEngine/) to get a list of MT Engines from the database.'
           required: true
           type: integer
-        - name: mt_engine_version
+        - name: mtEngineVersion
           in: formData
           description: 'The version of the updated MT engine.'
           required: false
           type: string
-        - name: segment_origin
+        - name: segmentOrigin
           in: formData
           description: 'The origin of the segment.'
           required: false
@@ -663,7 +663,7 @@ paths:
           - termbase
           - other
           - none
-        - name: segment_origin_detail
+        - name: segmentOriginDetail
           in: formData
           description: 'A string describing details of the segment origin, for example a translation memory name.'
           required: false
@@ -682,12 +682,12 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/job/{jobid}/segment/{segmentid}/review:
+  /project/{projectId}/job/{jobId}/segment/{segmentId}/review:
     post:
       tags:
         - project
         - job
-        - errorreview
+        - errorReview
       summary: Add error review for a translation
       description: 'Used to add error review for a translation of an existing segment. Can be used to submit error description and/or proofread corrected target text.'
       operationId: addErrorReview
@@ -697,25 +697,25 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: segment_uuid
+        - name: segmentUuid
           in: header
           description: 'The unique identifier of a file.'
           required: true
           type: string
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that a new review has to be added.'
           required: true
           type: integer
           format: int64
-        - name: jobid
+        - name: jobId
           in: path
           description: 'The file id that the review needs to be added.'
           required: true
           type: integer
-        - name: segmentid
+        - name: segmentId
           in: path
-          description: 'The source_segment id that the review needs to be added.'
+          description: 'The sourceSegment id that the review needs to be added.'
           required: true
           type: string
         - name: errorLevelId
@@ -781,40 +781,40 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []
-  /project/{projectid}/job/{jobid}/segment/{segmentid}/review/{reviewid}:
+  /project/{projectId}/job/{jobId}/segment/{segmentId}/review/{reviewId}:
     put:
       tags:
         - job
         - segment
-        - errorreview
+        - errorReview
       summary: Update error review for a segment
       description: 'Used to update error review for existing segment. Can be used to update error description and/or proofread corrected target text.'
       operationId: updateErrorReview
       produces:
         - application/json
       parameters:
-        - name: segment_uuid
+        - name: segmentUuid
           in: header
           description: 'The unique identifier of a segment.'
           required: true
           type: string
-        - name: projectid
+        - name: projectId
           in: path
           description: 'ID of project that a new review has to be added.'
           required: true
           type: integer
           format: int64
-        - name: jobid
+        - name: jobId
           in: path
           description: 'The file id that the review needs to be added.'
           required: true
           type: integer
-        - name: segmentid
+        - name: segmentId
           in: path
-          description: 'The source_segment id that the review needs to be added.'
+          description: 'The sourceSegment id that the review needs to be added.'
           required: true
           type: string
-        - name: reviewid
+        - name: reviewId
           in: path
           description: 'The id of the error review that needs to be updated.'
           required: true
@@ -939,7 +939,7 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []          
-  /user/{project_id}/:
+  /user/{projectId}/:
     get:
       tags:
         - project
@@ -951,7 +951,7 @@ paths:
         - application/json
       parameters:
         - in: path
-          name: project_id
+          name: projectId
           description: 'ID of project that needs to be fetched'
           required: true
           type: integer
@@ -970,11 +970,11 @@ paths:
       security:
         - USER_MANAGEMENT_SERVICE: []
         - API_KEY: []          
-  /cattools/:
+  /catTool/:
     get:
       tags:
         - attributes
-        - CAT
+        - CAT tool
       summary: Get the CAT tools available.
       description: 'Get a list of the CAT tools currently existing in the DQF database. Please contact us if your CAT tool is not available.'
       operationId: getCATTools
@@ -985,14 +985,14 @@ paths:
           description: 'Successful operation - Returns the IDs and the names of the CAT tools.'
         '400':
           description: 'Bad request'
-  /mtengines/:
+  /mtEngine/:
     get:
       tags:
         - attributes
-        - MT engines
+        - MT engine
       summary: Get the MT engines available.
       description: 'Get a list of the MT Engines currently existing in the DQF database. Please contact us if your MT engine is not available.'
-      operationId: getMTengines
+      operationId: getmtEngines
       produces:
         - application/json
       responses:
@@ -1002,7 +1002,7 @@ paths:
           description: 'Bad request'
       security:
         - API_KEY: []          
-  /qualitylevel/:
+  /qualityLevel/:
     get:
       tags:
         - attributes
@@ -1036,7 +1036,7 @@ paths:
           description: 'Bad request'
       security:
         - API_KEY: []           
-  /contenttype/:
+  /contentType/:
     get:
       tags:
         - attributes
@@ -1070,14 +1070,14 @@ paths:
           description: 'Bad request'
       security:
         - API_KEY: []           
-  /languages/:
+  /language/:
     get:
       tags:
         - attributes
-        - languages
+        - language
       summary: Get a language list for the project set up.
       description: 'Get a list of the supported languages currently available in the DQF database.'
-      operationId: getLanguages
+      operationId: getLanguage
       produces:
         - application/json
       responses:
@@ -1087,14 +1087,14 @@ paths:
           description: 'Bad request'
       security:
         - API_KEY: []           
-  /errorLevels/:
+  /errorLevel/:
     get:
       tags:
         - attributes
         - errorreview
       summary: Get a list of all error categories.
       description: 'Get a list of list of top level and their sub-level errors in error hierarchy currently available in the DQF database.'
-      operationId: getErrorLevels
+      operationId: getErrorLevel
       produces:
         - application/json
       responses:
