@@ -17,6 +17,40 @@ schemes:
 produces:
   - application/json
 paths:
+  /login:
+    post:
+      tags:
+        - User
+      summary: Login to the DQF APIv3 service
+      description: 'Use the Login method to retrieve the session_id to be used through the API.'
+      operationId: login
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: email
+          description: 'The email of the user encrypted with AES/CBC/PKCS5PADDING and Base64 endoding. Contact us for the encrytion key and initialization vector.'
+          required: true
+          type: string
+          format: email
+        - in: formData
+          name: password
+          description: 'The user password encrypted with AES/CBC/PKCS5PADDING and Base64 endoding. Contact us for the encrytion key and initialization vector.'
+          required: true
+          type: string          
+      responses:
+        '200':
+          description: 'Successful operation - Returns the session_id'
+        '400':
+          description: 'Bad request' 
+        '404':
+          description: 'Not found'
+        '408':
+          description: 'Time out'           
+        '500':
+          description: 'Internal Server Error'
+      security:
+        - API_KEY: []
   /project/master:
     post:
       tags:
@@ -29,6 +63,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string
         - name: name
           in: formData
           description: 'The name of the project'
@@ -66,7 +110,7 @@ paths:
           type: string          
       responses:
         '200':
-          description: 'Successful operation. Returns the projectId and the projectKey'
+          description: 'Successful operation. Returns the projectId and the projectKey of the master project.'
         '400':
           description: 'Wrong parameters'
         '401':
@@ -75,9 +119,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/child:
     post:
       tags:
@@ -90,6 +137,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string
         - name: projectKey
           in: header
           description: 'The key of a master project. Providing a master projectKey will create jobs to the main project.'
@@ -123,7 +180,7 @@ paths:
           type: string
       responses:
         '200':
-          description: 'Successful operation. Returns the projectId and the childProjectKey'
+          description: 'Successful operation. Returns the projectId and the projectKey of the child project.'
         '400':
           description: 'Wrong parameters'
         '401':
@@ -132,9 +189,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/properties:
     put:
       tags:
@@ -148,6 +208,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The master project key.'
@@ -185,9 +255,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
     get:
       tags:
         - Project
@@ -200,6 +273,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The master or child project key.'
@@ -222,9 +305,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}:
     get:
       tags:
@@ -235,6 +321,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The master or child project key.'
@@ -257,9 +353,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job:
     post:
       tags:
@@ -273,6 +372,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The master or child project key.'
@@ -315,9 +424,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
     get:
       tags:
         - Project
@@ -328,6 +440,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The master or child project key.'
@@ -350,9 +472,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job/{jobId}:
     get:
       tags:
@@ -364,6 +489,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The master or child project key.'
@@ -391,9 +526,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
-        - API_KEY: []        
+        - SESSION_ID: []
+        - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job/{jobId}/segment:
     post:
       tags:
@@ -408,6 +546,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string
         - name: projectKey
           in: header
           description: 'The child project key.'
@@ -494,9 +642,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job/{jobId}/segment/sourceSegment:
     post:
       tags:
@@ -511,6 +662,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The child project key.'
@@ -548,9 +709,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job/{jobId}/segment/sourceSegment/{segmentId}/translation:
     post:
       tags:
@@ -565,6 +729,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The child project key.'
@@ -646,9 +820,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job/{jobId}/segment/{segmentId}:
     put:
       tags:
@@ -663,6 +840,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The child project key.'
@@ -749,9 +936,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job/{jobId}/segment/{segmentId}/review:
     post:
       tags:
@@ -767,6 +957,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The child project key.'
@@ -848,9 +1048,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /project/{projectId}/job/{jobId}/segment/{segmentId}/review/{reviewId}:
     put:
       tags:
@@ -863,6 +1066,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The child project key.'
@@ -950,9 +1163,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /user:
     post:
       tags:
@@ -963,6 +1179,11 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - in: formData
           name: name
           description: 'The name of the user'
@@ -993,6 +1214,17 @@ paths:
       operationId: getUserInfo
       produces:
         - application/json
+      parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
       responses:
         '200':
           description: 'Successful operation. Returns the User information.'
@@ -1004,8 +1236,10 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []          
   /user/{projectId}/:
     get:
@@ -1018,6 +1252,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
         - name: projectKey
           in: header
           description: 'The child project key.'
@@ -1040,9 +1284,12 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
+        - PROJECT_KEY: []
   /user/errorLevel/:
     get:
       tags:
@@ -1054,6 +1301,17 @@ paths:
       operationId: getUserSelectedErrorTypologies
       produces:
         - application/json
+      parameters:
+        - name: sessionId
+          in: header
+          description: 'The session id retrieved after a successful login using the (POST /login) method.'
+          required: true
+          type: string      
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string      
       responses:
         '200':
           description: 'Successful operation'
@@ -1065,8 +1323,10 @@ paths:
           description: 'Access is not permitted'
         '405':
           description: 'Method Not Allowed or missing parameters'
+        '408':
+          description: 'Time out'          
       security:
-        - USER_MANAGEMENT_SERVICE: []
+        - SESSION_ID: []
         - API_KEY: []
   /mtEngine/:
     get:
@@ -1078,6 +1338,12 @@ paths:
       operationId: getmtEngines
       produces:
         - application/json
+      parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string
       responses:
         '200':
           description: 'Successful operation - Returns the ID and the names of the MT engines.'
@@ -1095,6 +1361,12 @@ paths:
       operationId: getQualityLevel
       produces:
         - application/json
+      parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string        
       responses:
         '200':
           description: 'Successful operation - Returns the IDs and the names of the quality levels.'
@@ -1112,6 +1384,12 @@ paths:
       operationId: getProcess
       produces:
         - application/json
+      parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string        
       responses:
         '200':
           description: 'Successful operation - Returns the IDs, the names and the availability of the processes(api_supported) through the API.'
@@ -1128,6 +1406,12 @@ paths:
       operationId: contentType
       produces:
         - application/json
+      parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string        
       responses:
         '200':
           description: 'Successful operation - Returns the IDs and the names of the content types.'
@@ -1145,6 +1429,12 @@ paths:
       operationId: getIndustry
       produces:
         - application/json
+      parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string        
       responses:
         '200':
           description: 'Successful operation - Returns the IDs and the names of the industries.'
@@ -1162,6 +1452,12 @@ paths:
       operationId: getLanguage
       produces:
         - application/json
+      parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string        
       responses:
         '200':
           description: 'Successful operation - Returns a list of DQF language identifiers (ISO 639 2-letter-language identifier"-"ISO 3166 two-letter country identifier).'
@@ -1179,17 +1475,30 @@ paths:
       operationId: getErrorLevel
       produces:
         - application/json
+      parameters:
+        - name: apiKey
+          in: header
+          description: 'The API key of the integrator'
+          required: true
+          type: string        
       responses:
         '200':
           description: 'Successful operation - Returns the IDs and the descriptions of the top level and their sub-level errors.'
         '400':
           description: 'Bad request'
+      security:
+        - API_KEY: []
 securityDefinitions:
-  USER_MANAGEMENT_SERVICE:
+  SESSION_ID:
     type: basic
     description: 'The user management service authenticates and authorizes users to add, retrieve and update data.'
   API_KEY:
     type: apiKey
-    name: API_KEY
+    name: apiKey
     in: header
     description: 'The API Key given to the integrators'
+  PROJECT_KEY:
+    type: apiKey
+    name: projectKey
+    in: header
+    description: 'The Project key will be returned every time a new project is submitted with the API. This key will allow the creation of subprojects and will authorize users to access the data of the project.'
