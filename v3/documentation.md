@@ -16,7 +16,7 @@ The TAUS DQF API v3.0 connects any CAT tool or TMS to the DQF platform to measur
 * [Translation](#translation)
 * [Review](#review)
 * [Target segments](#targetSegments)
-* [Templates](#templates)
+* [User/Company Templates](#templates)
 * [Mapping](#mapping)
 * [User](#user)
 * [API Specifications](#specs)
@@ -164,7 +164,7 @@ The sub-type will be automatically defined by the API , based on the non-require
 **Note:** The Kudos parameter, even if submitted, will not be immediately available to the users on the QD.
 
 <a name="targetSegments"/>
-## Child Target Segments
+## Target Segments
 The final step for a child project (after a translation or a review has taken place) would be to post all of the remaining target segments (if any) that were not edited (translation or review correction). This can be accomplished through:
 POSTv3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch. 
 This is similar to the batch source segments operation. To verify which source segments have target segment content the following method can be used:
