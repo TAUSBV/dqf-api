@@ -28,39 +28,47 @@ The DQF API went through a major upgrade from v1.3 to v3 in order to fully suppo
 
 ## June 07, 2016 - DQF API v3.0 Release
 This release contains the following new features compared to the previous version:
-* New and updated methods/endpoints to measure productivity and quality
-* Content type "multipart/form-data" for the submission of data
-* Tree hierarchy structure of projects to track supply chain workflows
-* Updated Authentication/Authorization methods
-* Multiple file support
-* Batch upload of source, target and edited segments
-* Project and Review settings templates
-* Client-API identifier mapping for Projects, Files, Segments, Translations
+* [New and updated methods/endpoints to measure productivity and quality](#methodsEndpoints)
+* [Content type "multipart/form-data" for the submission of data](#multipartFormdata)
+* [Tree hierarchy structure of projects to track supply chain workflows](#treeHierachy)
+* [Updated Authentication/Authorization methods](#authenticationAuthorization)
+* [Multiple file support](#multipleFile)
+* [Batch upload of source, target and edited segments](#batchUpload)
+* [Project and Review settings templates](#templates)
+* [Client-API identifier mapping for Projects, Files, Segments, Translations](#mapping)
 
-### New and updated methods/endpoints
+<a name="methodsEndpoints"/>
+#### New and updated methods/endpoints
 The DQF API v3.0 follows a RESTful approach with the basic CRUD functions(POST, PUT, GET, DELETE) to be applied in most of its methods. Please refer to the Swagger specification and UI for a detailed reference of v3.0 end points.
 
-### Content type "multipart/form-data" for the submission of data
+<a name="multipartFormdata"/>
+#### Content type "multipart/form-data" for the submission of data
 The content type that needs to be used to encode the form data set for submission to the server, has been changed to ["multipart/form-data"](https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2).
 
-### Tree hierarchy structure of projects to track supply chain workflows
+<a name="treeHierachy"/>
+#### Tree hierarchy structure of projects to track supply chain workflows
 The APIs hierarchy is based on a tree structure where the root node is the master project.
 During the translation workflow, the project creation will follow the tree hierarchy in order to identify the path that the data is following from the initialization until the completion of a project. There is a Parent/Child relationship between the projects that are created during this workflow.
 
-### Updated Authentication/Authorization methods
+<a name="authenticationAuthorization"/>
+#### Updated Authentication/Authorization methods
 After successful submission of username and password to the DQF authentication service the service will create a session which the user can use to access the API.
 The user will be authorized to access data that has been submitted by him/her, shared within his/her company or data from projects on lower levels on their project hierarchy tree.
 
-### Multiple file support 
+<a name="multipleFile"/>
+#### Multiple file support 
 The API can support multiple files for a project which in their turn can be translated in many different languages. The files can be specified only on the Master project level.
 
-### Batch upload of source, target and edited segments
+<a name="batchUpload"/>
+#### Batch upload of source, target and edited segments
 A method for batch submission of the source segments of a file has been introduced at the creation of a Master project.  Furthermore, the remaining, if any, target segments that haven’t been submitted to the DQF server can be posted by another batch upload method. Batch uploads reduce API traffic and enable display of accurate statistics throughout the project progress.
 
-### Project and Review settings templates
+<a name="templates"/>
+#### Project and Review settings templates
 Users can store their project and review settings into templates to be used by them or their company for future projects.
 
-### Client-API identifier mapping for Projects, Files, Segments, Translations
+<a name="mapping"/>
+#### Client-API identifier mapping for Projects, Files, Segments, Translations
 Integrators can submit their own identifiers during the creation of projects, files, segments and translations to map the DQF related identifiers. Then using their own identifiers they will be able to retrieve the DQF identifiers. This feature enables integrators that cannot track DQF identifiers to use the DQF API.
 
 <a name="whatsComing"/>
