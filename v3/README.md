@@ -5,13 +5,14 @@ DQF Team | TAUS 2016 | [Previous version](https://github.com/TAUSBV/dqf-api/rele
 _This topic describes the new features in DQF API v3.0_
 
 In this topic:
-* Product Description
-* What's new?
-* What's coming?
-* Known issues
-* Documentation
-* Help and support
+* [Product Description](#productDescription)
+* [What's new?](#whatsNew)
+* [What's coming?](#whatsComing)
+* [Known issues](#knownIssues)
+* [Documentation](#documentation)
+* [Help and support](#helpSupport)
 
+<a name="productDescription"/>
 ## Product Description
 The Quality Dashboard is an industry platform for statistics on translation, benchmarking translation activity and quality and analysis of translation performance and production. TAUS provides API specifications allowing translation technology providers and users of translation services to plug TAUS DQF into their work environment.
 The TAUS DQF API v3.0 enables  any CAT tool or TMS to connect to the DQF platform to measure quality, productivity and efficiency. Data will be visualized through the [Quality Dashboard](https://dqf.taus.net/quality-dashboard).
@@ -21,10 +22,11 @@ The TAUS DQF API v3.0 enables  any CAT tool or TMS to connect to the DQF platfor
 * [Base url] (http://dqf-api.ta-us.net/v3)
 * [Specifications] (http://dqf-api.dev.ta-us.net/v3/api-docs)
 
+<a name="whatsNew"/>
 ## What's new?
 The DQF API went through a major upgrade from v1.3 to v3 in order to fully support the translation and quality review workflows of most available CAT tools and TMS.
 
-### June 07, 2016 - DQF API v3.0 Release
+## June 07, 2016 - DQF API v3.0 Release
 This release contains the following new features compared to the previous version:
 * New and updated methods/endpoints to measure productivity and quality
 * Content type "multipart/form-data" for the submission of data
@@ -61,16 +63,20 @@ Users can store their project and review settings into templates to be used by t
 ### Client-API identifier mapping for Projects, Files, Segments, Translations
 Integrators can submit their own identifiers during the creation of projects, files, segments and translations to map the DQF related identifiers. Then using their own identifiers they will be able to retrieve the DQF identifiers. This feature enables integrators that cannot track DQF identifiers to use the DQF API.
 
+<a name="whatsComing"/>
 ## What's coming?
 Here are some of the features that we are working on. You should see these in the next months:
 * A new version of the Quality Dashboard, fully supporting the new API.
 
+<a name="knownIssues"/>
 ## Known issues
 The current version of the API does not support review projects without the existence in DQF of the actual translation that needs to be reviewed. A translation project has to exist in order a review project to be created.
 Report issues that you find, and they will show up in our issue tracker.
 
+<a name="documentation"/>
 ## Documentation
 Please see the documentation on how to integrate with the DQF API v3.0
 
+<a name="helpSupport"/>
 ## Help and support
 Send questions or suggestions on dqfapi(at)taus(dot)net
