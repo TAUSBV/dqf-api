@@ -23,9 +23,9 @@ The TAUS DQF API v3.0 connects any CAT tool or TMS to the DQF platform to measur
 
 <a name="authentication"/>
 ## Authentication
-* Every request must contain the header parameter apiKey, a Universally Unique Identifier (UUID) which will be provided by us. The apiKey is application specific and used to identify the client that sends the requests. Every integrator will have one apiKey.	
-* For secured endpoints, there should also be a header parameter sessionId.
-* In order to obtain a sessionId one must call the POST /v3/login endpoint. 	 		
+* Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by us. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
+* For secured endpoints, there should also be a header parameter **sessionId**.
+* In order to obtain a sessionId one must call the [POST /v3/login](http://dqf-api.ta-us.net/) endpoint. 	 		
 * The body parameters (email, password) are the user's encrypted and Base64 encoded credentials.	
 * The encryption algorithm used is AES/CBC/PKCS5PADDING
 * The encryption key will also be provided by us.
@@ -49,10 +49,12 @@ public static String encrypt(String value, String key) throws Exception {
 The **_initVector_** will also be provided by us.
 Should you decide to use your own initialization vector, it should be 16 Bytes and you must provide us with it.
 
-For testing/debugging purposes, we have enabled an encrypt endpoint which is accessible through POST /v3/encrypt. No authentication is required. The body parameters are:
-* email: 	The user's email as plain text
-* password: The user's password as plain text
-* key: The encryption key
+For testing/debugging purposes, we have enabled an encrypt endpoint which is accessible through 
+[POST /v3/encrypt](http://dqf-api.ta-us.net/). 
+No authentication is required. The body parameters are:
+* **email:** 	The user's email as plain text
+* **password:** The user's password as plain text
+* **key:** The encryption key
 With a successful request you should get back your encrypted and Base64 encoded credentials.
 
 **Note:** The aforementioned endpoint is not available in production and should not be used as part of your final implementation.
@@ -66,45 +68,46 @@ The code is DQF specific and can be used to report the nature of the problem to 
 <a name="attributes"/>
 ## Basic Attributes
 The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these.
-* GET /v3/catTool
-* GET /v3/contentType
-* GET /v3/errorCategory
-* GET /v3/industry
-* GET /v3/language
-* GET /v3/mtEngine
-* GET /v3/process
-* GET /v3/qualitylevel
-* GET /v3/segmentOrigin
-* GET /v3/severity
+* [GET /v3/catTool](http://dqf-api.ta-us.net/)
+* [GET /v3/contentType](http://dqf-api.ta-us.net/)
+* [GET /v3/errorCategory](http://dqf-api.ta-us.net/)
+* [GET /v3/industry](http://dqf-api.ta-us.net/)
+* [GET /v3/language](http://dqf-api.ta-us.net/)
+* [GET /v3/mtEngine](http://dqf-api.ta-us.net/)
+* [GET /v3/process](http://dqf-api.ta-us.net/)
+* [GET /v3/qualitylevel](http://dqf-api.ta-us.net/)
+* [GET /v3/segmentOrigin](http://dqf-api.ta-us.net/)
+* [GET /v3/severity](http://dqf-api.ta-us.net/)
 
 <a name="requestsHeader"/>
 ## Requests/Header
-As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the apiKey and sessionId header parameters. For the project related requests you should also include the projectKey in the header.
+As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the **apiKey** and sessionId header parameters. For the project related requests you should also include the projectKey in the header.
 
 <a name="projectMaster"/>
 ## Project/Master
-The core entity of the DQF API. Once the basic attributes are received, a master project needs to be created: POST /v3/project/master
+The core entity of the DQF API. Once the basic attributes are received, a master project needs to be created: 
+[POST /v3/project/master](http://dqf-api.ta-us.net/)
 The APIs hierarchy is based on a tree structure where the root node is the master project.
 A master project contains all of the basic attributes which are then inherited by child projects. After a successful post the project's Id and UUID(dqfUUID) will be returned as response. The Id should be used as path parameter whereas the UUID as a header parameter for subsequent requests. The owner will be identified from the header's sessionID.
 **Note:** There are no endpoints to apply translations/reviews to the master project (attribute placeholder). It is necessary to create child projects for that purpose.
 
 The next action would be to declare the project files. 
-The POST /v3/project/master/{projectId}/file will be used for that. 
+The [POST /v3/project/master/{projectId}/file](http://dqf-api.ta-us.net/) will be used for that. 
 For validation and statistical reasons, the number of segments that are included in the file is required.
 
 The final step for the master project setup would be a:
-POST /v3/project/master/{projectId}/file/{fileId}/targetLang where the target languages are associated with files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language.
+[POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/) where the target languages are associated with files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language.
 
 <a name="projectChild"/>
 ## Project/Child
 This is where the actual work takes place. To declare a child project the 
-POST /v3/project/child has to be used. The parent's _UUID_ must be specified to create a parent/child relationship (remember that a tree structure is used). 
+[POST /v3/project/child](http://dqf-api.ta-us.net/) has to be used. The parent's _UUID_ must be specified to create a parent/child relationship (remember that a tree structure is used). 
 **Example:**
 _Child1_ will declare the master project's UUID as the parentKey. Of Course child1 can have as many siblings as needed. If then a child of _child1_ (_child1.1_) needs to be created , the same endpoint will be used but with the _child1 UUID_ as a parentKey. The type of a child project can be either translation or review. There is also the possibility of directly declaring a different child project owner (other than the one making the request) by optionally specifying an email for the assignee parameter. The email must belong to an existing TAUS account.
 
-There is no need to declare files for child projects as they have access to the master/root project files. A child project can get a list of files with GET /v3/project/child/{projectId}/file.
+There is no need to declare files for child projects as they have access to the master/root project files. A child project can get a list of files with [GET /v3/project/child/{projectId}/file](http://dqf-api.ta-us.net/).
 
-The POST /v3/project/child/{projectId}/file/{fileId}/targetLang will be used next to declare the target language for the child project.
+The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/) will be used next to declare the target language for the child project.
 Note: A child project can declare any combination of files/targetLangs that are a subset of their parents' file/targetLang pairs. So building on the previous example, child1 can declare nl-NL for file1 but not nl-NL for file2.
 
 <a name="translation"/>
@@ -112,7 +115,7 @@ Note: A child project can declare any combination of files/targetLangs that are 
 To be able to post a translation, there must be a child project with a type of translation. The API supports two different alternatives for posting translations. The main distinguishing parameter among these two approaches is the prerequisite of source segments.
 
 ### Approach 1: Translation with source segments posted at master project level:
-In this approach, all of a file's source segments have first to be uploaded at master project level. The POST /v3/project/master/{projectId}/file/{fileId}/sourceSegment/batch should be used after the files for the master project have been declared. The sourceSegments body parameter should be a Json Array. Example (two source segments):
+In this approach, all of a file's source segments have first to be uploaded at master project level. The [POST /v3/project/master/{projectId}/file/{fileId}/sourceSegment/batch](http://dqf-api.ta-us.net/) should be used after the files for the master project have been declared. The sourceSegments body parameter should be a Json Array. Example (two source segments):
 
 ```
 [
@@ -124,13 +127,13 @@ In this approach, all of a file's source segments have first to be uploaded at m
 The index refers to the segment's sequential numbering in the file. The maximum allowed number of elements in the array is 100. Whenever a re-post of segments with the same index numbers is submitted, the old values will be overwritten. After each successful post the DQF Id for each segment will be returned.
 Note: During this process the numberOfSegments declared at file posting cannot be exceeded.
 
-Child projects can access the source segment information through: GET/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch
+Child projects can access the source segment information through: [GET/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/)
 To post a translation in this scenario the 
-POST/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation method should be used.
+[POST/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation](http://dqf-api.ta-us.net/) method should be used.
 
 ### Approach 2: Translation with source segments posted at translation level:
 In this approach, the method
-POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment which is almost identical to the aforementioned translation post should be used. The additional parameters here are the source segment content and its index numbering.
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment](http://dqf-api.ta-us.net/) which is almost identical to the aforementioned translation post should be used. The additional parameters here are the source segment content and its index numbering.
 
 **Note:** It is strongly recommended the use of the 1st approach. Even though it seems like extra effort (batch upload, an additional request) it will lead to a more robust solution.
 
@@ -138,9 +141,11 @@ POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/seg
 ## Review
 Review projects are created as (direct) children of translation or other review projects. 
 The first thing would be to add the Review Settings that the user intends to apply. 
-This can be accomplished with POST /v3/project/master/{projectId}/reviewSettings for master projects and POST /v3/project/child/{projectId}/reviewSettings for child projects. 
+This can be accomplished with POST /v3/project/master/{projectId}/reviewSettings for master projects and 
+[POST /v3/project/child/{projectId}/reviewSettings for child projects](http://dqf-api.ta-us.net/). 
 By specifying the templateName parameter, the posted settings will also be saved as a user template (templates are described below). 
-To create a review project use the POST/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/review method.
+To create a review project use the 
+[POST/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/](http://dqf-api.ta-us.net/)review method.
 Three types of review projects are supported:
 
 ### Error Review - i.e. selection of one or multiple error categories to be applied to:		
