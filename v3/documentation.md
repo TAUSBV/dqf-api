@@ -21,6 +21,8 @@ The TAUS DQF API v3.0 connects any CAT tool or TMS to the DQF platform to measur
 * [User](#user)
 * [API Specifications](#specs)
 
+<a name="authentication"/>
+## Authentication
 * Every request must contain the header parameter apiKey, a Universally Unique Identifier (UUID) which will be provided by us. The apiKey is application specific and used to identify the client that sends the requests. Every integrator will have one apiKey.	
 * For secured endpoints, there should also be a header parameter sessionId.
 * In order to obtain a sessionId one must call the POST /v3/login endpoint. 	 		
