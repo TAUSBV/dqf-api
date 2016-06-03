@@ -15,6 +15,7 @@ In this topic:
 <a name="productDescription"/>
 ## Product Description
 The Quality Dashboard is an industry platform for statistics on translation, benchmarking translation activity and quality and analysis of translation performance and production. TAUS provides API specifications allowing translation technology providers and users of translation services to plug TAUS DQF into their work environment.
+
 The TAUS DQF API v3.0 enables  any CAT tool or TMS to connect to the DQF platform to measure quality, productivity and efficiency. Data will be visualized through the [Quality Dashboard](https://dqf.taus.net/quality-dashboard).
 
 ### APIv3
