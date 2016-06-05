@@ -83,17 +83,17 @@ As already explained, every request to the DQF API (apart from the aforementione
 <a name="projectMaster"/>
 ## Project/Master
 The core entity of the DQF API. Once the basic attributes are received, a master project needs to be created: 
-[POST /v3/project/master](http://dqf-api.ta-us.net/)
-The APIs hierarchy is based on a tree structure where the root node is the master project.
-A master project contains all of the basic attributes which are then inherited by child projects. After a successful post the project's Id and UUID(dqfUUID) will be returned as response. The Id should be used as path parameter whereas the UUID as a header parameter for subsequent requests. The owner will be identified from the header's sessionID.
+[POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add)
+The APIs hierarchy is based on a *tree structure where the root node is the master project*.
+A master project contains all of the basic attributes which are then inherited by child projects. After a successful post the project's *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The owner will be identified from the header's *sessionID*.
 **Note:** There are no endpoints to apply translations/reviews to the master project (attribute placeholder). It is necessary to create child projects for that purpose.
 
 The next action would be to declare the project files. 
-The [POST /v3/project/master/{projectId}/file](http://dqf-api.ta-us.net/) will be used for that. 
+The [POST /v3/project/master/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile/add) will be used for that. 
 For validation and statistical reasons, the number of segments that are included in the file is required.
 
 The final step for the master project setup would be a:
-[POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/) where the target languages are associated with files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language.
+[POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile%2FTarget_Language/add) where the target languages are associated with files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language.
 
 <a name="projectChild"/>
 ## Project/Child
