@@ -2,11 +2,6 @@
 
 This document is for anyone who is interested in integrating with DQF using the DQF API v3.0
 
-## Overview
-The Quality Dashboard is an industry platform for statistics on translation, benchmarking translation activity and quality and analysis of translation performance and production. TAUS provides API specifications allowing translation technology providers and users of translation services to plug TAUS DQF into their work environment.
-
-The TAUS DQF API v3.0 connects any CAT tool or TMS to the DQF platform to measure quality, productivity. Data will be visualized through the new Quality Dashboard (work in progress).
-
 ## Getting started
 * [Authentication](#authentication)
 * [Basic Attributes](#attributes)
@@ -25,14 +20,14 @@ The TAUS DQF API v3.0 connects any CAT tool or TMS to the DQF platform to measur
 ## Authentication
 * Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by us. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
 * For secured endpoints, there should also be a header parameter **sessionId**.
-* In order to obtain a sessionId one must call the [POST /v3/login](http://dqf-api.ta-us.net/) endpoint. 	 		
-* The body parameters (email, password) are the user's encrypted and Base64 encoded credentials.	
-* The encryption algorithm used is AES/CBC/PKCS5PADDING
+* In order to obtain a **sessionId** one must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login) endpoint.
+* The body parameters (_email, password_) are the user's encrypted and Base64 encoded credentials.	
+* The encryption algorithm used is **AES/CBC/PKCS5PADDING**
 * The encryption key will also be provided by us.
 
 Below is a simple Java code snippet for the encryption part using the javax.crypto lib:
 
-```
+```java
 public static String encrypt(String value, String key) throws Exception {
 	IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
 	SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
@@ -47,10 +42,10 @@ public static String encrypt(String value, String key) throws Exception {
 ```
 
 The **_initVector_** will also be provided by us.
-Should you decide to use your own initialization vector, it should be 16 Bytes and you must provide us with it.
+Should you decide to use your own initialization vector, it should be _16 Bytes_ and you must provide us with it.
 
 For testing/debugging purposes, we have enabled an encrypt endpoint which is accessible through 
-[POST /v3/encrypt](http://dqf-api.ta-us.net/). 
+[POST /v3/encrypt](http://dqf-api.ta-us.net/v3/encrypt). 
 No authentication is required. The body parameters are:
 * **email:** 	The user's email as plain text
 * **password:** The user's password as plain text
