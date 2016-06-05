@@ -56,27 +56,29 @@ With a successful request you should get back your encrypted and Base64 encoded 
 
 ## Response Content Type
 All the responses are in Json format. You should explicitly handle the status of the response in order to retrieve additional information. For example, in .NET you can catch a WebException for a BadRequest and parse the content to see what went wrong:
+
 ``` {  "code": 6,   "message": {    "password": [  "This field is required"  ]  }} ```
+
 The code is DQF specific and can be used to report the nature of the problem to the DQF team.
 
 
 <a name="attributes"/>
 ## Basic Attributes
 The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these.
-* [GET /v3/catTool](http://dqf-api.ta-us.net/)
-* [GET /v3/contentType](http://dqf-api.ta-us.net/)
-* [GET /v3/errorCategory](http://dqf-api.ta-us.net/)
-* [GET /v3/industry](http://dqf-api.ta-us.net/)
-* [GET /v3/language](http://dqf-api.ta-us.net/)
-* [GET /v3/mtEngine](http://dqf-api.ta-us.net/)
-* [GET /v3/process](http://dqf-api.ta-us.net/)
-* [GET /v3/qualitylevel](http://dqf-api.ta-us.net/)
-* [GET /v3/segmentOrigin](http://dqf-api.ta-us.net/)
-* [GET /v3/severity](http://dqf-api.ta-us.net/)
+* [GET /v3/catTool](http://dqf-api.ta-us.net/#!/Basic_attributes/get)
+* [GET /v3/contentType](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0)
+* [GET /v3/errorCategory](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1)
+* [GET /v3/industry](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2)
+* [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
+* [GET /v3/mtEngine](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4)
+* [GET /v3/process](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5)
+* [GET /v3/qualitylevel](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6)
+* [GET /v3/segmentOrigin](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7)
+* [GET /v3/severity](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7_8)
 
 <a name="requestsHeader"/>
 ## Requests/Header
-As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the **apiKey** and sessionId header parameters. For the project related requests you should also include the projectKey in the header.
+As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests you should also include the ***projectKey*** in the header.
 
 <a name="projectMaster"/>
 ## Project/Master
