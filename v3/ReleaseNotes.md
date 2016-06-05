@@ -19,13 +19,13 @@ The Quality Dashboard is an industry platform for statistics on translation, ben
 The TAUS DQF API v3.0 enables  any CAT tool or TMS to connect to the DQF platform to measure quality, productivity and efficiency. Data will be visualized through the [Quality Dashboard](https://dqf.taus.net/quality-dashboard).
 
 ### APIv3
-* [Swagger UI](http://dqf-api.ta-us.net)
-* [Base url] (http://dqf-api.ta-us.net/v3)
-* [Specifications] (http://dqf-api.dev.ta-us.net/v3/api-docs)
+* **Swagger UI:** http://dqf-api.ta-us.net
+* **Base url:** http://dqf-api.ta-us.net/v3
+* **Specifications:** http://dqf-api.dev.ta-us.net/v3/api-docs
 
 <a name="whatsNew"/>
 ## What's new?
-The DQF API went through a major upgrade from v1.3 to v3 in order to fully support the translation and quality review workflows of most available CAT tools and TMS.
+The DQF API went through a major upgrade from v1.3 to v3.0 in order to fully support the translation and quality review workflows of most available CAT tools and TMS.
 
 ## June 07, 2016 - DQF API v3.0 Release
 This release contains the following new features compared to the previous version:
@@ -48,8 +48,9 @@ The content type that needs to be used to encode the form data set for submissio
 
 <a name="treeHierachy"/>
 #### Tree hierarchy structure of projects to track supply chain workflows
-The APIs hierarchy is based on a tree structure where the root node is the master project.
-During the translation workflow, the project creation will follow the tree hierarchy in order to identify the path that the data is following from the initialization until the completion of a project. There is a Parent/Child relationship between the projects that are created during this workflow.
+The APIs hierarchy is based on a *tree structure where the root node is the master project*.
+During the translation workflow, the projects should be created following  a tree hierarchy. There is a Parent/Child relationship between the projects that are created during this workflow with the root project being the Master project. 
+It’s very important that each new project in a translation or review workflow to specify its parent. This helps us to identify the path that the data has taken from the initialization until the completion of a project. 
 
 <a name="authenticationAuthorization"/>
 #### Updated Authentication/Authorization methods
