@@ -20,7 +20,7 @@ This document is for anyone who is interested in integrating with DQF using the 
 ## Authentication
 * Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by us. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
 * For secured endpoints, there should also be a header parameter **sessionId**.
-* In order to obtain a **sessionId** one must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login){:target="_blank"} endpoint.
+* In order to obtain a **sessionId** one must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login) endpoint.
 * The body parameters (_email, password_) are the user's encrypted and Base64 encoded credentials.	
 * The encryption algorithm used is **AES/CBC/PKCS5PADDING**
 * The encryption key will also be provided by us.
