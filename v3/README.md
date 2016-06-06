@@ -203,10 +203,10 @@ To access the user's and shared organization templates use GET /v3/user/reviewTe
 <a name="mapping"/>
 ## Mapping
 A client-API identifier mapping for the following entities is provided:
-1. Project: [GET /v3/DQFProjectId](http://dqf-api.ta-us.net/#!/Mapping/get_0)
-2. File: [GET /v3/DQFFileId](http://dqf-api.ta-us.net/#!/Mapping/get)
-3. Source Segment: [GET /v3/DQFSegmentId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1)	
-4. Translation: [GET /v3/DQFTranslationId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1_2)
+* Project: [GET /v3/DQFProjectId](http://dqf-api.ta-us.net/#!/Mapping/get_0)
+* File: [GET /v3/DQFFileId](http://dqf-api.ta-us.net/#!/Mapping/get)
+* Source Segment: [GET /v3/DQFSegmentId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1)	
+* Translation: [GET /v3/DQFTranslationId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1_2)
 
 By specifying the optional parameter of clientId in the respective requests, the API's identifier can be recalled for that entity with the aforementioned GETs. Example: A file can be posted for a master project, specify a *clientId=”test123”* and get the *dqfId* from the response (*dqfId=5*). The GET /v3/DQFFileId method can be used by specifying *clientId=”test123”* and get back *dqfId=5* as a response.
 
