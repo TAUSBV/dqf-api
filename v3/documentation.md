@@ -20,7 +20,7 @@ This document is for anyone who is interested in integrating with DQF using the 
 ## Authentication
 * Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by us. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
 * For secured endpoints, there should also be a header parameter **sessionId**.
-* In order to obtain a **sessionId** one must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login) endpoint.
+* In order to obtain a **sessionId** one must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login){:target="_blank"} endpoint.
 * The body parameters (_email, password_) are the user's encrypted and Base64 encoded credentials.	
 * The encryption algorithm used is **AES/CBC/PKCS5PADDING**
 * The encryption key will also be provided by us.
@@ -146,20 +146,23 @@ To create a review project use the
 Three types of review projects are supported:
 
 1. Error Review - i.e. selection of one or multiple error categories to be applied to:		
-* Whole segment		
-* Part of segment	
+  * Whole segment		
+  * Part of segment	
 2. Correction - i.e. editing the existing translation
 3. Combined (a combination of the above). For the error review part, again:		
-* Whole segment		
-* Part of segment
+  * Whole segment		
+  * Part of segment
 
 The sub-type will be automatically defined by the API , based on the non-required parameters that were included during the review settings post. These are the parameters needed for each type of review:
 
-1.a: errorCategoryId, severityId, time
-1.b: errorCategoryId, severityId, time, characterPosStart, characterPosEnd
-2: editedText, time, kudos
-3.a: errorCategoryId, severityId, time, editedText, kudos
-3.b: errorCategoryId, severityId, time, editedText, kudos, characterPosStart, characterPosEnd
+1. Error Review
+  * errorCategoryId, severityId, time
+  * errorCategoryId, severityId, time, characterPosStart, characterPosEnd
+2. Correction
+  * editedText, time, kudos
+3. Combined
+  * errorCategoryId, severityId, time, editedText, kudos
+  * errorCategoryId, severityId, time, editedText, kudos, characterPosStart, characterPosEnd
 
 **Note:** Review projects can also have translation projects as children. For example, a review project with a type of *Error Review* is created and completed. The review's parent project (let's assume a translation project) owner decides to send it again for translation. This should create a translation child for the aforementioned review project. Or he/she can send it for review *Correction* which would then have to create a review child project.
 
