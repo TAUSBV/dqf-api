@@ -103,7 +103,7 @@ This is where the actual work takes place. To declare a child project the
 **Example:**
 _Child1_ will declare the master project's UUID as the parentKey. Of Course child1 can have as many siblings as needed. If then a child of _child1_ (_child1.1_) needs to be created , the same endpoint will be used but with the _child1 UUID_ as a parentKey. The type of a child project can be either *translation* or *review*. There is also the possibility of directly declaring a different child project owner (other than the one making the request) by optionally specifying an email for the *assignee* parameter. The email must belong to an existing **TAUS account**.
 
-There is no need to declare files for child projects as they have access to the master/root project files. A child project can get a list of files with [GET /v3/project/child/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile/getAll).
+There is no need to declare files for child projects as they have access to the master/root project files. A child project can get a list of files with [GET /v3/project/child/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile/getAll). The projectId here refers to the child project.
 
 The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language/add) will be used next to declare the target language for the child project.
 **Note:** A child project can declare any combination of files/targetLangs that are a **subset** of their **parents'** *file/targetLang* pairs. So building on the previous example, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
