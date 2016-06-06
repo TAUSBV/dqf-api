@@ -50,6 +50,7 @@ No authentication is required. The body parameters are:
 * **email:** 	The user's email as plain text
 * **password:** The user's password as plain text
 * **key:** The encryption key
+
 With a successful request you should get back your encrypted and Base64 encoded credentials.
 
 **Note:** The aforementioned endpoint is not available in production and should not be used as part of your final implementation.
@@ -137,19 +138,18 @@ In this approach, the method
 <a name="review"/>
 ## Review
 Review projects are created as (direct) children of translation or other review projects. 
-The first thing would be to add the Review Settings that the user intends to apply. 
-This can be accomplished with POST /v3/project/master/{projectId}/reviewSettings for master projects and 
-[POST /v3/project/child/{projectId}/reviewSettings for child projects](http://dqf-api.ta-us.net/). 
-By specifying the templateName parameter, the posted settings will also be saved as a user template (templates are described below). 
+The first thing would be to add the Review Settings that the user intends to apply. This can be accomplished with [POST /v3/project/master/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FReviewSettings/add) for master projects and 
+[POST /v3/project/child/{projectId}/reviewSettings for child projects](http://dqf-api.ta-us.net/#!/Project%2FChild%2FReviewSettings/add).
+By specifying the *templateName* parameter, the posted settings will also be saved as a user template (templates are described below). 
 To create a review project use the 
-[POST/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/](http://dqf-api.ta-us.net/)review method.
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/review/](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment%2FReview/add_0)review method.
 Three types of review projects are supported:
 
-### Error Review - i.e. selection of one or multiple error categories to be applied to:		
+1. Error Review - i.e. selection of one or multiple error categories to be applied to:		
 * Whole segment		
 * Part of segment	
-### Correction - i.e. editing the existing translation
-### Combined (a combination of the above). For the error review part, again:		
+2. Correction - i.e. editing the existing translation
+3. Combined (a combination of the above). For the error review part, again:		
 * Whole segment		
 * Part of segment
 
@@ -161,7 +161,7 @@ The sub-type will be automatically defined by the API , based on the non-require
 3.a: errorCategoryId, severityId, time, editedText, kudos
 3.b: errorCategoryId, severityId, time, editedText, kudos, characterPosStart, characterPosEnd
 
-**Note:** Review projects can also have translation projects as children. For example, a review project with a type of Error Review is created and completed. The review's parent project (let's assume a translation project) owner decides to send it again for translation. This should create a translation child for the aforementioned review project. Or he/she can send it for review Correction which would then have to create a review child project.
+**Note:** Review projects can also have translation projects as children. For example, a review project with a type of *Error Review* is created and completed. The review's parent project (let's assume a translation project) owner decides to send it again for translation. This should create a translation child for the aforementioned review project. Or he/she can send it for review *Correction* which would then have to create a review child project.
 
 **Note:** The Kudos parameter, even if submitted, will not be immediately available to the users on the QD.
 
