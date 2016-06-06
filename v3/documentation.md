@@ -167,50 +167,49 @@ The sub-type will be automatically defined by the API , based on the non-require
 
 <a name="targetSegments"/>
 ## Target Segments
-The final step for a child project (after a translation or a review has taken place) would be to post all of the remaining target segments (if any) that were not edited (translation or review correction). This can be accomplished through:
-POSTv3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch. 
+The final step for a child project (after a translation or a review has taken place) would be to post **all** of the remaining target segments (if any) that were not edited (translation or review correction). This can be accomplished through:
+[POST v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1). 
 This is similar to the batch source segments operation. To verify which source segments have target segment content the following method can be used:
-GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch. 
+[GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get).
+
 This request will return all of the source segments of the file and a flag determining if target segments have been posted (through translation or review process) for the specified target language.
 
 **Note:** The target segment batch upload can take place at any time during the execution of the translation/review project. The final batch upload can be made e.g when the user is ready to complete the job or e.g. when the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
 
 <a name="templates"/>
 ## User/Company Templates
-In order to enhance user experience a set of operations allowing the use of project templates has been  included. Templates contain project settings that pre-populate the fields required by DQF. Templates are created by a single user but they can be shared among users within the same organization by setting the isPublic parameter to true. In this way a user can select more templates than just the ones he created himself. 
+In order to enhance user experience a set of operations allowing the use of project templates has been  included. Templates contain project settings that pre-populate the fields required by DQF. Templates are created by a single user but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*.
+
 
 There are two types of templates:
-* Project templates
-* Review settings templates
+1. Project templates
+2. Review settings templates
 
 ### Templates/Project
-To post a project template use POST /v3/user/projectTemplate. 
-This request includes all of the parameters that are required during a master project creation (content type, industry, process, quality level) except source language. 
-A user can access a list of his/her project templates he/she has access to through  GET /v3/user/projectTemplate. 
-This request should also fetch all user’s template plus any shared templates within of users that belong under the same organization umbrella. 
-In UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates. 
-After selecting an existing template, the template's content can be used to populate the required parameters for a master project post.
+To post a project template use [POST /v3/user/projectTemplate](http://dqf-api.ta-us.net/#!/Template/add). 
+This request includes all of the parameters that are required during a master project creation (*content type, industry, process, quality level*) except *source language*. 
+A user can get a list of project templates he/she has access to through  [GET /v3/user/projectTemplate](http://dqf-api.ta-us.net/#!/Template/getAll). This request should fetch all user’s templates plus any shared template within the organization. In UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates.
 
 ### Templates/Review
 The same principle applies to Review templates. 
-To post a review template use POST /v3/user/reviewTemplate. 
+To post a review template use [POST /v3/user/reviewTemplate](http://dqf-api.ta-us.net/#!/Template/add_0). 
 To access the user's and shared organization templates use GET /v3/user/reviewTemplate.
 
-**Note:** A review can be created template automatically when posting review settings as described in the Review section.
+**Note:** A review can be created template automatically when posting review settings as described in the *Review* section.
 
 <a name="mapping"/>
 ## Mapping
 A client-API identifier mapping for the following entities is provided:
-* Project: GET /v3/DQFProjectId
-* File: GET /v3/DQFFileId
-* Source Segment: GET /v3/DQFSegmentId	
-* Translation: GET /v3/DQFTranslationId
+1. Project: [GET /v3/DQFProjectId](http://dqf-api.ta-us.net/#!/Mapping/get_0)
+2. File: [GET /v3/DQFFileId](http://dqf-api.ta-us.net/#!/Mapping/get)
+3. Source Segment: [GET /v3/DQFSegmentId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1)	
+4. Translation: [GET /v3/DQFTranslationId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1_2)
 
-By specifying the optional parameter of clientId in the respective requests, the API's identifier can be recalled for that entity with the aforementioned GETs. Example: A file can be posted for a master project, specify a clientId=”test123” and get the dqfId from the response (dqfId=5). The GET /v3/DQFFileId method can be used by specifying clientId=”test123” and get back dqfId=5 as a response.
+By specifying the optional parameter of clientId in the respective requests, the API's identifier can be recalled for that entity with the aforementioned GETs. Example: A file can be posted for a master project, specify a *clientId=”test123”* and get the *dqfId* from the response (*dqfId=5*). The GET /v3/DQFFileId method can be used by specifying *clientId=”test123”* and get back *dqfId=5* as a response.
 
 <a name="user"/>
 ## User
-In order to retrieve basic user information use GET /v3/user. To check if an email exists for a TAUS account use GET /v3/user/{email}.
+In order to retrieve basic user information use [GET /v3/user](http://dqf-api.ta-us.net/#!/User/get). To check if an email exists for a TAUS account use [GET /v3/user/{email}](http://dqf-api.ta-us.net/#!/User/get_0).
 
 <a name="specs"/>
 ## API Specifications
