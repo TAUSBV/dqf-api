@@ -1,4 +1,4 @@
-# DQF API v3.0 documentation
+# DQF API v3.0 Documentation
 
 This document is for anyone who is interested in integrating with DQF using the DQF API v3.0
 
