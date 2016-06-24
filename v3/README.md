@@ -10,6 +10,8 @@ This document is for anyone who is interested in integrating with DQF using the 
 * [Project/Child](#projectChild)
 * [Translation](#translation)
 * [Review](#review)
+* [Automated Review Projects](#automatedReview)
+* [Project Status](#projectStatus)
 * [Target segments](#targetSegments)
 * [User/Company Templates](#templates)
 * [Mapping](#mapping)
@@ -58,7 +60,16 @@ With a successful request you should get back your encrypted and Base64 encoded 
 ## Response Content Type
 All the responses are in Json format. You should explicitly handle the status of the response in order to retrieve additional information. For example, in .NET you can catch a WebException for a BadRequest and parse the content to see what went wrong:
 
-``` {  "code": 6,   "message": {    "password": [  "This field is required"  ]  }} ```
+```json 
+{  
+   "code":6,
+   "message":{  
+      "password":[  
+         "This field is required"
+      ]
+   }
+}
+```
 
 The code is DQF specific and can be used to report the nature of the problem to the DQF team.
 
@@ -115,10 +126,18 @@ To be able to post a translation, there must be a child project with a type of *
 ### Approach 1: Translation with source segments posted at master project level:
 In this approach, all of a file's source segments have first to be uploaded at master project level. The [POST /v3/project/master/{projectId}/file/{fileId}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1) should be used after the files for the master project have been declared. The *sourceSegments* body parameter should be a Json Array. Example (two source segments):
 
-```
-[
-   {"sourceSegment":"Aenean fermentum.", "index":1,"clientId":"c352702c-75f7-4f08-ab4a-b71c1407b240"}, 
-   {"sourceSegment":"Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.","index":2,"clientId":"43dee044-fc0e-4dcb-98a1-64aa49b702e3"}
+```json
+[  
+   {  
+      "sourceSegment":"Aenean fermentum.",
+      "index":1,
+      "clientId":"c352702c-75f7-4f08-ab4a-b71c1407b240"
+   },
+   {  
+      "sourceSegment":"Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",
+      "index":2,
+      "clientId":"43dee044-fc0e-4dcb-98a1-64aa49b702e3"
+   }
 ]
 ```
 
@@ -167,6 +186,25 @@ The sub-type will be automatically defined by the API , based on the non-require
 **Note:** Review projects can also have translation projects as children. For example, a review project with a type of *Error Review* is created and completed. The review's parent project (let's assume a translation project) owner decides to send it again for translation. This should create a translation child for the aforementioned review project. Or he/she can send it for review *Correction* which would then have to create a review child project.
 
 **Note:** The Kudos parameter, even if submitted, will not be immediately available to the users on the QD.
+
+<a name="automatedReview"/>
+## Automated Review Projects
+For convenience reasons we have setted up some extra endpoints to automatically create child review projects in the tree hierarchy.
+* Review settings must exist for the project that we want to perform this procedure. 
+* Review Settings can be posted at any time. 
+
+When a Review Cycle is about to begin, you can call [POST /v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net). In this request you must specify an array of fileTargetLangIds. These refer to the file and target language combinations for the project at hand and can be retrieved any time via [GET /v3/project/{projectId}/fileTargetLang](http://dqf-api.ta-us.net) (for both master and child projects). You must also specify the assignee (existing TAUS user email) that will take ownership of the automatically created review projects. The API will detect any appropriate projects and create Review projects as children. The current criteria are:
+* The project’s status must be ‘completed’
+* The project’s type cannot be Review with a Review Type of ‘error_typology’. Only ‘correction’ and ‘combined’ Review projects are allowed
+* There must be no direct Review children for the specified user and file/target-language combination
+* The project must be a leaf in the tree hierarchy (after excluding projects that do not meet the criteria above)
+
+The response will contain a list of all the Review projects that were created and a list of all the leaf projects that did not meet the aforementioned criteria alongside with the reason for that. You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net).
+
+<a name="projectStatus"/>
+## Project Status
+Currently, we allow the update of status for Child Projects only. This is accomplished through 
+[PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value at the moment though is ‘completed’. You can retrieve a project’s status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
 
 <a name="targetSegments"/>
 ## Target Segments
