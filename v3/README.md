@@ -242,7 +242,7 @@ The whole procedure took 10 secs. These series of actions should generate the js
     * If the user applies an error to a selected text then the start and end positions of the selection have to be specified.
     * The field content of the corretion object contains the whole content of the segment (even deletions). 
     * In the second revision in the example note that even though the word "Segment" got deleted, the content is "Some Test Segment" and that the character indexes correclty identify the current position of the word "Test". 
-  * In the detailList we specify the revision type for each segment sub item. The allowed types are:
+  * In the detailList we specify the revision type for each segment sub item. In our example, sub items were solely words but they can even be single characters. The allowed types are:
     * unchanged
     * added
     * deleted 
