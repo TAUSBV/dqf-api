@@ -4,6 +4,7 @@ This document is for anyone who is interested in integrating with DQF using the 
 
 ## Getting started
 * [Authentication](#authentication)
+* [Authentication - Generic Users (not on production)](#genericUsers)
 * [Basic Attributes](#attributes)
 * [Requests/Header](#requestsHeader)
 * [Project/Master](#projectMaster)
@@ -73,6 +74,10 @@ All the responses are in Json format. You should explicitly handle the status of
 
 The code is DQF specific and can be used to report the nature of the problem to the DQF team.
 
+<a name="genericUsers"/>
+## Authentication - Generic Users (not on production)
+Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users need not have a TAUS account while using the API's clients. In order to obtain a generic account you should contact the DQF team. The aforementioned account gets authenticated in the exact same way as [Authentication](#authentication) describes.
+There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
 
 <a name="attributes"/>
 ## Basic Attributes
@@ -90,7 +95,7 @@ The following endpoints are used to retrieve the basic/static attributes of the 
 
 <a name="requestsHeader"/>
 ## Requests/Header
-As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests you should also include the ***projectKey*** in the header.
+As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests you should also include the ***projectKey*** in the header. If you are using a generic account, then you should also include the **email** header parameter.
 
 <a name="projectMaster"/>
 ## Project/Master
