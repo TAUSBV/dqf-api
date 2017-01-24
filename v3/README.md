@@ -3,8 +3,9 @@
 This document is for anyone who is interested in integrating with DQF using the DQF API v3.0
 
 ## Getting started
+* [Servers to Use](#servers)
 * [Authentication](#authentication)
-* [Authentication - Generic Users (not on production)](#genericUsers)
+* [Authentication - Generic Users](#genericUsers)
 * [Basic Attributes](#attributes)
 * [Requests/Header](#requestsHeader)
 * [Project/Master](#projectMaster)
@@ -20,6 +21,20 @@ This document is for anyone who is interested in integrating with DQF using the 
 * [User](#user)
 * [API Specifications](#specs)
 
+<a name="servers"/>
+## Servers to Use
+During your development process, you **must** use our Staging Server: 
+* Site http://ta-us.net
+* API http://dqf-api.ta-us.net
+* Quality Dashboard http://qd.ta-us.net
+
+The staging server is dedicated to integrators only. All new features and/or fixes are deployed here as well before going to our production server. 
+
+Once your integration is completed, you must contact the DQF team in order to enable your application on the production server. Once this is done, you should switch your base URLs to our official ones:
+* Site http://taus.net
+* API http://dqf-api.taus.net
+* Quality Dashboard http://qd.taus.net
+
 <a name="authentication"/>
 ## Authentication
 * Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by us. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
@@ -27,7 +42,7 @@ This document is for anyone who is interested in integrating with DQF using the 
 * In order to obtain a **sessionId** one must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login) endpoint.
 * The body parameters (_email, password_) are the user's encrypted and Base64 encoded credentials.	
 * The encryption algorithm used is **AES/CBC/PKCS5PADDING**
-* The encryption key will also be provided by us.
+* The encryption key will also be provided by us and will be valid on both servers (staging and production).
 
 Below is a simple Java code snippet for the encryption part using the javax.crypto lib:
 
@@ -79,6 +94,8 @@ The code is DQF specific and can be used to report the nature of the problem to 
 ## Authentication - Generic Users (not on production)
 Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users need not have a TAUS account while using the API's clients. In order to obtain a generic account you should contact the DQF team. The aforementioned account gets authenticated in the exact same way as [Authentication](#authentication) describes.
 There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
+
+**IMPORTANT!!!** Note that although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/).
 
 <a name="attributes"/>
 ## Basic Attributes
@@ -289,8 +306,6 @@ Three types of review projects are supported:
 
 The sub-type will be automatically defined by the API , based on the non-required parameters that were included during the review settings post.
 
-
-
 **Note:** Review projects can also have translation projects as children. For example, a review project with a type of *Error Review* is created and completed. The review's parent project (let's assume a translation project) owner decides to send it again for translation. This should create a translation child for the aforementioned review project. Or he/she can send it for review *Correction* which would then have to create a review child project.
 
 <a name="automatedReview"/>
@@ -300,7 +315,6 @@ For convenience reasons we have setted up some extra endpoints to automatically 
 * Review Settings can be posted at any time. 
 
 When a Review Cycle is about to begin, you can call [POST /v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net). In this request you must specify an array of fileTargetLangIds. These refer to the file and target language combinations for the project at hand and can be retrieved any time via [GET /v3/project/{projectId}/fileTargetLang](http://dqf-api.ta-us.net) (for both master and child projects). You must also specify the assignee (existing TAUS user email) that will take ownership of the automatically created review projects. The API will detect any appropriate projects and create Review projects as children. The current criteria are:
-* The project’s status must be ‘completed’
 * The project’s type cannot be Review with a Review Type of ‘error_typology’. Only ‘correction’ and ‘combined’ Review projects are allowed
 * There must be no direct Review children for the specified user and file/target-language combination
 * The project must be a leaf in the tree hierarchy (after excluding projects that do not meet the criteria above)
@@ -310,7 +324,7 @@ The response will contain a list of all the Review projects that were created an
 <a name="projectStatus"/>
 ## Project Status
 Currently, we allow the update of status for Child Projects only. This is accomplished through 
-[PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value at the moment though is ‘completed’. You can retrieve a project’s status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
+[PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value you can update the status to currently is ‘completed’. You should use this as soon as a translation or a review task (that is mapped to a DQF child project) is done (ex. translator finishes and notifies PM). All the other statuses are automatically assigned through certain events in the API. You can retrieve a project’s current status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
 
 <a name="targetSegments"/>
 ## Target Segments
