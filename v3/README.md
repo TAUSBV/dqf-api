@@ -10,6 +10,7 @@ This document is for anyone who is interested in integrating with DQF using the 
 * [Project/Master](#projectMaster)
 * [Project/Child](#projectChild)
 * [Translation](#translation)
+* [Target Segments](#targetSegments)
 * [Review](#review)
 * [Automated Review Projects](#automatedReview)
 * [Project Status](#projectStatus)
@@ -158,6 +159,28 @@ In this approach, the method
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add) which is almost identical to the aforementioned translation post should be used. The additional parameters here are the source segment content and its index numbering.
 
 **Note:** It is strongly recommended the use of the 1st approach. Even though it seems like extra effort (batch upload, an additional request) it will lead to a more robust solution.
+
+<a name="targetSegments"/>
+## Target Segments
+### Batch Upload
+Whichever approach you decide to use, aside from the tranlation itself, you will need to send all relevant information for the target segments as well. Depending on the integration approach there may be segments that were not sent to the DQF (ex. segments that were not processed by the translator). DQF requires these segments as well so as to have a reference for subsequent review projects. In order to send all the "untouched" segments, you can use the batch operation [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). 
+
+### Fields and Constraints
+In all of the requests that include target segments (the aforementioned batch operation and the two approaches for translation), you will find the same parameters to describe a target segment based on its origin.
+
+For the **segmentOriginId** you can choose between:
+
+* MT (Machine Translation)
+* TM (Translation Memory)
+* Termbase
+* Other
+* HT (Human Translation)
+
+If the segment's origin is of type **MT**, you must also specify the MT engine that was used to produce it (**mtEngineId**). If no match can be found in the DQF list ([GET /v3/mtEngine](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4)), you can then use "Other" as the MT engine and then specify the name in the **mtEngineOtherName** parameter.
+
+If the segment's origin is of type **TM**, you should also provide the match percentage of the memory (**matchRate**).
+
+If a segment is empty, you can send an empty string for the **targetSegment** parameter and use **HT** as the segment's origin.
 
 <a name="review"/>
 ## Review
