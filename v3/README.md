@@ -8,7 +8,7 @@ Before reading the documentation consider the following:
 * You need to ensure that you can correctly map the functionalities and/or workflow steps with DQF. Before starting the integration, please contact the DQF Team and share your proposed mapping for verification.
 * You need to ensure appropriate mapping between the users and/or user roles in your system and the TAUS user logins. Please discuss the user mapping directly with the DQF team in advance.
 
-The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration. Please refer to this overview as initial example: https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing
+The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration. Please refer to the provided [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing) as initial example. 
 
 For any questions related to the integration, please contact dqfapi@taus.net
 
@@ -39,9 +39,7 @@ During your development process, you **must** use the DQF Staging Server:
 * Quality Dashboard http://qd.ta-us.net
 
 The staging server is dedicated to integrators only. All new features and/or fixes are deployed here as well before going to the DQF production server. 
-In order to use the staging server, you need to create an account using ta-us.net. TAUS does not provide test accounts for integration. Please create your account using the Trial Membership option:
-http://www.ta-us.net/all-memberships/subscribe-to/20-taus-free-trial-membership. 
-The accounts will not expire despite the "trial" status. 
+In order to use the staging server, you need to create an account using ta-us.net. TAUS does not provide test accounts for integration. Please create your account using the [Trial Membership](http://www.ta-us.net/all-memberships/subscribe-to/20-taus-free-trial-membership. ) option. The accounts will not expire despite the "trial" status. 
 If you want to access the Quality Dashboard with your staging account, you may need to request some to the DQF Team. 
 Please write to dqfapi@taus.net
 
@@ -116,21 +114,40 @@ The code is DQF specific and can be used to report the nature of the problem to 
 Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users do not need a valid TAUS account while using the API clients. Generic accounts are provided by the DQF team at integrator (=tool) level. However, one integrator can request multiple generic accounts if their integration requires this. In order to obtain a generic account you should contact the DQF team. The generic account gets authenticated in the exact same way as [Authentication](#authentication) describes.
 There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
 
-**IMPORTANT!!!** Note that although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/).
+**IMPORTANT!!!** Note that although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/). 
 
 <a name="attributes"/>
 ## Basic Attributes
-The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these.
-* [GET /v3/catTool](http://dqf-api.ta-us.net/#!/Basic_attributes/get)
+The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these. 
+The basic attributes can be grouped according to their function. More details will be provided in the related sections:
+
+***DQF PROJECT SETTINGS*** - See [Master Project](#projectMaster) 
+
+You may require some mapping between your current values and the ones used in DQF. If this is the case please notify the DQF Team.
 * [GET /v3/contentType](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0)
-* [GET /v3/errorCategory](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1)
 * [GET /v3/industry](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2)
-* [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
-* [GET /v3/mtEngine](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4)
 * [GET /v3/process](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5)
 * [GET /v3/qualitylevel](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6)
-* [GET /v3/segmentOrigin](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7)
+
+The following call is no longer necessary after compliance with the [BCP47 standard](https://tools.ietf.org/html/bcp47)
+* [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
+
+***DQF REVIEW SETTINGS*** - See [Review](#review)
+
+We consider the current error category as stable with no changes expected in the near future. Should you use hard-coded values for the error categories or any other attribute in this list, please inform the DQF Team. If changes to the current values are required, we will notify integrators in due time.
+* [GET /v3/errorCategory](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1)
 * [GET /v3/severity](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7_8)
+
+***DQF POSTING CONTENT*** - See 
+
+Please check whether the names in the responses for the _catTool_ and _mtEngine_ parameters, the name of tool you are integrating with DQF actually matches the name your tool uses for identification. If you notice any discrepancies (e.g. "MyMemory" vs. "MyMemory Plugin"), please report them to the DQF Team:
+* [GET /v3/catTool](http://dqf-api.ta-us.net/#!/Basic_attributes/get)
+* [GET /v3/mtEngine](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4)
+
+The following attribute requires a clear mapping between DQF values and the values available in the tool. 
+* [GET /v3/segmentOrigin](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7)
+
+**IMPORTANT:** Please take a moment to review the [segment origin mapping document](https://drive.google.com/open?id=1sEvwAthP07YWNritEaInmG6w1p-xnyRZmvvh8zjxBTc) provided by TAUS and report any inconsistencies with your tool.
 
 <a name="requestsHeader"/>
 ## Requests/Header
