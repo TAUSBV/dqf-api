@@ -75,7 +75,7 @@ public static String encrypt(String value, String key) throws Exception {
 }
 ```
 
-The **_initVector_** will also be provided by us.
+The **_initVector_** will also be provided by us. The initVector will remain the same for the production environment.
 Should you decide to use your own initialization vector, it should be _16 Bytes_ and you must provide us with it.
 
 For testing/debugging purposes, we have enabled an encrypt endpoint which is accessible through 
