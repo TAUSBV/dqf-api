@@ -76,7 +76,7 @@ public static String encrypt(String value, String key) throws Exception {
 The **_initVector_** will also be provided by us. The initVector will remain the same for the production environment.
 Should you decide to use your own initialization vector, it should be _16 Bytes_ and you must provide us with it.
 
-The UI in the integrating tool should enable users to enter (and store) their TAUS DQF credentials. Please include the following text and URLs to the users:
+The UI in the integrating tool should enable users to enter (and store) their TAUS DQF credentials. Please include the following text and URLs into your UI:
 * "Don't have a TAUS account?" - Link to: https://www.taus.net/all-memberships/view-membership-details/64-taus-dqf-subscription
 * "Forgot your TAUS password?" - Link to: https://www.taus.net/component/users/?view=reset
 * "Forgot your TAUS email?" - Link to: https://www.taus.net/component/users/?view=remind
@@ -169,8 +169,8 @@ The next step is to declare the project files.
 The [POST /v3/project/master/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile/add) will be used for that. 
 For validation and statistical reasons, the number of segments that are included in the file is required.
 
-The final step for the master project setup would be a:
-[POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile%2FTarget_Language/add) where the target languages are associated with files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language.
+The final step for the master project setup would be a
+[POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile%2FTarget_Language/add) where the target languages are associated with the project files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language. If files and/or languages are added and/or modified, the combinations need to be updated accordingly.
 
 <a name="projectChild"/>
 ## Project/Child
