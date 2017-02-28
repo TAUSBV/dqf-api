@@ -1,6 +1,14 @@
 # DQF API v3.0 Documentation
 
-This document is for anyone who is interested in integrating with DQF using the DQF API v3.0
+This document is intended for anyone who is interested in integrating DQF into their (translation) technology using the DQF API v3.0.
+Please note that the DQF API is not related to DQF TOOLS (https://dqf.taus.net). If you are visiting the DQF Tool page, please keep in mind that DQF Tools play no role in the integration.
+
+Before reading the documentation consider the following:
+* You will most likely need to make UI changes to your tool when integrating DQF. We will provide recommendations in the relevant sections.
+* You need to ensure that you can correctly map the functionalities and/or workflow steps with DQF. Before starting the integration, please contact the DQF Team and share your proposed mapping for verification.
+* You need to ensure appropriate mapping between the users and/or user roles in your system and the TAUS user logins. Please discuss the user mapping directly with the DQF team in advance.
+
+The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration.
 
 ## Getting started
 * [Servers to Use](#servers)
