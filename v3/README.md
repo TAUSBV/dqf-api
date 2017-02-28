@@ -8,10 +8,12 @@ Before reading the documentation consider the following:
 * You need to ensure that you can correctly map the functionalities and/or workflow steps with DQF. Before starting the integration, please contact the DQF Team and share your proposed mapping for verification.
 * You need to ensure appropriate mapping between the users and/or user roles in your system and the TAUS user logins. Please discuss the user mapping directly with the DQF team in advance.
 
-The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration.
+The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration. Please refer to this overview as initial example: https://drive.google.com/open?id=15XamRUcDrjtOwHcOmx0SGC1w0tk8-PQuFldpKUFJ6II
+
+For any questions related to the integration, please contact dqfapi@taus.net
 
 ## Getting started
-* [Servers to Use](#servers)
+* [Server Info](#servers)
 * [Authentication](#authentication)
 * [Authentication - Generic Users](#genericUsers)
 * [Basic Attributes](#attributes)
@@ -30,18 +32,23 @@ The documentation will explain in greater detail the hierarchical tree structure
 * [API Specifications](#specs)
 
 <a name="servers"/>
-## Servers to Use
-During your development process, you **must** use our Staging Server: 
+## Server Info
+During your development process, you **must** use the DQF Staging Server: 
 * Site http://ta-us.net
 * API http://dqf-api.ta-us.net
 * Quality Dashboard http://qd.ta-us.net
 
-The staging server is dedicated to integrators only. All new features and/or fixes are deployed here as well before going to our production server. 
+The staging server is dedicated to integrators only. All new features and/or fixes are deployed here as well before going to the DQF production server. 
+In order to use the staging server, you need to create an account using ta-us.net. TAUS does not provide test accounts for integration. Please create your account using the Trial Membership option:
+http://www.ta-us.net/all-memberships/subscribe-to/20-taus-free-trial-membership. 
+The accounts will not expire despite the "trial" status. 
+If you want to access the Quality Dashboard with your staging account, you may need to request some to the DQF Team. 
+Please write to dqfapi@taus.net
 
 Once your integration is completed, you must contact the DQF team in order to enable your application on the production server. Once this is done, you should switch your base URLs to our official ones:
-* Site http://taus.net
-* API http://dqf-api.taus.net
-* Quality Dashboard http://qd.taus.net
+* Site https://taus.net
+* API https://dqf-api.taus.net
+* Quality Dashboard https://qd.taus.net
 
 <a name="authentication"/>
 ## Authentication
