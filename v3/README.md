@@ -8,14 +8,14 @@ Before reading the documentation consider the following:
 * You need to ensure that you can correctly map the functionalities and/or workflow steps with DQF. Before starting the integration, please contact the DQF Team and share your proposed mapping for verification.
 * You need to ensure appropriate mapping between the users and/or user roles in your system and the TAUS user logins. Please discuss the user mapping directly with the DQF team in advance.
 
-The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration. Please refer to this overview as initial example: https://drive.google.com/open?id=15XamRUcDrjtOwHcOmx0SGC1w0tk8-PQuFldpKUFJ6II
+The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration. Please refer to this overview as initial example: https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing
 
 For any questions related to the integration, please contact dqfapi@taus.net
 
 ## Getting started
 * [Server Info](#servers)
 * [Authentication](#authentication)
-* [Authentication - Generic Users](#genericUsers)
+* [Authentication - Generic User Account](#genericUsers)
 * [Basic Attributes](#attributes)
 * [Requests/Header](#requestsHeader)
 * [Project/Master](#projectMaster)
@@ -78,6 +78,11 @@ public static String encrypt(String value, String key) throws Exception {
 The **_initVector_** will also be provided by us. The initVector will remain the same for the production environment.
 Should you decide to use your own initialization vector, it should be _16 Bytes_ and you must provide us with it.
 
+The UI in the integrating tool should enable users to enter (and store) their TAUS DQF credentials. Please include the following text and URLs to the users:
+* "Don't have a TAUS account?" - Link to: https://www.taus.net/all-memberships/view-membership-details/64-taus-dqf-subscription
+* "Forgot your TAUS password?" - Link to: https://www.taus.net/component/users/?view=reset
+* "Forgot your TAUS email?" - Link to: https://www.taus.net/component/users/?view=remind
+
 For testing/debugging purposes, we have enabled an encrypt endpoint which is accessible through 
 [POST /v3/encrypt](http://dqf-api.ta-us.net/v3/encrypt). 
 No authentication is required. The body parameters are:
@@ -87,7 +92,7 @@ No authentication is required. The body parameters are:
 
 With a successful request you should get back your encrypted and Base64 encoded credentials.
 
-**Note:** The aforementioned endpoint is not available in production and should not be used as part of your final implementation.
+**NOTE:** The _encrypt_ endpoint is not available in production and should not be used as part of your final implementation.
 
 ## Response Content Type
 All the responses are in Json format. You should explicitly handle the status of the response in order to retrieve additional information. For example, in .NET you can catch a WebException for a BadRequest and parse the content to see what went wrong:
@@ -104,10 +109,11 @@ All the responses are in Json format. You should explicitly handle the status of
 ```
 
 The code is DQF specific and can be used to report the nature of the problem to the DQF team.
+**NOTE:** For debugging and troubleshooting purposes, it is _critical_ that you can provide logs of the calls to the DQF server. The DQF Team strongly recommends to include UI elements containing the API responses in case of errors. Errors need to be reported to the DQF Team and the users need to be informed whenever the communication with the DQF server fails and ideally also when operations are concluded successfully.
 
 <a name="genericUsers"/>
-## Authentication - Generic Users (not on production)
-Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users need not have a TAUS account while using the API's clients. In order to obtain a generic account you should contact the DQF team. The aforementioned account gets authenticated in the exact same way as [Authentication](#authentication) describes.
+## Authentication - Generic User Account 
+Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users do not need a valid TAUS account while using the API clients. Generic accounts are provided by the DQF team at integrator (=tool) level. However, one integrator can request multiple generic accounts if their integration requires this. In order to obtain a generic account you should contact the DQF team. The generic account gets authenticated in the exact same way as [Authentication](#authentication) describes.
 There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
 
 **IMPORTANT!!!** Note that although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/).
@@ -136,7 +142,7 @@ The core entity of the DQF API. Once the basic attributes are received, a master
 [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add)
 The APIs hierarchy is based on a *tree structure where the root node is the master project*.
 A master project contains all of the basic attributes which are then inherited by child projects. After a successful post the project's *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The owner will be identified from the header's *sessionID*.
-**Note:** There are no endpoints to apply translations/reviews to the master project (attribute placeholder). It is necessary to create child projects for that purpose.
+**NOTE:** There are no endpoints to apply translations/reviews to the master project (attribute placeholder). It is necessary to create child projects for that purpose.
 
 The next action would be to declare the project files. 
 The [POST /v3/project/master/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile/add) will be used for that. 
@@ -155,7 +161,7 @@ _Child1_ will declare the master project's UUID as the parentKey. Of Course chil
 There is no need to declare files for child projects as they have access to the master/root project files. A child project can get a list of files with [GET /v3/project/child/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile/getAll). The projectId here refers to the child project.
 
 The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language/add) will be used next to declare the target language for the child project.
-**Note:** A child project can declare any combination of files/targetLangs that are a **subset** of their **parents'** *file/targetLang* pairs. So building on the previous example, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
+**NOTE:** A child project can declare any combination of files/targetLangs that are a **subset** of their **parents'** *file/targetLang* pairs. So building on the previous example, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
 
 <a name="translation"/>
 ## Translation
