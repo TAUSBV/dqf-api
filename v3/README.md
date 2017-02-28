@@ -121,24 +121,24 @@ There is an extra header parameter required when using session ids that derive f
 The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these. 
 The basic attributes can be grouped according to their function. More details will be provided in the related sections:
 
-***DQF PROJECT SETTINGS*** - See [Master Project](#projectMaster) 
+***DQF PROJECT SETTINGS*** - See [Master Project](#projectMaster) and [User/Company Templates](#templates)
 
-You may require some mapping between your current values and the ones used in DQF. If this is the case please notify the DQF Team.
+You may require some mapping between your current values and the ones used in DQF. If this is the case, please notify the DQF Team.
 * [GET /v3/contentType](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0)
 * [GET /v3/industry](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2)
 * [GET /v3/process](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5)
 * [GET /v3/qualitylevel](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6)
 
-The following call is no longer necessary after compliance with the [BCP47 standard](https://tools.ietf.org/html/bcp47)
+The following call is no longer necessary after compliance with the [BCP47 standard](https://tools.ietf.org/html/bcp47):
 * [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
 
-***DQF REVIEW SETTINGS*** - See [Review](#review)
+***DQF REVIEW SETTINGS*** - See [Review](#review) and [User/Company Templates](#templates)
 
 We consider the current error category as stable with no changes expected in the near future. Should you use hard-coded values for the error categories or any other attribute in this list, please inform the DQF Team. If changes to the current values are required, we will notify integrators in due time.
 * [GET /v3/errorCategory](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1)
 * [GET /v3/severity](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7_8)
 
-***DQF POSTING CONTENT*** - See 
+***DQF POSTING CONTENT*** - See [Child Project](#projectChild) and [Target segments](#targetSegments)
 
 Please check whether the names in the responses for the _catTool_ and _mtEngine_ parameters, the name of tool you are integrating with DQF actually matches the name your tool uses for identification. If you notice any discrepancies (e.g. "MyMemory" vs. "MyMemory Plugin"), please report them to the DQF Team:
 * [GET /v3/catTool](http://dqf-api.ta-us.net/#!/Basic_attributes/get)
