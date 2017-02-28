@@ -155,13 +155,17 @@ As already explained, every request to the DQF API (apart from the aforementione
 
 <a name="projectMaster"/>
 ## Project/Master
-The core entity of the DQF API. Once the basic attributes are received, a master project needs to be created: 
-[POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add)
-The APIs hierarchy is based on a *tree structure where the root node is the master project*.
-A master project contains all of the basic attributes which are then inherited by child projects. After a successful post the project's *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The owner will be identified from the header's *sessionID*.
-**NOTE:** There are no endpoints to apply translations/reviews to the master project (attribute placeholder). It is necessary to create child projects for that purpose.
+The (Master) Project is the core entity of the DQF API. The APIs hierarchy is based on a *tree structure where the root node is the master project*.
 
-The next action would be to declare the project files. 
+Please note that the concept of _project_ in DQF does not necessarily match the corresponding entity in your tool (e.g. "drop", "(split) job", "task", etc.). Make sure you correctly map your entities to the DQF project-tree structure. Ask the DQF Team for support, if needed.
+
+A master project contains all of the basic attributes which are then inherited by child projects (see [Basic Attributes](#attributes)). Once the basic attributes are received, a master project needs to be created: [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add).
+
+After a successful post, the project *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The master project owner will be identified from the *sessionID* in the header.
+
+**NOTE:** There are ***no*** endpoints to post translation/review content to the master project, which is a setting/attribute container. It is necessary to create child projects for that purpose. However, a Master Project ***can*** contain _source text_ content (see [Translation](#translation)).
+
+The next step is to declare the project files. 
 The [POST /v3/project/master/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile/add) will be used for that. 
 For validation and statistical reasons, the number of segments that are included in the file is required.
 
