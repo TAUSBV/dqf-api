@@ -21,11 +21,11 @@ For any questions related to the integration, please contact dqfapi@taus.net
 * [Project/Master](#projectMaster)
 * [Project/Child](#projectChild)
 * [Translation](#translation)
-* [Target Segments](#targetSegments)
+* [Target Segment Info](#targetSegments)
 * [Review](#review)
 * [Automated Review Projects](#automatedReview)
 * [Project Status](#projectStatus)
-* [Target segments](#targetSegments)
+* [Batch Upload](#batchUpload)
 * [User/Company Templates](#templates)
 * [Mapping](#mapping)
 * [User](#user)
@@ -131,6 +131,8 @@ You may require some mapping between your current values and the ones used in DQ
 * [GET /v3/process](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5)
 * [GET /v3/qualitylevel](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6)
 
+**IMPORTANT:** Please use the term **Sector** on the UI where the API reads *Industry*.
+
 The following call is no longer necessary after DQF has become compliant with the [BCP47 standard](https://tools.ietf.org/html/bcp47):
 * [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
 
@@ -152,7 +154,7 @@ Please check whether the names in the responses for the _catTool_ and _mtEngine_
 The following attribute requires a clear mapping between DQF values and the values available in the tool. 
 * [GET /v3/segmentOrigin](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7)
 
-**IMPORTANT:** Please take a moment to review the [segment origin mapping document](https://drive.google.com/open?id=1sEvwAthP07YWNritEaInmG6w1p-xnyRZmvvh8zjxBTc) provided by TAUS and report any inconsistencies with your tool.
+**IMPORTANT:** Please take a moment to review the [segment origin mapping document](https://drive.google.com/open?id=1sEvwAthP07YWNritEaInmG6w1p-xnyRZmvvh8zjxBTc) provided by TAUS and report any inconsistencies with your tool. You will need to use these parameters when posting [translations](#fields).
 
 <a name="requestsHeader"/>
 ## Requests/Header
@@ -167,6 +169,8 @@ Please note that the concept of _project_ in DQF does not necessarily match the 
 A master project contains all of the basic attributes which are then inherited by child projects (see [Basic Attributes](#attributes)). Once the basic attributes are received, a master project needs to be created: [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add).
 
 **IMPORTANT:** The basic attributes for a master project are the DQF Project Settings. We expect the user to be able to manually select these values directly from the UI, either in the form of individual values or as a template. Please make sure that you _do not_ post some arbitrarily defined default settings without giving the user the possibility to modify these. TAUS reserves the right to block data from a given integration should the database get 'polluted' with such non-user defined values. We strongly suggest that every integrator discusses with the DQF Team beforehand how DQF Project Settings will be collected.
+
+**IMPORTANT:** Please use the term **Sector** on the UI where the API reads *Industry*.
 
 After a successful post, the project *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The master project owner will be identified from the *sessionID* in the header.
 
@@ -250,27 +254,17 @@ If you prefer not to send each translated segment individually, you have the pos
 In this approach, source and target segments are posted at the same time using one single method:
 [POST /v3/project/**child**/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add). This method is almost identical to the POST/translation described above and only requires two additional parameters: 1) the source segment content and 2) its index numbering.
 
-If you prefer not so send each segment pair individually, you have the possibility of uploading segments in [batch](#batchUpload).
+Please note that for this approach _no batch upload_ of full segments is currently available.
 
 **Note:** It is strongly recommended the use of [Approach 1](#approach1). Even though it seems like extra effort (batch upload, an additional request), it will lead to a more robust solution.
 
+Irrespective of the POST approach you decide to use, you will need to ensure that DQF receives all required information to produce accurate reports. This includes all relevant (source/target) segment and review information that complement that translated/reviewed content itself. Please consider carefully how you want to approach the submissions to DQF. If you need assistance please contact the DQF Team.
+
+**IMPORTANT:** DQF requires all translated segments at least once while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
+
 <a name="targetSegments"/>
-## Target Segments
-<a name="batchUpload"/>
-### Batch Upload
-Irrespective of the POST approach you decide to use, you will need to ensure that DQF receives all required information to produce accurate reports. This includes all relevant (target) segment and review information that complement that translated/reviewed content itself.
-
-Depending on your integration approach and triggers, you can use the POST calls in different ways.
-However, you need to ensure that DQF receives _at least once_ in a project tree **ALL** translated segments and info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
-
-**IMPORTANT:** DQF requires these translated segments while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent DQF review projects.
-
-The API enables a batch upload of segments. The maximum allowed number of elements in a batch/array is 100.
-In order to send all the "untouched" translated segments, you can use the batch operation [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). 
-
-**IMPORTANT:** If you are using [Approach 2](#approach2), you will also need to ensure that all missing (= unedited) source/target pairs are submitted as well.
- 
-
+## Target Segment Info
+<a name="fields"/>
 ### Fields and Constraints
 In all of the requests that include target segments (the aforementioned batch operation and the two approaches for translation), you will find the same parameters to describe a target segment based on its origin.
 
@@ -415,37 +409,45 @@ The response will contain a list of all the Review projects that were created an
 Currently, we allow the update of status for Child Projects only. This is accomplished through 
 [PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value you can update the status to currently is ‘completed’. You should use this as soon as a translation or a review task (that is mapped to a DQF child project) is done (ex. translator finishes and notifies PM). All the other statuses are automatically assigned through certain events in the API. You can retrieve a project’s current status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
 
-<a name="targetSegments"/>
-## Target Segments
-The final step for a child project (after a translation or a review has taken place) would be to post **all** of the remaining target segments (if any) that were not edited (translation or review correction). This can be accomplished through:
-[POST v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1). 
-This is similar to the batch source segments operation. To verify which source segments have target segment content the following method can be used:
-[GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get).
+<a name="batchUpload"/>
+### Batch Upload
+Depending on your integration approach and triggers, you can choose among the available POST calls.
+However, you need to ensure that DQF receives _**at least once**_ in a project tree **ALL** source and translated segments as well as segment info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
 
-This request will return all of the source segments of the file and a flag determining if target segments have been posted (through translation or review process) for the specified target language.
+**IMPORTANT:** DQF requires all translated segments at least once while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
 
-**Note:** The target segment batch upload can take place at any time during the execution of the translation/review project. The final batch upload can be made e.g when the user is ready to complete the job or e.g. when the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
+If you are following [Approach 1](#approach1) for posting translations, you can use a method for batch upload of segments. The maximum allowed number of elements in a batch/array is 100. 
+
+In order to send all the "untouched"/remaining translated segments (if any), you can use the batch operation [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. To verify which source segments have target segment content the following method can be used:
+[GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted (during translation or review) for the specified target language.
+
+**Note:** A target segment batch upload can take place at any time during the execution of the translation/review project. You will need to evaluate the available triggers. The final batch upload can be made e.g when a user is completes his/her part of the job or e.g. after the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
+
+**IMPORTANT:** If you are using [Approach 2](#approach2), you will still need to post each segment pair with separate calls.
 
 <a name="templates"/>
 ## User/Company Templates
-In order to enhance user experience a set of operations allowing the use of project templates has been  included. Templates contain project settings that pre-populate the fields required by DQF. Templates are created by a single user but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*.
-
+In order to enhance user experience, DQF attributes can be pre-populated by means of templates. Templates contain user-dependent DQF project attributes which can be called to quickly create new DQF (master) projects. Templates are created by (and associated to) a single user (= TAUS account) but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*. From a UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates.
 
 There are two types of templates:
-1. Project templates
+1. Project settings templates
 2. Review settings templates
 
 ### Templates/Project
 To post a project template use [POST /v3/user/projectTemplate](http://dqf-api.ta-us.net/#!/Template/add). 
-This request includes all of the parameters that are required during a master project creation (*content type, industry, process, quality level*) except *source language*. 
-A user can get a list of project templates he/she has access to through  [GET /v3/user/projectTemplate](http://dqf-api.ta-us.net/#!/Template/getAll). This request should fetch all user’s templates plus any shared template within the organization. In UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates.
+This request includes all of the parameters that are required during a master project creation (*content type, industry, process, quality level* - see [DQF Project Settings](#projectSettings)) except *source language*. 
+You can show the user a list of project templates he/she has access to through [GET /v3/user/projectTemplate](http://dqf-api.ta-us.net/#!/Template/getAll). This request should fetch all user’s templates plus any shared template within the organization. 
 
 ### Templates/Review
-The same principle applies to Review templates. 
-To post a review template use [POST /v3/user/reviewTemplate](http://dqf-api.ta-us.net/#!/Template/add_0). 
-To access the user's and shared organization templates use GET /v3/user/reviewTemplate.
+The same principle applies to Review templates. In addition to the *error category ids* and *severity* attributes specified in [DQF Review Settings](#reviewSettings), Review template also require the *review type* and, where applicable, *pass/fail threshold* and *severity weights*. Please note that the *sampling* attribute is not used in the Quality Dashboard.
+You may want to avoid using templates for the review type *correction* as no additional attributed are actually required.
 
-**Note:** A review can be created template automatically when posting review settings as described in the *Review* section.
+**IMPORTANT:** Please use the term **Error Annotation** on the UI where the API reads *error_typology*
+
+To post a review template use [POST /v3/user/reviewTemplate](http://dqf-api.ta-us.net/#!/Template/add_0). 
+To provide access to the user's and organization templates use GET /v3/user/reviewTemplate.
+
+**Note:** A review can be created template automatically when posting review settings as described in the [Review](#review) section.
 
 <a name="mapping"/>
 ## Mapping
