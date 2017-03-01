@@ -129,7 +129,7 @@ You may require some mapping between your current values and the ones used in DQ
 * [GET /v3/process](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5)
 * [GET /v3/qualitylevel](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6)
 
-The following call is no longer necessary after compliance with the [BCP47 standard](https://tools.ietf.org/html/bcp47):
+The following call is no longer necessary after DQF has become compliant with the [BCP47 standard](https://tools.ietf.org/html/bcp47):
 * [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
 
 ***DQF REVIEW SETTINGS*** - See [Review](#review) and [User/Company Templates](#templates)
@@ -160,6 +160,8 @@ The (Master) Project is the core entity of the DQF API. The APIs hierarchy is ba
 Please note that the concept of _project_ in DQF does not necessarily match the corresponding entity in your tool (e.g. "drop", "(split) job", "task", etc.). Make sure you correctly map your entities to the DQF project-tree structure. Ask the DQF Team for support, if needed.
 
 A master project contains all of the basic attributes which are then inherited by child projects (see [Basic Attributes](#attributes)). Once the basic attributes are received, a master project needs to be created: [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add).
+
+**IMPORTANT:** The basic attributes for a Master Project are the DQF Project Settings. We expect the user to be able to manually select these values directly from the UI, either in the form of individual values or as a template. Please make sure that you _do not_ post some arbitrarily defined default settings without giving the user the possibility to modify these. TAUS reserves the right to block data from a given integration should the database get 'polluted' with such non-user defined values. We strongly suggest that every integrator discusses with the DQF Team beforehand how DQF Project Settings will be collected.
 
 After a successful post, the project *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The master project owner will be identified from the *sessionID* in the header.
 
