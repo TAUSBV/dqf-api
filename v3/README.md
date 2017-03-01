@@ -160,13 +160,13 @@ As already explained, every request to the DQF API (apart from the aforementione
 
 <a name="projectMaster"/>
 ## Project/Master
-The (Master) Project is the core entity of the DQF API. The APIs hierarchy is based on a *tree structure where the root node is the master project*.
+The (master) project is the core entity of the DQF API. The APIs hierarchy is based on a *tree structure where the root node is the master project*.
 
 Please note that the concept of _project_ in DQF does not necessarily match the corresponding entity in your tool (e.g. "drop", "(split) job", "task", etc.). Make sure you correctly map your entities to the DQF project-tree structure. Ask the DQF Team for support, if needed.
 
 A master project contains all of the basic attributes which are then inherited by child projects (see [Basic Attributes](#attributes)). Once the basic attributes are received, a master project needs to be created: [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add).
 
-**IMPORTANT:** The basic attributes for a Master Project are the DQF Project Settings. We expect the user to be able to manually select these values directly from the UI, either in the form of individual values or as a template. Please make sure that you _do not_ post some arbitrarily defined default settings without giving the user the possibility to modify these. TAUS reserves the right to block data from a given integration should the database get 'polluted' with such non-user defined values. We strongly suggest that every integrator discusses with the DQF Team beforehand how DQF Project Settings will be collected.
+**IMPORTANT:** The basic attributes for a master project are the DQF Project Settings. We expect the user to be able to manually select these values directly from the UI, either in the form of individual values or as a template. Please make sure that you _do not_ post some arbitrarily defined default settings without giving the user the possibility to modify these. TAUS reserves the right to block data from a given integration should the database get 'polluted' with such non-user defined values. We strongly suggest that every integrator discusses with the DQF Team beforehand how DQF Project Settings will be collected.
 
 After a successful post, the project *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The master project owner will be identified from the *sessionID* in the header.
 
@@ -181,10 +181,10 @@ The final step for the master project setup would be a
 
 <a name="projectChild"/>
 ## Project/Child
-A Child Project is used to handle the actual translation/revision work. To declare a Child Project the 
+A child project is used to handle the actual translation/revision work. To declare a child project the 
 [POST /v3/project/child](http://dqf-api.ta-us.net/#!/Project%2FChild/add) has to be used. The parent's _UUID_ must be specified to create a parent/child relationship (remember that a hierarchical tree structure is used).  
 
-**Example:** _Child1_ will declare the Master Project's UUID as the parentKey. Of course, Child1 can have as many siblings as needed. If then a child of _child1_ (_child1.1_) needs to be created, the same endpoint will be used but with the _child1 UUID_ as a parentKey. 
+**Example:** _Child1_ will declare the master project's UUID as the parentKey. Of course, Child1 can have as many siblings as needed. If then a child of _child1_ (_child1.1_) needs to be created, the same endpoint will be used but with the _child1 UUID_ as a parentKey. 
 
 A Child Project can be of two types: *translation* or *review*. 
 * A _translation_ Child Project should be used for all workflow steps until the translation is completed. 
@@ -192,22 +192,23 @@ A Child Project can be of two types: *translation* or *review*.
 
 **Example:** If you are applying a TEP (Translation-Editing-Proofreading) approach followed by an "official" reveiw step, you may want to consider the Translation and Editing steps as DQF _translation_ steps and depending on how Proofreading is handled, you may consider it a _translation_ or _review_ step for DQF purposes. 
 
-Each type of child project requires specific settings. These are specified in the [Translation](#translation) and [Review](#review) sections. By default, the Child Project will inherit the settings/basic attributes specified in the Master Project, but there can be exceptions (see [Review](#review) for more details).
+Each type of child project requires specific settings. These are specified in the [Translation](#translation) and [Review](#review) sections. By default, the Child Project will inherit the settings/basic attributes specified in the master project, but there can be exceptions (see [Review](#review) for more details).
 
-**IMPORTANT:** In the current implementation, the "review only" scenario is _not_ supported. You will always need to have at least one Child Project of type _translation_ in a project tree.
+**IMPORTANT:** In the current implementation, the "review only" scenario is _not_ supported. You will always need to have at least one child project of type _translation_ in a project tree.
 
-You should post a DQF Child Project every time _at least_ one of these conditions is true:
+You should post a DQF child project every time _at least_ one of these conditions is true:
 * _There is a change in workflow step_ (if applicable)
 * _There is a change in the user who is working on the project._ User should be understood from a DQF perspective as the TAUS account or email address associated with the requests. This can map 1:1 with the users shown in your system, but it may also not be the case. This condition also includes the scenario in which a Project Manager receives a project back and sends it to someone else, which would count as three different users.
 
-Every Child Project has an associated _owner_. Generally speaking, the _owner_ is the TAUS account that is in use when making the request. You also have the possibility of declaring a different owner for a child project by specifying an email in the *assignee* parameter. This email must belong to an existing **TAUS account**. This is the case when the individual assignee is known at the moment of the POST request. Please note that for the purposes of the DQF hierarchy, an assignee does not have to actually perform the translation/review task. It could also just be a project manager who receives the assignment from their customer. This satisfies the second condition for posting a Child Project.
+Every child project has an associated _owner_. Generally speaking, the _owner_ is the TAUS account that is in use when making the request. You also have the possibility of declaring a different owner for a child project by specifying an email in the *assignee* parameter. This email must belong to an existing **TAUS account**. This is the case when the individual assignee is known at the moment of the POST request. Please note that for the purposes of the DQF hierarchy, an assignee does not have to actually perform the translation/review task. It could also just be a project manager who receives the assignment from their customer. This satisfies the second condition for posting a child project.
 
-**IMPORTANT:** As shown in the [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing), a Child Project can only have ***one*** parent project, while a parent project can have multiple Child Projects. Please keep this in mind when dealing with returned jobs and/or split jobs. Once the DQF project tree branches out, the branches need to be kept separate and cannot be merged back. This is one of the main differences between the DQF tree structure and your tool.
+**IMPORTANT:** As shown in the [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing), a child project can only have ***one*** parent project, while a parent project can have multiple child projects. Please keep this in mind when dealing with returned jobs and/or split jobs. Once the DQF project tree branches out, the branches need to be kept separate and cannot be merged back. This is one of the main differences between the DQF tree structure and your tool.
 
-When posting the request, there is no need to declare files, as Child Projects have access to the master/root project files. A child project can get a list of the available files with [GET /v3/project/child/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile/getAll). The projectId here refers to the Child Project.
+When posting the request, there is no need to declare files, as child projects have access to the master/root project files. A child project can get a list of the available files with [GET /v3/project/child/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile/getAll). The projectId here refers to the child project.
 
-The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language/add) will be used next to declare the target language(s) of the Child Project.
-**NOTE:** A child project can declare any combination of files/targetLangs that are a **subset** of the *file/targetLang* pairs of their **parent**. So building on the previous example, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
+The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language/add) will be used next to declare the target language(s) of the child project.
+
+**NOTE:** A child project can declare any combination of files/targetLangs that are a **subset** of the *file/targetLang* pairs of their **parent**. So building on the example above, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
 
 <a name="translation"/>
 ## Translation
