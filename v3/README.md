@@ -121,7 +121,7 @@ There is an extra header parameter required when using session ids that derive f
 The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these. 
 The basic attributes can be grouped according to their function. More details will be provided in the related sections:
 
-<a name="ProjectSettings"/>
+<a name="projectSettings"/>
 ### DQF PROJECT SETTINGS
 See [Master Project](#projectMaster) and [User/Company Templates](#templates)
 
@@ -134,7 +134,7 @@ You may require some mapping between your current values and the ones used in DQ
 The following call is no longer necessary after DQF has become compliant with the [BCP47 standard](https://tools.ietf.org/html/bcp47):
 * [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
 
-<a name="ReviewSettings"/>
+<a name="reviewSettings"/>
 ### DQF REVIEW SETTINGS
 See [Review](#review) and [User/Company Templates](#templates)
 
@@ -170,11 +170,11 @@ A master project contains all of the basic attributes which are then inherited b
 
 After a successful post, the project *Id* and *UUID(dqfUUID)* will be returned as response. The *Id* should be used as path parameter whereas the *UUID* as a header parameter for subsequent requests. The master project owner will be identified from the *sessionID* in the header.
 
-**NOTE:** There are ***no*** endpoints to post translation/review content to the master project, which is a setting/attribute container. It is necessary to create child projects for that purpose. However, a Master Project ***can*** contain _source text_ content (see [Translation](#translation)).
+**NOTE:** There are ***no*** endpoints to post translation/review content to the master project, which is a setting/attribute container. It is necessary to create child projects for that purpose. However, a Master Project ***can*** contain _source text_ content (see the section [Translation](#approach1)).
 
 The next step is to declare the project files. 
 The [POST /v3/project/master/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile/add) will be used for that. 
-For validation and statistical reasons, the number of segments that are included in the file is required.
+For validation and statistical reasons, the number of segments that are included in the file is required (*numberOfSegments*).
 
 The final step for the master project setup would be a
 [POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile%2FTarget_Language/add) where the target languages are associated with the project files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language. If files and/or languages are added and/or modified, the combinations need to be updated accordingly.
@@ -202,6 +202,8 @@ You should post a DQF child project every time _at least_ one of these condition
 
 Every child project has an associated _owner_. Generally speaking, the _owner_ is the TAUS account that is in use when making the request. You also have the possibility of declaring a different owner for a child project by specifying an email in the *assignee* parameter. This email must belong to an existing **TAUS account**. This is the case when the individual assignee is known at the moment of the POST request. Please note that for the purposes of the DQF hierarchy, an assignee does not have to actually perform the translation/review task. It could also just be a project manager who receives the assignment from their customer. This satisfies the second condition for posting a child project.
 
+As a result, there will likely be more child projects posted than what you are able to show on your tool interface. This is fine. DQF will aggregate results as needed using the child projects in the workflow. The **important** thing for you to do is to make sure that _every new or returning user_ is assigned a new DQF child project, i.e. there are no gaps in the workflow steps from a DQF perspective.
+
 **IMPORTANT:** As shown in the [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing), a child project can only have ***one*** parent project, while a parent project can have multiple child projects. Please keep this in mind when dealing with returned jobs and/or split jobs. Once the DQF project tree branches out, the branches need to be kept separate and cannot be merged back. This is one of the main differences between the DQF tree structure and your tool.
 
 When posting the request, there is no need to declare files, as child projects have access to the master/root project files. A child project can get a list of the available files with [GET /v3/project/child/{projectId}/file](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile/getAll). The projectId here refers to the child project.
@@ -212,10 +214,12 @@ The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api
 
 <a name="translation"/>
 ## Translation
-To be able to post a translation, there must be a child project with a type of *translation*. The API supports two different alternatives for posting translations. The main distinguishing parameter among these two approaches is the prerequisite of *source segments*.
+To be able to post translation-related content to DQF, there must be a child project of type *translation*. No specific project settings are needed as the required attributes are inherited from the parent/master project (see [DQF Project Settings](#projectSettings)). 
+The API supports two  alternative ways for posting translation data. The main difference between these approaches lies in how the *sourceSegments* parameter is handled. Source segments can be sent to DQF in batch after creating a master project or they can be submitted together with the translated segment at child project level.
 
-### Approach 1: Translation with source segments posted at master project level:
-In this approach, all of a file's source segments have first to be uploaded at master project level. The [POST /v3/project/master/{projectId}/file/{fileId}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1) should be used after the files for the master project have been declared. The *sourceSegments* body parameter should be a Json Array. Example (two source segments):
+<a name="approach1"/>
+### APPROACH 1: Source segments posted at _master_ project level & translations at _child_ level (_RECOMMENDED_)
+In this approach, all source segments in a file/job have first to be uploaded at master project level. This means that translated segments will be posted separately with a different method. The [POST /v3/project/**master**/{projectId}/file/{fileId}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1) should be used after declaring the files for the master project. The *sourceSegments* body parameter should be a Json Array. Example (two source segments):
 
 ```json
 [  
@@ -232,23 +236,40 @@ In this approach, all of a file's source segments have first to be uploaded at m
 ]
 ```
 
-The *index* refers to the segment's sequential numbering in the file. The maximum allowed number of elements in the array is 100. Whenever a re-post of segments with the same index numbers is submitted, the old values will be overwritten. After each successful post the DQF Id for each segment will be returned.
-**Note:** During this process the *numberOfSegments* declared at file posting cannot be exceeded.
+The *index* refers to the sequential numbering of the segments in each file. The maximum allowed number of elements in the array is 100. Whenever a re-post of segments with the same index numbers is submitted, the old values will be overwritten. After each successful post, the DQF Id for each segment will be returned.
+**Note:** During this process, the *numberOfSegments* declared at file posting cannot be exceeded.
 
-Child projects can access the source segment information through: [GET/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get)
-To post a translation in this scenario the 
-[POST/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0) method should be used.
+When posting translation, child projects can access the source segment information through: [GET/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get)
+To post a translation in this scenario, the 
+[POST/v3/project/**child**/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0) method should be used.
 
-### Approach 2: Translation with source segments posted at translation level:
-In this approach, the method
-[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add) which is almost identical to the aforementioned translation post should be used. The additional parameters here are the source segment content and its index numbering.
+If you prefer not to send each translated segment individually, you have the possibility of uploading segments in [batch](#batchUpload).
 
-**Note:** It is strongly recommended the use of the 1st approach. Even though it seems like extra effort (batch upload, an additional request) it will lead to a more robust solution.
+<a name="approach2"/>
+### APPROACH 2: Source segments and translations posted at translation _child_ project level
+In this approach, source and target segments are posted at the same time using one single method:
+[POST /v3/project/**child**/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add). This method is almost identical to the POST/translation described above and only requires two additional parameters: 1) the source segment content and 2) its index numbering.
+
+If you prefer not so send each segment pair individually, you have the possibility of uploading segments in [batch](#batchUpload).
+
+**Note:** It is strongly recommended the use of [Approach 1](#approach1). Even though it seems like extra effort (batch upload, an additional request), it will lead to a more robust solution.
 
 <a name="targetSegments"/>
 ## Target Segments
+<a name="batchUpload"/>
 ### Batch Upload
-Whichever approach you decide to use, aside from the tranlation itself, you will need to send all relevant information for the target segments as well. Depending on the integration approach there may be segments that were not sent to the DQF (ex. segments that were not processed by the translator). DQF requires these segments as well so as to have a reference for subsequent review projects. In order to send all the "untouched" segments, you can use the batch operation [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). 
+Irrespective of the POST approach you decide to use, you will need to ensure that DQF receives all required information to produce accurate reports. This includes all relevant (target) segment and review information that complement that translated/reviewed content itself.
+
+Depending on your integration approach and triggers, you can use the POST calls in different ways.
+However, you need to ensure that DQF receives _at least once_ in a project tree **ALL** translated segments and info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
+
+**IMPORTANT:** DQF requires these translated segments while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent DQF review projects.
+
+The API enables a batch upload of segments. The maximum allowed number of elements in a batch/array is 100.
+In order to send all the "untouched" translated segments, you can use the batch operation [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). 
+
+**IMPORTANT:** If you are using [Approach 2](#approach2), you will also need to ensure that all missing (= unedited) source/target pairs are submitted as well.
+ 
 
 ### Fields and Constraints
 In all of the requests that include target segments (the aforementioned batch operation and the two approaches for translation), you will find the same parameters to describe a target segment based on its origin.
