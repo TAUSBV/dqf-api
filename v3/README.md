@@ -307,17 +307,35 @@ Review projects are created as (direct) children of translation or other review 
 
 **IMPORTANT:** Please note that irrespective of the mapping you adopt, you **must** have at least one child project of type _translation_ in the tree before you can create a project of type _review_.
 
-In order to post a review project you need to specify the [DQF Review Settings](#reviewSettings)
+In order to post a review project you need to specify the [DQF Review Settings](#reviewSettings). This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
+By specifying the *templateName* parameter, the posted settings will also be saved as a template associated with the active user (see [User/Company Templates](#templates)). 
+
+A review child project will also need to be assigned to a _type of review_. The sub-type will be automatically defined by the API, based on the non-required parameters that are included during the review settings post. Three types of review projects are supported:
+
+1. **Correction** (_correction_): The existing translation is edited/corrected 
+2. **Error Annotation** (*error_typology*): The identified incorrect part of a translation are marked using one or multiple error categories and severities. The errors can to be applied to:		
+  * Whole segment		
+  * Part of segment	
+3. **Combined** (_combined_): Combination of the above. The existing translation is corrected and error categories are applied. Here too errors can apply to the whole segment or just a part.
 
 
-The first thing would be to add the Review Settings that the user intends to apply. This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
-By specifying the *templateName* parameter, the posted settings will also be saved as a user template (templates are described below). 
-To create a review project use the 
-[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment%2FReview/add) review method.
+
+**Note:** Review projects can also have projects of type _translation_ as children. For example, a review project with a type *Error Annotation* is created and completed. The owner of the parent project of this review project (let's assume a translation project)  decides to have the project go through a new translation round. Two options are possible:
+* A new child of type _translation_ gets created that has the review project as parent. 
+* A new child of type _review/correction_ gets created.
+Which of the two options should be chosen ultimately depends on your implementationa and your tool. However, please keep in mind that the results on the reports will be different according to the chosen approach.
+
+
+The review settings can be posted at master project level if they are known from the beginning of the project. Alternatively, they can be posted at child project level if e.g. 1) they are determined at a later stage 2) a different set of review settings is required for a subset of the workflow. The TAUS account in use when the review settings are submitted is considered the ***initiator*** of the review cycle.
+
+
+
+To create a review project you need to use the method
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment%2FReview/add).
 
 This is the most complex request in the API.
 
-The easiest way to explain this would be by seeing how a request's raw body data looks like:
+The easiest way to explain this method is to display the request raw body data:
 ```json
 {
     "overwrite": true,
@@ -402,19 +420,7 @@ The whole procedure took 10 secs. These series of actions should generate the js
 * Getting back to the overwrite parameter. If this is set to true, then the whole segment revision history should be posted every time you trigger the upload (ex. document saved) as it overwrites existing records in our end. 
 If set to false, then only the new and un-posted revisions should be sent.
 
-Three types of review projects are supported:
 
-1. Error Review - i.e. selection of one or multiple error categories to be applied to:		
-  * Whole segment		
-  * Part of segment	
-2. Correction - i.e. editing the existing translation
-3. Combined (a combination of the above). For the error review part, again:		
-  * Whole segment		
-  * Part of segment
-
-The sub-type will be automatically defined by the API , based on the non-required parameters that were included during the review settings post.
-
-**Note:** Review projects can also have translation projects as children. For example, a review project with a type of *Error Review* is created and completed. The review's parent project (let's assume a translation project) owner decides to send it again for translation. This should create a translation child for the aforementioned review project. Or he/she can send it for review *Correction* which would then have to create a review child project.
 
 <a name="automatedReview"/>
 ## Automated Review Projects
