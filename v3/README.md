@@ -464,12 +464,13 @@ A client-API identifier mapping for the following entities is provided:
 * Source Segment: [GET /v3/DQFSegmentId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1)	
 * Translation: [GET /v3/DQFTranslationId](http://dqf-api.ta-us.net/#!/Mapping/get_0_1_2)
 
-By specifying the optional parameter of clientId in the respective requests, the API's identifier can be recalled for that entity with the aforementioned GETs. Example: A file can be posted for a master project, specify a *clientId=”test123”* and get the *dqfId* from the response (*dqfId=5*). The GET /v3/DQFFileId method can be used by specifying *clientId=”test123”* and get back *dqfId=5* as a response.
+By specifying the optional parameter of clientId in the respective requests, the API identifier can be recalled for that entity with the aforementioned GETs. Example: A file can be posted for a master project, specify a *clientId=”test123”* and get the *dqfId* from the response (*dqfId=5*). The GET /v3/DQFFileId method can be used by specifying *clientId=”test123”* and get back *dqfId=5* as a response.
 
 <a name="user"/>
 ## User
-In order to retrieve basic user information use [GET /v3/user](http://dqf-api.ta-us.net/#!/User/get). To check if an email exists for a TAUS account use [GET /v3/user/{email}](http://dqf-api.ta-us.net/#!/User/get_0).
+In order to retrieve basic user information, use [GET /v3/user](http://dqf-api.ta-us.net/#!/User/get). 
+To check if an email exists for a TAUS account, use [GET /v3/user/{email}](http://dqf-api.ta-us.net/#!/User/get_0).
 
 <a name="specs"/>
 ## API Specifications
-Please refer to http://dqf-api.ta-us.net/ for a full set of the API’s specification.
+Please refer to http://dqf-api.ta-us.net/ for a full set of the API specification.
