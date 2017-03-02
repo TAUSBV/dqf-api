@@ -264,9 +264,18 @@ Irrespective of the POST approach you decide to use, you will need to ensure tha
 
 <a name="targetSegments"/>
 ## Target Segment Info
+
+When posting target segment content, DQF distinguishes between two parameters:
+* **Target Segment:** This represents the pre-existing content of a target segment that was pre-populated e.g. by machine translation or  a previous translation round. You should consider _targetSegment_ any content that makes a target segment field _not empty_. 
+* **Edited Segment:** This represents the _newer_ content produced by human intervention (most likely). This does not necessarily mean that the content of the _editedSegment_ has to be different than that of the _targetSegment_. 
+
+**Note:** Whenever the _time_ parameter is >0, _editedSegment_ content is expected.
+
 <a name="fields"/>
-### Fields and Constraints
-In all of the requests that include target segments (the aforementioned batch operation and the two approaches for translation), you will find the same parameters to describe a target segment based on its origin.
+### Parameters and Constraints
+In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes.
+
+
 
 For the **segmentOriginId** you can choose between:
 
@@ -416,7 +425,8 @@ However, you need to ensure that DQF receives _**at least once**_ in a project t
 
 **IMPORTANT:** DQF requires all translated segments at least once while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
 
-If you are following [Approach 1](#approach1) for posting translations, you can use two methods for batch upload of segments. The maximum allowed number of elements in a batch/array is 100. 
+If you are following [Approach 1](#approach1) for posting translations, you can use two methods for batch upload of segments. The methods differ in that the first expects both _targetSegment_ and _editedSegment_ content whereas the second only requires _targetSegment_ content. Please see [Target Segment Info](#targetSegments) for the difference between the two segment types.
+The maximum allowed number of elements in a batch/array is 100. 
 
 * If you want to batch submit all target segments that have been edited (= for which there is a new target content and/or time information) within a translation type project, you need to use the method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0)
