@@ -144,8 +144,10 @@ We consider the current error category as stable with no changes expected in the
 * [GET /v3/errorCategory](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1)
 * [GET /v3/severity](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7_8)
 
+For a full list of the Review Settings, please refer to the method [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
+
 ### DQF POSTING CONTENT
-See [Child Project](#projectChild) and [Target segments](#targetSegments)
+See [Child Project](#projectChild) and [Target Segment Info](#targetSegments)
 
 Please check whether the names in the responses for the _catTool_ and _mtEngine_ parameters, the name of tool you are integrating with DQF actually matches the name your tool uses for identification. If you notice any discrepancies (e.g. "MyMemory" vs. "MyMemory Plugin"), please report them to the DQF Team:
 * [GET /v3/catTool](http://dqf-api.ta-us.net/#!/Basic_attributes/get)
@@ -270,6 +272,8 @@ When posting target segment content, DQF distinguishes between two parameters:
 
 **Note:** Whenever the _time_ parameter is >0, _editedSegment_ content is expected.
 
+DQF offers you the possibility to map index numbers between your tool and DQF. For this you will need to use the _clientId_ parameter. For more information on this feature, see the section [Mapping](#mapping).
+
 <a name="fields"/>
 ### Parameters and Constraints
 In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes. These are:
@@ -281,8 +285,6 @@ In all requests that include target segment content both as individual segments 
 * MT Engine Other Name (if MT)
 * MT Engine Version (if MT)
 
-
-
 For the **segmentOriginId** you can choose between:
 
 * MT (Machine Translation)
@@ -291,15 +293,23 @@ For the **segmentOriginId** you can choose between:
 * Other
 * HT (Human Translation)
 
-If the segment's origin is of type **MT**, you must also specify the MT engine that was used to produce it (**mtEngineId**). If no match can be found in the DQF list ([GET /v3/mtEngine](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4)), you can then use "Other" as the MT engine and then specify the name in the **mtEngineOtherName** parameter.
+If the segment origin is of type **TM**, you should also provide the match percentage of the memory (*matchRate*) and optionally the name of the TM used in the _segmentOriginDetail_ field.
 
-If the segment's origin is of type **TM**, you should also provide the match percentage of the memory (**matchRate**).
+If the segment origin is of type **MT**, you must also specify the MT engine that was used to produce it (*mtEngineId*). If no match can be found in the DQF list ([GET /v3/mtEngine](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4)), you can use "Other" as the MT engine and then specify the name in the *mtEngineOtherName* parameter. However, if you do not find a match in the list due to differences in the name string (e.g. "MyMemory" vs. "MyMemory Plugin"), please report this to the DQF Team. Additionally you can specify the MT Engine Version (_mtEngineVersion_) if you are interested in tracking different versions of the same MT Engine.
 
-If a segment is empty, you can send an empty string for the **targetSegment** parameter and use **HT** as the segment's origin.
+If a segment is (initially) empty, you can send an empty string for the **targetSegment** parameter and use **HT** as segment origin.
+
+**Note:** In oder to ensure that you submit the expected value, please take a moment to review the [segment origin mapping document](https://drive.google.com/open?id=1sEvwAthP07YWNritEaInmG6w1p-xnyRZmvvh8zjxBTc) provided by TAUS and report any inconsistencies with your tool. 
 
 <a name="review"/>
 ## Review
-Review projects are created as (direct) children of translation or other review projects. 
+Review projects are created as (direct) children of translation or other review projects. It is up to you to decide what part of the workflow should be mapped onto a DQF child project of type _review_. 
+
+**IMPORTANT:** Please note that irrespective of the mapping you adopt, you **must** have at least one child project of type _translation_ in the tree before you can create a project of type _review_.
+
+In order to post a review project you need to specify the [DQF Review Settings](#reviewSettings)
+
+
 The first thing would be to add the Review Settings that the user intends to apply. This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
 By specifying the *templateName* parameter, the posted settings will also be saved as a user template (templates are described below). 
 To create a review project use the 
