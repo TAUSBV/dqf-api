@@ -264,7 +264,6 @@ Irrespective of the POST approach you decide to use, you will need to ensure tha
 
 <a name="targetSegments"/>
 ## Target Segment Info
-
 When posting target segment content, DQF distinguishes between two parameters:
 * **Target Segment:** This represents the pre-existing content of a target segment that was pre-populated e.g. by machine translation or  a previous translation round. You should consider _targetSegment_ any content that makes a target segment field _not empty_. 
 * **Edited Segment:** This represents the _newer_ content produced by human intervention (most likely). This does not necessarily mean that the content of the _editedSegment_ has to be different than that of the _targetSegment_. 
@@ -273,7 +272,14 @@ When posting target segment content, DQF distinguishes between two parameters:
 
 <a name="fields"/>
 ### Parameters and Constraints
-In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes.
+In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes. These are:
+
+* **Segment Origin ID**
+* Segment Origin Detail (if TM)
+* Match Rate (if TM or MT)
+* MT Engine ID (if MT)
+* MT Engine Other Name (if MT)
+* MT Engine Version (if MT)
 
 
 
