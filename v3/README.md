@@ -410,18 +410,25 @@ Currently, we allow the update of status for Child Projects only. This is accomp
 [PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value you can update the status to currently is ‘completed’. You should use this as soon as a translation or a review task (that is mapped to a DQF child project) is done (ex. translator finishes and notifies PM). All the other statuses are automatically assigned through certain events in the API. You can retrieve a project’s current status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
 
 <a name="batchUpload"/>
-### Batch Upload
+## Batch Upload
 Depending on your integration approach and triggers, you can choose among the available POST calls.
 However, you need to ensure that DQF receives _**at least once**_ in a project tree **ALL** source and translated segments as well as segment info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
 
 **IMPORTANT:** DQF requires all translated segments at least once while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
 
-If you are following [Approach 1](#approach1) for posting translations, you can use a method for batch upload of segments. The maximum allowed number of elements in a batch/array is 100. 
+If you are following [Approach 1](#approach1) for posting translations, you can use two methods for batch upload of segments. The maximum allowed number of elements in a batch/array is 100. 
 
-In order to send all the "untouched"/remaining translated segments (if any), you can use the batch operation [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. To verify which source segments have target segment content the following method can be used:
-[GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted (during translation or review) for the specified target language.
+* If you want to batch submit all target segments that have been edited (= for which there is a new target content and/or time information) within a translation type project, you need to use the method:
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0)
+To check whether a source segment has already a translation assigned you can use the following operation: 
+[GET /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](https://dqf-api.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
 
-**Note:** A target segment batch upload can take place at any time during the execution of the translation/review project. You will need to evaluate the available triggers. The final batch upload can be made e.g when a user is completes his/her part of the job or e.g. after the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
+* If you need to batch submit all remaining target segments that were _not_ edited (e.g. 100% matches, locked segments, etc.) for which there is no additional metadata), you should use this other method:
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. 
+To verify which source segments have target segment content the following method can be used:
+[GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
+
+**Note:** A target segment batch upload can take place at any time during the execution of the translation/review project. You will need to evaluate the available triggers in your tool. The final batch upload can be made e.g when a user is completes his/her part of the job or e.g. after the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
 
 **IMPORTANT:** If you are using [Approach 2](#approach2), you will still need to post each segment pair with separate calls.
 
