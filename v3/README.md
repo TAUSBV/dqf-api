@@ -76,7 +76,7 @@ public static String encrypt(String value, String key) throws Exception {
 The **_initVector_** will also be provided by us. The initVector will remain the same for the production environment.
 Should you decide to use your own initialization vector, it should be _16 Bytes_ and you must provide us with it.
 
-The UI in the integrating tool should enable users to enter (and store) their TAUS DQF credentials. Please include the following text and URLs into your UI:
+The UI in the integrating tool should enable users to enter (and store) their TAUS DQF credentials (see [User](#user)). Please include the following text and URLs into your UI:
 * "Don't have a TAUS account?" - Link to: https://www.taus.net/all-memberships/view-membership-details/64-taus-dqf-subscription
 * "Forgot your TAUS password?" - Link to: https://www.taus.net/component/users/?view=reset
 * "Forgot your TAUS email?" - Link to: https://www.taus.net/component/users/?view=remind
@@ -419,9 +419,9 @@ However, you need to ensure that DQF receives _**at least once**_ in a project t
 If you are following [Approach 1](#approach1) for posting translations, you can use two methods for batch upload of segments. The maximum allowed number of elements in a batch/array is 100. 
 
 * If you want to batch submit all target segments that have been edited (= for which there is a new target content and/or time information) within a translation type project, you need to use the method:
-[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0)
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0)
 To check whether a source segment has already a translation assigned you can use the following operation: 
-[GET /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](https://dqf-api.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
+[GET /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
 
 * If you need to batch submit all remaining target segments that were _not_ edited (e.g. 100% matches, locked segments, etc.) for which there is no additional metadata), you should use this other method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. 
@@ -434,7 +434,7 @@ To verify which source segments have target segment content the following method
 
 <a name="templates"/>
 ## User/Company Templates
-In order to enhance user experience, DQF attributes can be pre-populated by means of templates. Templates contain user-dependent DQF project attributes which can be called to quickly create new DQF (master) projects. Templates are created by (and associated to) a single user (= TAUS account) but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*. From a UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates.
+In order to enhance user experience, DQF attributes can be pre-populated by means of templates. Templates contain user-dependent DQF project attributes which can be called to quickly create new DQF (master) projects. Templates are created by (and associated to) a single user (= TAUS account) but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*. From a UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates. Please note that the API will throw an error if the same user posts two templates with the same _values_ **OR** _name_.
 
 There are two types of templates:
 1. Project settings templates
@@ -452,9 +452,9 @@ You may want to avoid using templates for the review type *correction* as no add
 **IMPORTANT:** Please use the term **Error Annotation** on the UI where the API reads *error_typology*
 
 To post a review template use [POST /v3/user/reviewTemplate](http://dqf-api.ta-us.net/#!/Template/add_0). 
-To provide access to the user's and organization templates use GET /v3/user/reviewTemplate.
+To provide access to the user's and organization templates use [GET /v3/user/reviewTemplate](https://dqf-api.ta-us.net/#!/Template/getAll_0).
 
-**Note:** A review can be created template automatically when posting review settings as described in the [Review](#review) section.
+**Note:** A review template can be created automatically when posting review settings as described in the [Review](#review) section.
 
 <a name="mapping"/>
 ## Mapping
