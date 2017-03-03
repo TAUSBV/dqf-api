@@ -187,7 +187,7 @@ The final step for the master project setup would be a
 
 <a name="projectChild"/>
 ## Project/Child
-A child project is used to handle the actual translation/revision work. To declare a child project the 
+A child project is primarily used to handle the actual translation/revision work. However, it is also used to track all the users associated with a project workflow at each stage. To declare a child project the 
 [POST /v3/project/child](http://dqf-api.ta-us.net/#!/Project%2FChild/add) has to be used. The parent's _UUID_ must be specified to create a parent/child relationship (remember that a hierarchical tree structure is used).  
 
 **Example:** _Child1_ will declare the master project's UUID as the parentKey. Of course, Child1 can have as many siblings as needed. If then a child of _child1_ (_child1.1_) needs to be created, the same endpoint will be used but with the _child1 UUID_ as a parentKey. 
@@ -203,10 +203,12 @@ Each type of child project requires specific settings. These are specified in th
 **IMPORTANT:** In the current implementation, the "review only" scenario is _not_ supported. You will always need to have at least one child project of type _translation_ in a project tree.
 
 You should post a DQF child project every time _at least_ one of these conditions is true:
-* _There is a change in workflow step_ (if applicable)
-* _There is a change in the user who is working on the project._ User should be understood from a DQF perspective as the TAUS account or email address associated with the requests. This can map 1:1 with the users shown in your system, but it may also not be the case. This condition also includes the scenario in which a Project Manager receives a project back and sends it to someone else, which would count as three different users.
+* _There is a change in workflow step_ (if applicable, as seen from the perspective of the translation tool in use)
+* _There is a change in the user who is working on the project._ "User" should be understood from a DQF perspective as the TAUS account or email address associated with the requests. This can map 1:1 with the users shown in your system, but it may also not be the case. This condition also includes the scenario in which a Project Manager receives a project back and sends it to someone else, which would count as three different users.
 
 Every child project has an associated _owner_. Generally speaking, the _owner_ is the TAUS account that is in use when making the request. You also have the possibility of declaring a different owner for a child project by specifying an email in the *assignee* parameter. This email must belong to an existing **TAUS account**. This is the case when the individual assignee is known at the moment of the POST request. Please note that for the purposes of the DQF hierarchy, an assignee does not have to actually perform the translation/review task. It could also just be a project manager who receives the assignment from their customer. This satisfies the second condition for posting a child project.
+
+**IMPORTANT:** Depending on your mapping, you can have child projects that match the translation/review activity and other child projects that match e.g. some job distribution tasks performed by PMs. DQF requires posting of translation/review content, **whenever there is some trackable activity at translation editor level**, e.g. the editor gets opened and a few segments are modified, irrespective of the specific role of the user (PM/translator/reviewer etc.).
 
 As a result, there will likely be more child projects posted than what you are able to show on your tool interface. This is fine. DQF will aggregate results as needed using the child projects in the workflow. The **important** thing for you to do is to make sure that _every new or returning user_ is assigned a new DQF child project, i.e. there are no gaps in the workflow steps from a DQF perspective.
 
@@ -221,6 +223,9 @@ The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api
 <a name="translation"/>
 ## Translation
 To be able to post translation-related content to DQF, there must be a child project of type *translation*. No specific project settings are needed as the required attributes are inherited from the parent/master project (see [DQF Project Settings](#projectSettings)). 
+
+**IMPORTANT: Whenever there is some trackable activity at editor level, you are expected to submit translation-related content to DQF.**
+
 The API supports two  alternative ways for posting translation data. The main difference between these approaches lies in how the *sourceSegments* parameter is handled. Source segments can be sent to DQF in batch after creating a master project or they can be submitted together with the translated segment at child project level.
 
 <a name="approach1"/>
@@ -262,7 +267,7 @@ Please note that for this approach _no batch upload_ of full segments is current
 
 Irrespective of the POST approach you decide to use, you will need to ensure that DQF receives all required information to produce accurate reports. This includes all relevant (source/target) segment and review information that complement that translated/reviewed content itself. Please consider carefully how you want to approach the submissions to DQF. If you need assistance please contact the DQF Team.
 
-**IMPORTANT:** DQF requires all translated segments at least once while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
+**IMPORTANT:** DQF requires all translated segments (edited or not) to be posted for any child project that is directly associated with the translation activity. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
 
 <a name="targetSegments"/>
 ## Target Segment Info
@@ -420,7 +425,7 @@ The segment "Test Segment" is being reviewed.
 
 Note that, in the second revision, the content is still "Some Test Segment" even though the word "Segment" got deleted and that the character indexes correclty identify the current position of the word "Test". 
  
-The whole procedure took 10 secs. The series of actions should generate the json in the example above. 
+The whole procedure took 10 secs. The series of actions should generate the json in the example above. [**REVIEW EXAMPLE - MISSING ERROR???**]
 
 ***
 You only have one method to post reviews. However, please be aware of the way the API processes the _revisions_ parameter:
@@ -432,6 +437,7 @@ You only have one method to post reviews. However, please be aware of the way th
 * A segment is reviewed a second time. The new review has only corrections AND the latest posted _revision_ **had** errors: A new _revision_ has to be created, which initially does not have any children errors.
 * A segment is reviewed a second time. The new review has only errors: The _errors_ object will apply to the most recent _correction_ object available.
 
+**IMPORTANT:** DQF requires all project segments (reviewed or not) to be posted for any child project that is directly associated with the review activity. 
 
 <a name="automatedReview"/>
 ## Automated Review Projects [_____TO BE REVISED____]
@@ -454,9 +460,8 @@ Currently, we allow the update of status for Child Projects only. This is accomp
 <a name="batchUpload"/>
 ## Batch Upload
 Depending on your integration approach and triggers, you can choose among the available POST calls.
-However, you need to ensure that DQF receives _**at least once**_ in a project tree **ALL** source and translated segments as well as segment info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
 
-**IMPORTANT:** DQF requires all translated segments at least once while a DQF project is still of type _translation_. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
+**IMPORTANT:** You need to ensure that DQF receives **ALL** source and translated segments for every child project that is associated with the actual translation activity as well as segment info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
 
 If you are following [Approach 1](#approach1) for posting translations, you can use two methods for batch upload of segments. The methods differ in that the first expects both _targetSegment_ and _editedSegment_ content whereas the second only requires _targetSegment_ content. Please see [Target Segment Info](#targetSegments) for the difference between the two segment types.
 The maximum allowed number of elements in a batch/array is 100. 
@@ -497,7 +502,10 @@ You may want to avoid using templates for the review type *correction* as no add
 To post a review template use [POST /v3/user/reviewTemplate](http://dqf-api.ta-us.net/#!/Template/add_0). 
 To provide access to the user's and organization templates use [GET /v3/user/reviewTemplate](https://dqf-api.ta-us.net/#!/Template/getAll_0).
 
-**Note:** A review template can be created automatically when posting review settings as described in the [Review](#review) section.
+**Note:** A Project or Review template can also be created automatically when posting project/review settings by using the _templateName_ parameter available in the methods: 
+
+* [POST /v3/project/master](https://dqf-api.ta-us.net/#!/Project%2FMaster/add)
+* [POST /v3/project/{projectId}/reviewSettings](https://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add)
 
 <a name="mapping"/>
 ## Mapping
