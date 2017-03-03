@@ -310,7 +310,7 @@ Review projects are created as (direct) children of translation or other review 
 In order to post a review project you need to specify the [DQF Review Settings](#reviewSettings). This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
 By specifying the *templateName* parameter, the posted settings will also be saved as a template associated with the active user (see [User/Company Templates](#templates)). 
 
-A review child project will also need to be assigned to a _type of review_. The sub-type will be automatically defined by the API, based on the non-required parameters that are included during the review settings post. Three types of review projects are supported:
+A review child project will also need to be assigned to a _type of review_. The sub-type will be automatically defined by the API, based on the optional parameters that are included during the review settings post. Three types of review projects are supported:
 
 1. **Correction** (_correction_): The existing translation is edited/corrected 
 2. **Error Annotation** (*error_typology*): The identified incorrect part of a translation are marked using one or multiple error categories and severities. The errors can to be applied to:		
@@ -318,24 +318,24 @@ A review child project will also need to be assigned to a _type of review_. The 
   * Part of segment	
 3. **Combined** (_combined_): Combination of the above. The existing translation is corrected and error categories are applied. Here too errors can apply to the whole segment or just a part.
 
-
-
 **Note:** Review projects can also have projects of type _translation_ as children. For example, a review project with a type *Error Annotation* is created and completed. The owner of the parent project of this review project (let's assume a translation project)  decides to have the project go through a new translation round. Two options are possible:
 * A new child of type _translation_ gets created that has the review project as parent. 
 * A new child of type _review/correction_ gets created.
 Which of the two options should be chosen ultimately depends on your implementationa and your tool. However, please keep in mind that the results on the reports will be different according to the chosen approach.
 
-
 The review settings can be posted at master project level if they are known from the beginning of the project. Alternatively, they can be posted at child project level if e.g. 1) they are determined at a later stage 2) a different set of review settings is required for a subset of the workflow. The TAUS account in use when the review settings are submitted is considered the ***initiator*** of the review cycle.
-
-
 
 To create a review project you need to use the method
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment%2FReview/add).
 
 This is the most complex request in the API.
 
-The easiest way to explain this method is to display the request raw body data:
+The easiest way to explain this method is to display the request raw body data.
+
+**Note:** Please pay attention to the terminology used:
+* REVIEW = type of a child project and the POST method in the API
+* REVISION = parameter in the json request body when posting a review (see below) 
+
 ```json
 {
     "overwrite": true,
@@ -381,25 +381,46 @@ The easiest way to explain this method is to display the request raw body data:
 }
 ```
 
-The request's content should be json serialized which means that key-value pairs should not be used(as in x-www-form-urlencoded or form-data body) but a raw json body instead.
-* The batchId parameter is optional and is used for mapping reasons as it is returned back with the response from the API.
-* The overwrite parameter is required and its value depends on how the integrator is handling the segment revisions (more on that below).
-* The core json object is the revisions parameter: 
+The request content should be json serialized which means that key-value pairs should _not_ be used (as in x-www-form-urlencoded or form-data body) but a raw json body instead.
 
-  * Based on the Review Settings that were specified, the json content may differ. 
-In the example above, the combined review settings are used where a user can apply error annotations and correct a segment at the same time. 
-If the review settings are of correction only then the errors array should be ommited. 
-  * Same thing goes for the error review only settings: The correction object should be ommited. 
-If there is no way to prevent the user from editing a translation in the last scenario, 
-then the corrections can be posted but they will be not taken into consideration from the Quality Dashboard's side. 
+### Json Parameters
 
-  * Note that a segment revision can have multiple error annotations but only one correction. And that is exactly what revision refers to. 
+* **batchId:** _Optional_. It is used for mapping purposes as it is returned back with the response from the API.
+* **overwrite:** _Required_. Its value (true/false) depends on how the integrator is handling the segment revisions. 
+	- If this is set to true, the whole revision history of a segment should be posted every time the method is called (e.g. when saving a document after review) because it overwrites existing records in our end. 
+	- If set to false, then only the new and un-posted revisions should be sent.
+* **revisions:** The core json object. Based on the applied Review Settings, the json content may differ. 
+	- If the review settings include correction only, then the errors array should be ommited.
+	- If the review settings include error annotation only, the correction object should be ommited. **Note:** If there is no way to prevent the user from editing a translation (i.e. include the correction object in the API call), the corrections can still be posted but they will be not taken into consideration for reporting purposes. 
+	- If the review settings include the combined scenario, both error array and correction object are expected.
 
-  * Let's take for example the segment "Test Segment" for the json example above. 
-Let's assume that the reviewer marks the whole segment with an error and the word "Segment" with another one. 
-Then he/she deletes the word "Segment". 
-Later he/she notices another error in the corrected segment and first adds the word "Some " at the begining (so it becomes "Some Test Segment") and then applies an anotation to the word "Test". 
-The whole procedure took 10 secs. These series of actions should generate the json in our example. 
+**Note:** A single revision object can contain multiple error annotations but only _one_ correction. Keep this in mind when posting reviewed content.
+
+Some comments on the other fields that may not be self-explanatory:
+
+* The fields _charPosStart_ and _charPosEnd_ are zero based indexes. 
+	- They are *both null* when an error annotation applies to the whole segment. 
+	- If the user applies an error to a selected text then the start and end positions of the selection have to be specified.
+* The field _content_ in the _corretion_ object contains the whole text of the segment (**including deletions**). 
+
+**EXAMPLE**
+
+In the example above, combined review settings are applied.
+The segment "Test Segment" is being reviewed.
+
+1. The reviewer marks the whole segment with an error and the word "Segment" with another error.
+2. Then he/she deletes the word "Segment". 
+3. Later he/she notices another error in the already corrected segment.
+4. He/She adds the word "Some " at the beginning. (The text on the UI will probably read "Some Test Segment", with strikethrough appllied to the word "Segment").
+5. Then he/she applies another error to the word "Test". 
+ 
+The whole procedure took 10 secs. The series of actions should generate the json in the example above. 
+
+
+
+
+
+
 
   * The triggers/conditions for revisions are:
     * If there is no correction then the first revision contains only the error annotations which refer to the original translation.
@@ -407,18 +428,13 @@ The whole procedure took 10 secs. These series of actions should generate the js
     * If a segment gets corrected but the latest revision does not have any errors, then the correction object of the latest revision has to be updated.
     * If a segment gets corrected but the latest revision  does have errors applied, then a new revision (which initially does not have any children errors) has to be created. 
   * New error annotations apply to the latest revision/correction.
-  * Some comments on the fields that may not be self-explanatory:
-    * The fields charPosStart and charPosEnd are zero based indexes. 
-    * They are both null when an error annotation applies to the whole segment. 
-    * If the user applies an error to a selected text then the start and end positions of the selection have to be specified.
-    * The field content of the corretion object contains the whole content of the segment (even deletions). 
+  * 
     * In the second revision in the example note that even though the word "Segment" got deleted, the content is "Some Test Segment" and that the character indexes correclty identify the current position of the word "Test". 
   * In the detailList we specify the revision type for each segment sub item. In our example, sub items were solely words but they can even be single characters. The allowed types are:
     * unchanged
     * added
     * deleted 
-* Getting back to the overwrite parameter. If this is set to true, then the whole segment revision history should be posted every time you trigger the upload (ex. document saved) as it overwrites existing records in our end. 
-If set to false, then only the new and un-posted revisions should be sent.
+* Getting back to the overwrite parameter.
 
 
 
