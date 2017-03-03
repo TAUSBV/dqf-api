@@ -402,6 +402,10 @@ Some comments on the other fields that may not be self-explanatory:
 	- They are *both null* when an error annotation applies to the whole segment. 
 	- If the user applies an error to a selected text then the start and end positions of the selection have to be specified.
 * The field _content_ in the _corretion_ object contains the whole text of the segment (**including deletions**). 
+* In the _detailList_, we specify the type of change for each sub-segment item (_subContent_). Sub-segment items can be words or single characters. The allowed types are:
+    * _unchanged
+    * added
+    * deleted_ 
 
 **EXAMPLE**
 
@@ -413,33 +417,24 @@ The segment "Test Segment" is being reviewed.
 3. Later he/she notices another error in the already corrected segment.
 4. He/She adds the word "Some " at the beginning. (The text on the UI will probably read "Some Test Segment", with strikethrough appllied to the word "Segment").
 5. Then he/she applies another error to the word "Test". 
+
+Note that, in the second revision, the content is still "Some Test Segment" even though the word "Segment" got deleted and that the character indexes correclty identify the current position of the word "Test". 
  
 The whole procedure took 10 secs. The series of actions should generate the json in the example above. 
 
+***
+You only have one method to post reviews. However, please be aware of the way the API processes the _revisions_ parameter:
 
-
-
-
-
-
-  * The triggers/conditions for revisions are:
-    * If there is no correction then the first revision contains only the error annotations which refer to the original translation.
-    * If a correction precedes an error annotation, then the revision should contain both correction and error parameters.
-    * If a segment gets corrected but the latest revision does not have any errors, then the correction object of the latest revision has to be updated.
-    * If a segment gets corrected but the latest revision  does have errors applied, then a new revision (which initially does not have any children errors) has to be created. 
-  * New error annotations apply to the latest revision/correction.
-  * 
-    * In the second revision in the example note that even though the word "Segment" got deleted, the content is "Some Test Segment" and that the character indexes correclty identify the current position of the word "Test". 
-  * In the detailList we specify the revision type for each segment sub item. In our example, sub items were solely words but they can even be single characters. The allowed types are:
-    * unchanged
-    * added
-    * deleted 
-* Getting back to the overwrite parameter.
-
+* In the first review of a translated segment, only errors are applied: In the POST/review, the _errors_ array has values AND _correction_ is empty. 
+* In the first review of a translated segment, only correction applies: You should post the values for _correction_ and a first _revision_ will be created for that segment.
+* In a review of a segment, a correction precedes an error annotation: The _revisions_ should contain both correction and error parameters.
+* A segment is reviewed a second time. The new review has only corrections AND the latest posted _revision_ had **no** errors: The _correction_ object of the latest _revision_ has to be updated.
+* A segment is reviewed a second time. The new review has only corrections AND the latest posted _revision_ **had** errors: A new _revision_ has to be created, which initially does not have any children errors.
+* A segment is reviewed a second time. The new review has only errors: The _errors_ object will apply to the most recent _correction_ object available.
 
 
 <a name="automatedReview"/>
-## Automated Review Projects
+## Automated Review Projects [_____TO BE REVISED____]
 For convenience reasons we have setted up some extra endpoints to automatically create child review projects in the tree hierarchy.
 * Review settings must exist for the project that we want to perform this procedure. 
 * Review Settings can be posted at any time. 
