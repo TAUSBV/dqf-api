@@ -1,14 +1,14 @@
 # DQF API v3.0 Documentation
 
 This document is intended for anyone who is interested in integrating DQF into their (translation) technology using the DQF API v3.0.
-Please note that the DQF API is not related to DQF TOOLS (https://dqf.taus.net). If you are visiting the DQF Tool page, please keep in mind that DQF Tools play no role in the integration.
+Please note that the DQF API is **not** related to _DQF Tools_ (https://dqf.taus.net). If you are visiting the DQF Tools page, please keep in mind that DQF Tools play no role in the integration.
 
 Before reading the documentation consider the following:
 * You will most likely need to make UI changes to your tool when integrating DQF. We will provide recommendations in the relevant sections.
-* You need to ensure that you can correctly map the functionalities and/or workflow steps with DQF. Before starting the integration, please contact the DQF Team and share your proposed mapping for verification.
+* You need to ensure that you can correctly map your functionalities and/or workflow steps with DQF. Before starting the integration, please contact the DQF Team and share your proposed mapping for verification.
 * You need to ensure appropriate mapping between the users and/or user roles in your system and the TAUS user logins. Please discuss the user mapping directly with the DQF team in advance.
 
-The documentation will explain in greater detail the hierarchical tree structure DQF relies on. You need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence) before scoping out other details of the integration. Please refer to the provided [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing) as initial example. 
+The documentation will explain in greater detail the hierarchical tree structure DQF relies on. Before scoping out other details of the integration, you need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence). Please refer to the provided [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing) as an initial example. 
 
 For any questions related to the integration, please contact dqfapi@taus.net
 
@@ -34,30 +34,30 @@ For any questions related to the integration, please contact dqfapi@taus.net
 <a name="servers"/>
 ## Server Info
 During your development process, you **must** use the DQF Staging Server: 
-* Site http://ta-us.net
-* API http://dqf-api.ta-us.net
-* Quality Dashboard http://qd.ta-us.net
+* Site: http://ta-us.net
+* API: http://dqf-api.ta-us.net
+* Quality Dashboard: http://qd.ta-us.net
 
-The staging server is dedicated to integrators only. All new features and/or fixes are deployed here as well before going to the DQF production server. 
-In order to use the staging server, you need to create an account using ta-us.net. TAUS does not provide test accounts for integration. Please create your account using the [Trial Membership](http://www.ta-us.net/all-memberships/subscribe-to/20-taus-free-trial-membership. ) option. The accounts will not expire despite the "trial" status. 
-If you want to access the Quality Dashboard with your staging account, you may need to request some to the DQF Team. 
+The staging server is dedicated to integrators only. All new features and/or fixes are deployed here before going to the DQF production server. 
+In order to use the staging server, you need to create an account using ta-us.net. TAUS does **not** provide test accounts for integration. Please create your account using the [Trial Membership](http://www.ta-us.net/all-memberships/subscribe-to/20-taus-free-trial-membership) option. These accounts will not expire despite the "trial" status. 
+If you want to access the Quality Dashboard with your staging account, you may need to request some credits to the DQF Team. 
 Please write to dqfapi@taus.net
 
-Once your integration is completed, you must contact the DQF team in order to enable your application on the production server. Once this is done, you should switch your base URLs to our official ones:
-* Site https://taus.net
-* API https://dqf-api.taus.net
-* Quality Dashboard https://qd.taus.net
+Once your integration is completed, you must contact the DQF team in order to enable your application on the production server. After this, you should switch your base URLs to our official ones:
+* Site: https://taus.net
+* API: https://dqf-api.taus.net
+* Quality Dashboard: https://qd.taus.net
 
 <a name="authentication"/>
 ## Authentication
-* Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by us. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
+* Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by TAUS. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
 * For secured endpoints, there should also be a header parameter **sessionId**.
-* In order to obtain a **sessionId** one must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login) endpoint.
-* The body parameters (_email, password_) are the user's encrypted and Base64 encoded credentials.	
-* The encryption algorithm used is **AES/CBC/PKCS5PADDING**
-* The encryption key will also be provided by us and will be valid on both servers (staging and production).
+* In order to obtain a **sessionId**, you must call the [POST /v3/login](http://dqf-api.ta-us.net/#!/Authentication/login) endpoint.
+* The body parameters (_email, password_) represent the user's credenitals - encrypted and Base64 encoded.	
+* The encryption algorithm used is **AES/CBC/PKCS5PADDING**.
+* The encryption key will also be provided by TAUS and will be valid on both servers (staging and production).
 
-Below is a simple Java code snippet for the encryption part using the javax.crypto lib:
+Below you see a simple Java code snippet for the encryption part using the javax.crypto lib:
 
 ```java
 public static String encrypt(String value, String key) throws Exception {
@@ -73,10 +73,10 @@ public static String encrypt(String value, String key) throws Exception {
 }
 ```
 
-The **_initVector_** will also be provided by us. The initVector will remain the same for the production environment.
+The **_initVector_** will also be provided by TAUS. The initVector will remain the same for the production environment.
 Should you decide to use your own initialization vector, it should be _16 Bytes_ and you must provide us with it.
 
-The UI in the integrating tool should enable users to enter (and store) their TAUS DQF credentials (see [User](#user)). Please include the following text and URLs into your UI:
+The UI of the integrating tool should enable users to enter (and store) their TAUS DQF credentials (see [User](#user)). Please include the following text and URLs into your UI:
 * "Don't have a TAUS account?" - Link to: https://www.taus.net/all-memberships/view-membership-details/64-taus-dqf-subscription
 * "Forgot your TAUS password?" - Link to: https://www.taus.net/component/users/?view=reset
 * "Forgot your TAUS email?" - Link to: https://www.taus.net/component/users/?view=remind
@@ -84,13 +84,13 @@ The UI in the integrating tool should enable users to enter (and store) their TA
 For testing/debugging purposes, we have enabled an encrypt endpoint which is accessible through 
 [POST /v3/encrypt](http://dqf-api.ta-us.net/v3/encrypt). 
 No authentication is required. The body parameters are:
-* **email:** 	The user's email as plain text
+* **email:** The user's email as plain text
 * **password:** The user's password as plain text
 * **key:** The encryption key
 
-With a successful request you should get back your encrypted and Base64 encoded credentials.
+With a successful request, you should get back your encrypted and Base64 encoded credentials.
 
-**NOTE:** The _encrypt_ endpoint is not available in production and should not be used as part of your final implementation.
+**NOTE:** The _encrypt_ endpoint is **not** available in production and should not be used as part of your final implementation.
 
 ## Response Content Type
 All the responses are in Json format. You should explicitly handle the status of the response in order to retrieve additional information. For example, in .NET you can catch a WebException for a BadRequest and parse the content to see what went wrong:
@@ -107,6 +107,7 @@ All the responses are in Json format. You should explicitly handle the status of
 ```
 
 The code is DQF specific and can be used to report the nature of the problem to the DQF team.
+
 **NOTE:** For debugging and troubleshooting purposes, it is _critical_ that you can provide logs of the calls to the DQF server. The DQF Team strongly recommends to include UI elements containing the API responses in case of errors. Errors need to be reported to the DQF Team and the users need to be informed whenever the communication with the DQF server fails and ideally also when operations are concluded successfully.
 
 <a name="genericUsers"/>
