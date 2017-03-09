@@ -270,6 +270,8 @@ Irrespective of the POST approach you decide to use, you will need to ensure tha
 
 **IMPORTANT:** DQF requires all translated segments (edited or not) to be posted for any child project that is directly associated with the translation activity. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
 
+**Note:** TAUS recomments posting segment content including tags (whenever available) as they are an integral part of the translation/review process. DQF will process tags internally.
+
 <a name="targetSegments"/>
 ## Target Segment Info
 When posting target segment content, DQF distinguishes between two parameters:
@@ -342,6 +344,7 @@ The easiest way to explain this method is to display the request raw body data.
 * REVIEW = type of a child project and the POST method in the API
 * REVISION = parameter in the json request body when posting a review (see below) 
 
+***>> VERIFY EXAMPLE WITH DESCRIPTION OF STEPS AFTERWARDS***
 ```json
 {
     "overwrite": true,
