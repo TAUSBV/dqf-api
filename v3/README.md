@@ -348,11 +348,11 @@ The easiest way to explain this method is to display the request raw body data.
 ```json
 {
     "overwrite": true,
-    "batchId": "test batch",
+    "batchId": "25980bfd-d909-4d6d-bd35-ecfc30d90db3",
     "revisions":
     [
         {
-          "clientId": "",
+          "clientId": "b6a66581-53ae-4cdb-ba3c-5e9b8d8c7464",
           "comment": "test comment",
           "errors": [
             {
@@ -365,22 +365,40 @@ The easiest way to explain this method is to display the request raw body data.
             {
               "errorCategoryId": 2,
               "severityId": 3,
-              "charPosStart": 0,
-              "charPosEnd": 4,
+              "charPosStart": 5,
+              "charPosEnd": 11,
               "comment": "Test comment"
+            }
+          ]
+        },
+
+        {
+          "clientId": "8556bed0-084d-4e22-8ad3-0f9a0a42a232",
+          "comment": "test comment",
+          "errors": [
+            {
+              "errorCategoryId": 3,
+              "severityId": 2,
+              "charPosStart": 5,
+              "charPosEnd": 9,
+              "comment": null
             }
           ],
           "correction": {
-            "content": "test segment",
-            "time": 1000,
+            "content": "Some Test Segment",
+            "time": 10000,
             "comment": null,
             "detailList": [
+             {
+                "subContent": "Some ",
+                "type": "added"
+              },
               {
-                "subContent": "test ",
+                "subContent": "Test  ",
                 "type": "unchanged"
               },
               {
-                "subContent": "segment",
+                "subContent": "Segment",
                 "type": "deleted"
               }
             ]
@@ -424,7 +442,7 @@ The segment "Test Segment" is being reviewed.
 1. The reviewer marks the whole segment with an error and the word "Segment" with another error.
 2. Then he/she deletes the word "Segment". 
 3. Later he/she notices another error in the already corrected segment.
-4. He/She adds the word "Some " at the beginning. (The text on the UI will probably read "Some Test Segment", with strikethrough appllied to the word "Segment").
+4. He/She adds the word "Some " at the beginning. (The text on the UI will probably read "Some Test _Segment_", with strikethrough applied to the word "Segment").
 5. Then he/she applies another error to the word "Test". 
 
 Note that, in the second revision, the content is still "Some Test Segment" even though the word "Segment" got deleted and that the character indexes correclty identify the current position of the word "Test". 
