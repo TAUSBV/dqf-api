@@ -22,6 +22,7 @@ This document is for anyone who is interested in integrating with DQF using the 
 * [API Specifications](#specs)
 
 <a name="servers"/>
+
 ## Servers to Use
 During your development process, you **must** use our Staging Server: 
 * Site http://ta-us.net
@@ -36,6 +37,7 @@ Once your integration is completed, you must contact the DQF team in order to en
 * Quality Dashboard http://qd.taus.net
 
 <a name="authentication"/>
+
 ## Authentication
 * Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by us. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
 * For secured endpoints, there should also be a header parameter **sessionId**.
@@ -91,6 +93,7 @@ All the responses are in Json format. You should explicitly handle the status of
 The code is DQF specific and can be used to report the nature of the problem to the DQF team.
 
 <a name="genericUsers"/>
+
 ## Authentication - Generic Users (not on production)
 Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users need not have a TAUS account while using the API's clients. In order to obtain a generic account you should contact the DQF team. The aforementioned account gets authenticated in the exact same way as [Authentication](#authentication) describes.
 There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
@@ -98,6 +101,7 @@ There is an extra header parameter required when using session ids that derive f
 **IMPORTANT!!!** Note that although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/).
 
 <a name="attributes"/>
+
 ## Basic Attributes
 The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these.
 * [GET /v3/catTool](http://dqf-api.ta-us.net/#!/Basic_attributes/get)
@@ -112,10 +116,12 @@ The following endpoints are used to retrieve the basic/static attributes of the 
 * [GET /v3/severity](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7_8)
 
 <a name="requestsHeader"/>
+
 ## Requests/Header
 As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests you should also include the ***projectKey*** in the header. If you are using a generic account, then you should also include the **email** header parameter.
 
 <a name="projectMaster"/>
+
 ## Project/Master
 The core entity of the DQF API. Once the basic attributes are received, a master project needs to be created: 
 [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add)
@@ -131,6 +137,7 @@ The final step for the master project setup would be a:
 [POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile%2FTarget_Language/add) where the target languages are associated with files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language.
 
 <a name="projectChild"/>
+
 ## Project/Child
 This is where the actual work takes place. To declare a child project the 
 [POST /v3/project/child](http://dqf-api.ta-us.net/#!/Project%2FChild/add) has to be used. The parent's _UUID_ must be specified to create a parent/child relationship (remember that a tree structure is used). 
@@ -143,6 +150,7 @@ The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api
 **Note:** A child project can declare any combination of files/targetLangs that are a **subset** of their **parents'** *file/targetLang* pairs. So building on the previous example, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
 
 <a name="translation"/>
+
 ## Translation
 To be able to post a translation, there must be a child project with a type of *translation*. The API supports two different alternatives for posting translations. The main distinguishing parameter among these two approaches is the prerequisite of *source segments*.
 
@@ -178,6 +186,7 @@ In this approach, the method
 **Note:** It is strongly recommended the use of the 1st approach. Even though it seems like extra effort (batch upload, an additional request) it will lead to a more robust solution.
 
 <a name="targetSegments"/>
+
 ## Target Segments
 ### Batch Upload
 Whichever approach you decide to use, aside from the tranlation itself, you will need to send all relevant information for the target segments as well. Depending on the integration approach there may be segments that were not sent to the DQF (ex. segments that were not processed by the translator). DQF requires these segments as well so as to have a reference for subsequent review projects. In order to send all the "untouched" segments, you can use the batch operation [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). 
@@ -200,6 +209,7 @@ If the segment's origin is of type **TM**, you should also provide the match per
 If a segment is empty, you can send an empty string for the **targetSegment** parameter and use **HT** as the segment's origin.
 
 <a name="review"/>
+
 ## Review
 Review projects are created as (direct) children of translation or other review projects. 
 The first thing would be to add the Review Settings that the user intends to apply. This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
@@ -309,6 +319,7 @@ The sub-type will be automatically defined by the API , based on the non-require
 **Note:** Review projects can also have translation projects as children. For example, a review project with a type of *Error Review* is created and completed. The review's parent project (let's assume a translation project) owner decides to send it again for translation. This should create a translation child for the aforementioned review project. Or he/she can send it for review *Correction* which would then have to create a review child project.
 
 <a name="automatedReview"/>
+
 ## Automated Review Projects
 For convenience reasons we have setted up some extra endpoints to automatically create child review projects in the tree hierarchy.
 * Review settings must exist for the project that we want to perform this procedure. 
@@ -322,11 +333,13 @@ When a Review Cycle is about to begin, you can call [POST /v3/project/{projectId
 The response will contain a list of all the Review projects that were created and a list of all the leaf projects that did not meet the aforementioned criteria alongside with the reason for that. You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net).
 
 <a name="projectStatus"/>
+
 ## Project Status
 Currently, we allow the update of status for Child Projects only. This is accomplished through 
 [PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value you can update the status to currently is ‘completed’. You should use this as soon as a translation or a review task (that is mapped to a DQF child project) is done (ex. translator finishes and notifies PM). All the other statuses are automatically assigned through certain events in the API. You can retrieve a project’s current status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
 
 <a name="targetSegments"/>
+
 ## Target Segments
 The final step for a child project (after a translation or a review has taken place) would be to post **all** of the remaining target segments (if any) that were not edited (translation or review correction). This can be accomplished through:
 [POST v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1). 
@@ -338,6 +351,7 @@ This request will return all of the source segments of the file and a flag deter
 **Note:** The target segment batch upload can take place at any time during the execution of the translation/review project. The final batch upload can be made e.g when the user is ready to complete the job or e.g. when the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
 
 <a name="templates"/>
+
 ## User/Company Templates
 In order to enhance user experience a set of operations allowing the use of project templates has been  included. Templates contain project settings that pre-populate the fields required by DQF. Templates are created by a single user but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*.
 
@@ -359,6 +373,7 @@ To access the user's and shared organization templates use GET /v3/user/reviewTe
 **Note:** A review can be created template automatically when posting review settings as described in the *Review* section.
 
 <a name="mapping"/>
+
 ## Mapping
 A client-API identifier mapping for the following entities is provided:
 * Project: [GET /v3/DQFProjectId](http://dqf-api.ta-us.net/#!/Mapping/get_0)
@@ -369,9 +384,11 @@ A client-API identifier mapping for the following entities is provided:
 By specifying the optional parameter of clientId in the respective requests, the API's identifier can be recalled for that entity with the aforementioned GETs. Example: A file can be posted for a master project, specify a *clientId=”test123”* and get the *dqfId* from the response (*dqfId=5*). The GET /v3/DQFFileId method can be used by specifying *clientId=”test123”* and get back *dqfId=5* as a response.
 
 <a name="user"/>
+
 ## User
 In order to retrieve basic user information use [GET /v3/user](http://dqf-api.ta-us.net/#!/User/get). To check if an email exists for a TAUS account use [GET /v3/user/{email}](http://dqf-api.ta-us.net/#!/User/get_0).
 
 <a name="specs"/>
+
 ## API Specifications
 Please refer to http://dqf-api.ta-us.net/ for a full set of the API’s specification.
