@@ -32,6 +32,7 @@ For any questions related to the integration, please contact dqfapi@taus.net
 * [API Specifications](#specs)
 
 <a name="servers"/>
+
 ## Server Info
 During your development process, you **must** use the DQF Staging Server: 
 * Site: http://ta-us.net
@@ -231,7 +232,8 @@ The API supports two  alternative ways for posting translation data. The main di
 
 <a name="approach1"/>
 ### APPROACH 1: Source segments posted at _master_ project level & translations at _child_ level (_RECOMMENDED_)
-In this approach, all source segments in a file/job have first to be uploaded at master project level. This means that translated segments will be posted separately with a different method. The [POST /v3/project/**master**/{projectId}/file/{fileId}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1) should be used after declaring the files for the master project. The *sourceSegments* body parameter should be a Json Array. Example (two source segments):
+In this approach, all source segments in a file/job have first to be uploaded at master project level. This means that translated segments will be posted separately with a different method. If you prefer not to send each translated segment individually, you have the possibility of uploading segments in [batch](#batchUpload).
+The [POST /v3/project/**master**/{projectId}/file/{fileId}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1) should be used after declaring the files for the master project. The *sourceSegments* body parameter should be a Json Array. Example (two source segments):
 
 ```json
 [  
@@ -255,7 +257,6 @@ When posting translation, child projects can access the source segment informati
 To post a translation in this scenario, the 
 [POST/v3/project/**child**/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0) method should be used.
 
-If you prefer not to send each translated segment individually, you have the possibility of uploading segments in [batch](#batchUpload).
 
 <a name="approach2"/>
 ### APPROACH 2: Source segments and translations posted at translation _child_ project level
