@@ -284,7 +284,7 @@ DQF offers you the possibility to map index numbers between your tool and DQF. F
 
 <a name="fields"/>
 ### Parameters and Constraints
-In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes. These are:
+In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes. These are: 
 
 * **Segment Origin ID**
 * Segment Origin Detail (if TM)
