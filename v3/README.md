@@ -171,6 +171,7 @@ The following attribute requires a clear mapping between DQF values and the valu
 As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests you should also include the ***projectKey*** in the header. If you are using a generic account, then you should also include the **email** header parameter.
 
 <a name="projectMaster"/>
+
 ## Project/Master
 The (master) project is the core entity of the DQF API. The APIs hierarchy is based on a *tree structure where the root node is the master project*.
 
@@ -194,6 +195,7 @@ The final step for the master project setup would be a
 [POST /v3/project/master/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FMaster%2FFile%2FTarget_Language/add) where the target languages are associated with the project files. The API allows any combination of files/targetLangs. For example _file1_ has _en-US_ and _nl-NL_ whereas _file2_ has only _en-US_ as target language. If files and/or languages are added and/or modified, the combinations need to be updated accordingly.
 
 <a name="projectChild"/>
+
 ## Project/Child
 A child project is primarily used to handle the actual translation/revision work. However, it is also used to track all the users associated with a project workflow at each stage. To declare a child project the 
 [POST /v3/project/child](http://dqf-api.ta-us.net/#!/Project%2FChild/add) has to be used. The parent's _UUID_ must be specified to create a parent/child relationship (remember that a hierarchical tree structure is used).  
@@ -229,6 +231,7 @@ The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api
 **NOTE:** A child project can declare any combination of files/targetLangs that are a **subset** of the *file/targetLang* pairs of their **parent**. So building on the example above, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
 
 <a name="translation"/>
+
 ## Translation
 To be able to post translation-related content to DQF, there must be a child project of type *translation*. No specific project settings are needed as the required attributes are inherited from the parent/master project (see [DQF Project Settings](#projectSettings)). 
 
@@ -237,6 +240,7 @@ To be able to post translation-related content to DQF, there must be a child pro
 The API supports two  alternative ways for posting translation data. The main difference between these approaches lies in how the *sourceSegments* parameter is handled. Source segments can be sent to DQF in batch after creating a master project or they can be submitted together with the translated segment at child project level.
 
 <a name="approach1"/>
+
 ### APPROACH 1: Source segments posted at _master_ project level & translations at _child_ level (_RECOMMENDED_)
 In this approach, all source segments in a file/job have first to be uploaded at master project level. This means that translated segments will be posted separately with a different method. If you prefer not to send each translated segment individually, you have the possibility of uploading segments in [batch](#batchUpload).
 The [POST /v3/project/**master**/{projectId}/file/{fileId}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1) should be used after declaring the files for the master project. The *sourceSegments* body parameter should be a Json Array. Example (two source segments):
@@ -265,6 +269,7 @@ To post a translation in this scenario, the
 
 
 <a name="approach2"/>
+
 ### APPROACH 2: Source segments and translations posted at translation _child_ project level
 In this approach, source and target segments are posted at the same time using one single method:
 [POST /v3/project/**child**/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add). This method is almost identical to the POST/translation described above and only requires two additional parameters: 1) the source segment content and 2) its index numbering.
@@ -280,6 +285,7 @@ Irrespective of the POST approach you decide to use, you will need to ensure tha
 **Note:** TAUS recomments posting segment content including tags (whenever available) as they are an integral part of the translation/review process. DQF will process tags internally.
 
 <a name="targetSegments"/>
+
 ## Target Segment Info
 When posting target segment content, DQF distinguishes between two parameters:
 * **Target Segment:** This represents the pre-existing content of a target segment that was pre-populated e.g. by machine translation or  a previous translation round. You should consider _targetSegment_ any content that makes a target segment field _not empty_. 
@@ -290,6 +296,7 @@ When posting target segment content, DQF distinguishes between two parameters:
 DQF offers you the possibility to map index numbers between your tool and DQF. For this you will need to use the _clientId_ parameter. For more information on this feature, see the section [Mapping](#mapping).
 
 <a name="fields"/>
+
 ### Parameters and Constraints
 In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes. These are: 
 
@@ -317,6 +324,7 @@ If a segment is (initially) empty, you can send an empty string for the **target
 **Note:** In oder to ensure that you submit the expected value, please take a moment to review the [segment origin mapping document](https://drive.google.com/open?id=1sEvwAthP07YWNritEaInmG6w1p-xnyRZmvvh8zjxBTc) provided by TAUS and report any inconsistencies with your tool. 
 
 <a name="review"/>
+
 ## Review
 Review projects are created as (direct) children of translation or other review projects. It is up to you to decide what part of the workflow should be mapped onto a DQF child project of type _review_. 
 
@@ -469,6 +477,7 @@ You only have one method to post reviews. However, please be aware of the way th
 **IMPORTANT:** DQF requires all project segments (reviewed or not) to be posted for any child project that is directly associated with the review activity. 
 
 <a name="automatedReview"/>
+
 ## Automated Review Projects [_____TO BE REVISED____]
 For convenience reasons we have setted up some extra endpoints to automatically create child review projects in the tree hierarchy.
 * Review settings must exist for the project that we want to perform this procedure. 
@@ -482,11 +491,13 @@ When a Review Cycle is about to begin, you can call [POST /v3/project/{projectId
 The response will contain a list of all the Review projects that were created and a list of all the leaf projects that did not meet the aforementioned criteria alongside with the reason for that. You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net).
 
 <a name="projectStatus"/>
+
 ## Project Status
 Currently, we allow the update of status for Child Projects only. This is accomplished through 
 [PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value you can update the status to currently is ‘completed’. You should use this as soon as a translation or a review task (that is mapped to a DQF child project) is done (ex. translator finishes and notifies PM). All the other statuses are automatically assigned through certain events in the API. You can retrieve a project’s current status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
 
 <a name="batchUpload"/>
+
 ## Batch Upload
 Depending on your integration approach and triggers, you can choose among the available POST calls.
 
@@ -510,6 +521,7 @@ To verify which source segments have target segment content the following method
 **IMPORTANT:** If you are using [Approach 2](#approach2), you will still need to post each segment pair with separate calls.
 
 <a name="templates"/>
+
 ## User/Company Templates
 In order to enhance user experience, DQF attributes can be pre-populated by means of templates. Templates contain user-dependent DQF project attributes which can be called to quickly create new DQF (master) projects. Templates are created by (and associated to) a single user (= TAUS account) but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*. From a UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates. Please note that the API will throw an error if the same user posts two templates with the same _values_ **OR** _name_.
 
@@ -537,6 +549,7 @@ To provide access to the user's and organization templates use [GET /v3/user/rev
 * [POST /v3/project/{projectId}/reviewSettings](https://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add)
 
 <a name="mapping"/>
+
 ## Mapping
 A client-API identifier mapping for the following entities is provided:
 * Project: [GET /v3/DQFProjectId](http://dqf-api.ta-us.net/#!/Mapping/get_0)
@@ -547,10 +560,12 @@ A client-API identifier mapping for the following entities is provided:
 By specifying the optional parameter of clientId in the respective requests, the API identifier can be recalled for that entity with the aforementioned GETs. Example: A file can be posted for a master project, specify a *clientId=”test123”* and get the *dqfId* from the response (*dqfId=5*). The GET /v3/DQFFileId method can be used by specifying *clientId=”test123”* and get back *dqfId=5* as a response.
 
 <a name="user"/>
+
 ## User
 In order to retrieve basic user information, use [GET /v3/user](http://dqf-api.ta-us.net/#!/User/get). 
 To check if an email exists for a TAUS account, use [GET /v3/user/{email}](http://dqf-api.ta-us.net/#!/User/get_0).
 
 <a name="specs"/>
+
 ## API Specifications
 Please refer to http://dqf-api.ta-us.net/ for a full set of the API specification.
