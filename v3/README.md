@@ -50,6 +50,7 @@ Once your integration is completed, you must contact the DQF team in order to en
 * Quality Dashboard: https://qd.taus.net
 
 <a name="authentication"/>
+
 ## Authentication
 * Every request must contain the header parameter **apiKey**, a _Universally Unique Identifier_ (_UUID_) which will be provided by TAUS. The **apiKey** is application specific and used to identify the client that sends the requests. Every integrator will have one **apiKey**.	
 * For secured endpoints, there should also be a header parameter **sessionId**.
@@ -112,6 +113,7 @@ The code is DQF specific and can be used to report the nature of the problem to 
 **NOTE:** For debugging and troubleshooting purposes, it is _critical_ that you can provide logs of the calls to the DQF server. The DQF Team strongly recommends to include UI elements containing the API responses in case of errors. Errors need to be reported to the DQF Team and the users need to be informed whenever the communication with the DQF server fails and ideally also when operations are concluded successfully.
 
 <a name="genericUsers"/>
+
 ## Authentication - Generic User Account 
 Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users do not need a valid TAUS account while using the API clients. Generic accounts are provided by the DQF team at integrator (=tool) level. However, one integrator can request multiple generic accounts if their integration requires this. In order to obtain a generic account you should contact the DQF team. The generic account gets authenticated in the exact same way as [Authentication](#authentication) describes.
 There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
@@ -119,11 +121,13 @@ There is an extra header parameter required when using session ids that derive f
 **IMPORTANT!!!** Note that although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/). 
 
 <a name="attributes"/>
+
 ## Basic Attributes
 The following endpoints are used to retrieve the basic/static attributes of the API. No authentication is required for these. 
 The basic attributes can be grouped according to their function. More details will be provided in the related sections:
 
 <a name="projectSettings"/>
+
 ### DQF PROJECT SETTINGS
 See [Master Project](#projectMaster) and [User/Company Templates](#templates)
 
@@ -139,6 +143,7 @@ The following call is no longer necessary after DQF has become compliant with th
 * [GET /v3/language](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3)
 
 <a name="reviewSettings"/>
+
 ### DQF REVIEW SETTINGS
 See [Review](#review) and [User/Company Templates](#templates)
 
@@ -161,6 +166,7 @@ The following attribute requires a clear mapping between DQF values and the valu
 **IMPORTANT:** Please take a moment to review the [segment origin mapping document](https://drive.google.com/open?id=1sEvwAthP07YWNritEaInmG6w1p-xnyRZmvvh8zjxBTc) provided by TAUS and report any inconsistencies with your tool. You will need to use these parameters when posting [translations](#fields).
 
 <a name="requestsHeader"/>
+
 ## Requests/Header
 As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests you should also include the ***projectKey*** in the header. If you are using a generic account, then you should also include the **email** header parameter.
 
