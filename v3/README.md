@@ -83,6 +83,8 @@ The UI of the integrating tool should enable users to enter (and store) their TA
 * "Forgot your TAUS password?" - Link to: https://www.taus.net/component/users/?view=reset
 * "Forgot your TAUS email?" - Link to: https://www.taus.net/component/users/?view=remind
 
+**Note:** If your company has signed a special marekting agreement about profit sharing with TAUS, you will be provided a separate personalized URL to redirect people to the signup page. Please contact dqf@taus.net to clarify and/or coordinate.
+
 For testing/debugging purposes, we have enabled an encrypt endpoint which is accessible through 
 [POST /v3/encrypt](http://dqf-api.ta-us.net/v3/encrypt). 
 No authentication is required. The body parameters are:
@@ -92,7 +94,7 @@ No authentication is required. The body parameters are:
 
 With a successful request, you should get back your encrypted and Base64 encoded credentials.
 
-**NOTE:** The _encrypt_ endpoint is **not** available in production and should not be used as part of your final implementation.
+**Note:** The _encrypt_ endpoint is **not** available in production and should not be used as part of your final implementation.
 
 ## Response Content Type
 All the responses are in Json format. You should explicitly handle the status of the response in order to retrieve additional information. For example, in .NET you can catch a WebException for a BadRequest and parse the content to see what went wrong:
@@ -108,7 +110,7 @@ All the responses are in Json format. You should explicitly handle the status of
 }
 ```
 
-The code is DQF specific and can be used to report the nature of the problem to the DQF team.
+The code is DQF specific and should be used to report the nature of the problem to the DQF team.
 
 **NOTE:** For debugging and troubleshooting purposes, it is _critical_ that you can provide logs of the calls to the DQF server. The DQF Team strongly recommends to include UI elements containing the API responses in case of errors. Errors need to be reported to the DQF Team and the users need to be informed whenever the communication with the DQF server fails and ideally also when operations are concluded successfully.
 
@@ -116,9 +118,10 @@ The code is DQF specific and can be used to report the nature of the problem to 
 
 ## Authentication - Generic User Account 
 Integrators can now use a single TAUS generic account to perform the authentication. With this approach, users do not need a valid TAUS account while using the API clients. Generic accounts are provided by the DQF team at integrator (=tool) level. However, one integrator can request multiple generic accounts if their integration requires this. In order to obtain a generic account you should contact the DQF team. The generic account gets authenticated in the exact same way as [Authentication](#authentication) describes.
-There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
 
-**IMPORTANT!!!** Note that although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/). 
+**IMPORTANT!:** There is an extra header parameter required when using session ids that derive from generic accounts. In every such request you should include the user's email as the value of the **email** header.
+
+**Note:** Although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [Quality Dashboard](http://qd.ta-us.net/). 
 
 <a name="attributes"/>
 
@@ -147,7 +150,7 @@ The following call is no longer necessary after DQF has become compliant with th
 ### DQF REVIEW SETTINGS
 See [Review](#review) and [User/Company Templates](#templates)
 
-We consider the current error category as stable with no changes expected in the near future. Should you use hard-coded values for the error categories or any other attribute in this list, please inform the DQF Team. If changes to the current values are required, we will notify integrators in due time.
+We consider the current error list as stable with no changes expected in the near future. Should you use hard-coded values for the error categories or any other attribute in this list, please inform the DQF Team. If changes to the current values are required, we will notify integrators in due time.
 * [GET /v3/errorCategory](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1)
 * [GET /v3/severity](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4_5_6_7_8)
 
@@ -156,7 +159,7 @@ For a full list of the Review Settings, please refer to the method [POST /v3/pro
 ### DQF POSTING CONTENT
 See [Child Project](#projectChild) and [Target Segment Info](#targetSegments)
 
-Please check whether the names in the responses for the _catTool_ and _mtEngine_ parameters, the name of tool you are integrating with DQF actually matches the name your tool uses for identification. If you notice any discrepancies (e.g. "MyMemory" vs. "MyMemory Plugin"), please report them to the DQF Team:
+Please check whether the responses for the _catTool_ and _mtEngine_ parameters actually matche the name your tool uses for identification. If you notice any discrepancies (e.g. "MyMemory" vs. "MyMemory Plugin"), please report them to the DQF Team:
 * [GET /v3/catTool](http://dqf-api.ta-us.net/#!/Basic_attributes/get)
 * [GET /v3/mtEngine](http://dqf-api.ta-us.net/#!/Basic_attributes/get_0_1_2_3_4)
 
@@ -168,7 +171,7 @@ The following attribute requires a clear mapping between DQF values and the valu
 <a name="requestsHeader"/>
 
 ## Requests/Header
-As already explained, every request to the DQF API (apart from the aforementioned basic attributes) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests you should also include the ***projectKey*** in the header. If you are using a generic account, then you should also include the **email** header parameter.
+As already explained, every request to the DQF API (apart from the [Basic Attributes](#attributes)) should contain the ***apiKey*** and ***sessionId*** header parameters. For the project related requests, you should also include the ***projectKey*** in the header. If you are using a generic account, then you should also include the **email** header parameter.
 
 <a name="projectMaster"/>
 
@@ -179,7 +182,7 @@ Please note that the concept of _project_ in DQF does not necessarily match the 
 
 A master project contains all of the basic attributes which are then inherited by child projects (see [Basic Attributes](#attributes)). Once the basic attributes are received, a master project needs to be created: [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add).
 
-**IMPORTANT:** The basic attributes for a master project are the DQF Project Settings. We expect the user to be able to manually select these values directly from the UI, either in the form of individual values or as a template. Please make sure that you _do not_ post some arbitrarily defined default settings without giving the user the possibility to modify these. TAUS reserves the right to block data from a given integration should the database get 'polluted' with such non-user defined values. We strongly suggest that every integrator discusses with the DQF Team beforehand how DQF Project Settings will be collected.
+**IMPORTANT:** The basic attributes for a master project are the DQF Project Settings. We expect the user to be able to manually select these values directly from the UI, either in the form of individual values or as a [template](#templates). Please make sure that you _do not_ post some arbitrarily defined default settings without giving the user the possibility to modify these. TAUS reserves the right to block data from a given integration should the database get 'polluted' with such non-user-defined values. We strongly suggest that every integrator discusses with the DQF Team beforehand how DQF Project Settings will be collected.
 
 **IMPORTANT:** Please use the term **Sector** on the UI where the API reads *Industry*.
 
@@ -206,21 +209,21 @@ A Child Project can be of two types: *translation* or *review*.
 * A _translation_ Child Project should be used for all workflow steps until the translation is completed. 
 * A _review_ Child Project should be used when a person appointed as reviewer would correct and/or mark errors in a translation. 
 
-**Example:** If you are applying a TEP (Translation-Editing-Proofreading) approach followed by an "official" reveiw step, you may want to consider the Translation and Editing steps as DQF _translation_ steps and depending on how Proofreading is handled, you may consider it a _translation_ or _review_ step for DQF purposes. 
+**Example:** If you are applying a TEP (Translation-Editing-Proofreading) approach followed by an "official" reveiw step, you may want to consider the Translation and Editing steps as DQF _translation_ steps and depending on how Proofreading is handled, you may consider it a _translation_ or _review_ step for DQF purposes. Please share your approach with the DQF Team before implementing it.
 
-Each type of child project requires specific settings. These are specified in the [Translation](#translation) and [Review](#review) sections. By default, the Child Project will inherit the settings/basic attributes specified in the master project, but there can be exceptions (see [Review](#review) for more details).
+Each type of child project requires specific settings. These are specified in the [Translation](#translation) and [Review](#review) sections. By default, the child project will inherit the settings/basic attributes specified in the master project, but there can be exceptions (see [Review](#review) for more details).
 
 **IMPORTANT:** In the current implementation, the "review only" scenario is _not_ supported. You will always need to have at least one child project of type _translation_ in a project tree.
 
 You should post a DQF child project every time _at least_ one of these conditions is true:
 * _There is a change in workflow step_ (if applicable, as seen from the perspective of the translation tool in use)
-* _There is a change in the user who is working on the project._ "User" should be understood from a DQF perspective as the TAUS account or email address associated with the requests. This can map 1:1 with the users shown in your system, but it may also not be the case. This condition also includes the scenario in which a Project Manager receives a project back and sends it to someone else, which would count as three different users.
+* _There is a change in the user who is working on the project._ "User" should be understood from a DQF perspective as the TAUS account or email address associated with the requests. This can map 1:1 with the users shown in your system, but it may also not be the case. This condition also includes the scenario in which a Project Manager receives a project back and sends it to someone else, which would count as three different users, hence child projects.
 
 Every child project has an associated _owner_. Generally speaking, the _owner_ is the TAUS account that is in use when making the request. You also have the possibility of declaring a different owner for a child project by specifying an email in the *assignee* parameter. This email must belong to an existing **TAUS account**. This is the case when the individual assignee is known at the moment of the POST request. Please note that for the purposes of the DQF hierarchy, an assignee does not have to actually perform the translation/review task. It could also just be a project manager who receives the assignment from their customer. This satisfies the second condition for posting a child project.
 
-**IMPORTANT:** Depending on your mapping, you can have child projects that match the translation/review activity and other child projects that match e.g. some job distribution tasks performed by PMs. DQF requires posting of translation/review content, **whenever there is some trackable activity at translation editor level**, e.g. the editor gets opened and a few segments are modified, irrespective of the specific role of the user (PM/translator/reviewer etc.).
+**IMPORTANT:** Depending on your mapping, you can have child projects that match the translation/review activity and other child projects that match e.g. some job distribution tasks performed by PMs. DQF requires posting of translation/review content, **whenever there is some trackable activity at editor level**, e.g. the editor gets opened and a few segments are modified or just made "active", irrespective of the specific role of the user (PM/translator/reviewer etc.).
 
-As a result, there will likely be more child projects posted than what you are able to show on your tool interface. This is fine. DQF will aggregate results as needed using the child projects in the workflow. The **important** thing for you to do is to make sure that _every new or returning user_ is assigned a new DQF child project, i.e. there are no gaps in the workflow steps from a DQF perspective.
+As a result, there will likely be more child projects posted to DQF than what you are able to show on your tool interface. This is fine. DQF will aggregate results as needed using the child projects in the workflow. The **important** thing for you to do is to make sure that _every new or returning user_ is assigned a new DQF child project, i.e. there are no gaps in the workflow steps from a DQF perspective.
 
 **IMPORTANT:** As shown in the [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing), a child project can only have ***one*** parent project, while a parent project can have multiple child projects. Please keep this in mind when dealing with returned jobs and/or split jobs. Once the DQF project tree branches out, the branches need to be kept separate and cannot be merged back. This is one of the main differences between the DQF tree structure and your tool.
 
@@ -238,6 +241,12 @@ To be able to post translation-related content to DQF, there must be a child pro
 **IMPORTANT: Whenever there is some trackable activity at editor level, you are expected to submit translation-related content to DQF.**
 
 The API supports two  alternative ways for posting translation data. The main difference between these approaches lies in how the *sourceSegments* parameter is handled. Source segments can be sent to DQF in batch after creating a master project or they can be submitted together with the translated segment at child project level.
+
+Irrespective of the POST approach you decide to use, you will need to ensure that DQF receives all required information to produce accurate reports. This includes all relevant (source/target) segment and review information that complement that translated/reviewed content itself. Please consider carefully how you want to approach the submissions to DQF. If you need assistance please contact the DQF Team.
+
+**IMPORTANT:** DQF requires all translated segments (edited or not) to be posted for _any child project directly associated with the translation activity_ (i.e. where activity in the editor takes place). This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
+
+**Note:** TAUS recommends posting segment content including tags and other markup (whenever available) as they are an integral part of the translation/review process. DQF will process tags internally.
 
 <a name="approach1"/>
 
@@ -264,7 +273,7 @@ The *index* refers to the sequential numbering of the segments in each file. The
 **Note:** During this process, the *numberOfSegments* declared at file posting cannot be exceeded.
 
 When posting translation, child projects can access the source segment information through: [GET/v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get)
-To post a translation in this scenario, the 
+To post a translation in this scenario, the  
 [POST/v3/project/**child**/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0) method should be used.
 
 
@@ -274,15 +283,10 @@ To post a translation in this scenario, the
 In this approach, source and target segments are posted at the same time using one single method:
 [POST /v3/project/**child**/{projectId}/file/{fileId}/targetLang/{targetLangCode}/segment](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add). This method is almost identical to the POST/translation described above and only requires two additional parameters: 1) the source segment content and 2) its index numbering.
 
-Please note that for this approach _no batch upload_ of full segments is currently available.
+**Please note that for this approach _no batch upload_ option for full segments is currently available.**
 
-**Note:** It is strongly recommended the use of [Approach 1](#approach1). Even though it seems like extra effort (batch upload, an additional request), it will lead to a more robust solution.
+**Note:** It is strongly recommended to use [Approach 1](#approach1). Even though it seems like extra effort (batch upload, an additional request), it will lead to a more robust solution.
 
-Irrespective of the POST approach you decide to use, you will need to ensure that DQF receives all required information to produce accurate reports. This includes all relevant (source/target) segment and review information that complement that translated/reviewed content itself. Please consider carefully how you want to approach the submissions to DQF. If you need assistance please contact the DQF Team.
-
-**IMPORTANT:** DQF requires all translated segments (edited or not) to be posted for any child project that is directly associated with the translation activity. This is necessary both for statistical purposes as well as to enable subsequent POST calls in DQF review projects.
-
-**Note:** TAUS recomments posting segment content including tags (whenever available) as they are an integral part of the translation/review process. DQF will process tags internally.
 
 <a name="targetSegments"/>
 
@@ -291,14 +295,14 @@ When posting target segment content, DQF distinguishes between two parameters:
 * **Target Segment:** This represents the pre-existing content of a target segment that was pre-populated e.g. by machine translation or  a previous translation round. You should consider _targetSegment_ any content that makes a target segment field _not empty_. 
 * **Edited Segment:** This represents the _newer_ content produced by human intervention (most likely). This does not necessarily mean that the content of the _editedSegment_ has to be different than that of the _targetSegment_. 
 
-**Note:** Whenever the _time_ parameter is >0, _editedSegment_ content is expected.
+**Note:** DQF expects _target segment_ and _edited segment_ content with every POST call. There can be situation where _either_ parameter is null. _targetSegment_ can be null if no pre-translation existed for a given segment (i.e. the translation takes place from scratch). _editedSegment_ can be null if the user enters with the cursor in a segment that has no content and then moves away from that segment without adding any content. In this case only the time value will be _not null_.
 
 DQF offers you the possibility to map index numbers between your tool and DQF. For this you will need to use the _clientId_ parameter. For more information on this feature, see the section [Mapping](#mapping).
 
 <a name="fields"/>
 
 ### Parameters and Constraints
-In all requests that include target segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes. These are: 
+In all requests that include translated segment content both as individual segments or in batch, you will need to provide additional parameters that will be used as segment metadata for reporting purposes. These are: 
 
 * **Segment Origin ID**
 * Segment Origin Detail (if TM)
@@ -330,7 +334,7 @@ Review projects are created as (direct) children of translation or other review 
 
 **IMPORTANT:** Please note that irrespective of the mapping you adopt, you **must** have at least one child project of type _translation_ in the tree before you can create a project of type _review_.
 
-In order to post a review project you need to specify the [DQF Review Settings](#reviewSettings). This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
+To create a review project you need to use the method [POST /v3/project/child](https://dqf-api.ta-us.net/#/Project/Child) and select ***Review*** as project type. You will also need to specify the [DQF Review Settings](#reviewSettings). This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
 By specifying the *templateName* parameter, the posted settings will also be saved as a template associated with the active user (see [User/Company Templates](#templates)). 
 
 A review child project will also need to be assigned to a _type of review_. The sub-type will be automatically defined by the API, based on the optional parameters that are included during the review settings post. Three types of review projects are supported:
@@ -344,22 +348,38 @@ A review child project will also need to be assigned to a _type of review_. The 
 **Note:** Review projects can also have projects of type _translation_ as children. For example, a review project with a type *Error Annotation* is created and completed. The owner of the parent project of this review project (let's assume a translation project)  decides to have the project go through a new translation round. Two options are possible:
 * A new child of type _translation_ gets created that has the review project as parent. 
 * A new child of type _review/correction_ gets created.
-Which of the two options should be chosen ultimately depends on your implementationa and your tool. However, please keep in mind that the results on the reports will be different according to the chosen approach.
 
-The review settings can be posted at master project level if they are known from the beginning of the project. Alternatively, they can be posted at child project level if e.g. 1) they are determined at a later stage 2) a different set of review settings is required for a subset of the workflow. The TAUS account in use when the review settings are submitted is considered the ***initiator*** of the review cycle.
+Which of the two options should be chosen ultimately depends on your implementationa and your tool. 
+Please keep in mind that the results on the reports will be different according to the chosen approach.
 
-To create a review project you need to use the method
+The review settings can be posted at master project level if they are known from the beginning of the project. Alternatively, they can be posted at child project level if e.g. 1) they are determined at a later stage 2) a different set of review settings is required for a review subset of the workflow. The TAUS account in use when the review settings are submitted is considered the ***initiator*** of the review cycle.
+
+In order to post content to the created child project of type review, you need to use the method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment%2FReview/add).
 
 This is the most complex request in the API.
 
-The easiest way to explain this method is to display the request raw body data.
+The easiest way to explain this method is to display the request raw body data you will submit.
 
 **Note:** Please pay attention to the terminology used:
 * REVIEW = type of a child project and the POST method in the API
 * REVISION = parameter in the json request body when posting a review (see below) 
 
-***>> VERIFY EXAMPLE WITH DESCRIPTION OF STEPS AFTERWARDS***
+**EXAMPLE**
+
+In this example, combined review settings are applied.
+The segment "Test Segment" is being reviewed.
+
+1. The reviewer marks the whole segment with an error and the word "Segment" with another error.
+2. Then he/she deletes the word "Segment". 
+3. Later he/she notices another error in the already corrected segment.
+4. He/She adds the word "Some " at the beginning. (The text on the UI will probably read "Some Test _Segment_", with strikethrough applied to the word "Segment").
+5. Then he/she applies another error to the word "Test". 
+
+Note that, in the second revision, the content is still "Some Test Segment" even though the word "Segment" got deleted and that the character indexes correclty identify the current position of the word "Test". 
+ 
+The whole procedure took 10 secs. The series of actions should generate the json in the example above. [**REVIEW EXAMPLE - MISSING ERROR???**]
+
 ```json
 {
     "overwrite": true,
@@ -368,41 +388,37 @@ The easiest way to explain this method is to display the request raw body data.
     [
         {
           "clientId": "b6a66581-53ae-4cdb-ba3c-5e9b8d8c7464",
-          "comment": "test comment",
+          "comment": "This is a sample review comment",
           "errors": [
             {
               "errorCategoryId": 1,
               "severityId": 2,
               "charPosStart": null,
-              "charPosEnd": null,
-              "comment": null
+              "charPosEnd": null
             },
             {
               "errorCategoryId": 2,
               "severityId": 3,
               "charPosStart": 5,
-              "charPosEnd": 11,
-              "comment": "Test comment"
+              "charPosEnd": 11
             }
           ]
         },
 
         {
           "clientId": "8556bed0-084d-4e22-8ad3-0f9a0a42a232",
-          "comment": "test comment",
+          "comment": "This is another review comment",
           "errors": [
             {
               "errorCategoryId": 3,
               "severityId": 2,
               "charPosStart": 5,
-              "charPosEnd": 9,
-              "comment": null
+              "charPosEnd": 9
             }
           ],
           "correction": {
             "content": "Some Test Segment",
             "time": 10000,
-            "comment": null,
             "detailList": [
              {
                 "subContent": "Some ",
@@ -449,20 +465,7 @@ Some comments on the other fields that may not be self-explanatory:
     * added
     * deleted_ 
 
-**EXAMPLE**
 
-In the example above, combined review settings are applied.
-The segment "Test Segment" is being reviewed.
-
-1. The reviewer marks the whole segment with an error and the word "Segment" with another error.
-2. Then he/she deletes the word "Segment". 
-3. Later he/she notices another error in the already corrected segment.
-4. He/She adds the word "Some " at the beginning. (The text on the UI will probably read "Some Test _Segment_", with strikethrough applied to the word "Segment").
-5. Then he/she applies another error to the word "Test". 
-
-Note that, in the second revision, the content is still "Some Test Segment" even though the word "Segment" got deleted and that the character indexes correclty identify the current position of the word "Test". 
- 
-The whole procedure took 10 secs. The series of actions should generate the json in the example above. [**REVIEW EXAMPLE - MISSING ERROR???**]
 
 ***
 You only have one method to post reviews. However, please be aware of the way the API processes the _revisions_ parameter:
