@@ -363,22 +363,7 @@ The easiest way to explain this method is to display the request raw body data y
 
 **Note:** Please pay attention to the terminology used:
 * REVIEW = type of a child project and the POST method in the API
-* REVISION = parameter in the json request body when posting a review (see below) 
-
-**EXAMPLE**
-
-In this example, combined review settings are applied.
-The segment "Test Segment" is being reviewed.
-
-1. The reviewer marks the whole segment with an error and the word "Segment" with another error.
-2. Then he/she deletes the word "Segment". 
-3. Later he/she notices another error in the already corrected segment.
-4. He/She adds the word "Some " at the beginning. (The text on the UI will probably read "Some Test _Segment_", with strikethrough applied to the word "Segment").
-5. Then he/she applies another error to the word "Test". 
-
-Note that, in the second revision, the content is still "Some Test Segment" even though the word "Segment" got deleted and that the character indexes correclty identify the current position of the word "Test". 
- 
-The whole procedure took 10 secs. The series of actions should generate the json in the example above. [**REVIEW EXAMPLE - MISSING ERROR???**]
+* REVISION = parameter in the json request body when posting a review. 
 
 ```json
 {
@@ -388,10 +373,88 @@ The whole procedure took 10 secs. The series of actions should generate the json
     [
         {
           "clientId": "b6a66581-53ae-4cdb-ba3c-5e9b8d8c7464",
-          "comment": "This is a sample review comment",
+          "comment": "Sample review comment",
           "errors": [
             {
-              "errorCategoryId": 1,
+              "errorCategoryId": 11,
+              "severityId": 2,
+              "charPosStart": null,
+              "charPosEnd": null
+            }
+          ],
+          "correction": {
+            "content": "Some Test",
+            "time": 10000,
+            "detailList": [
+             {
+                "subContent": "Some ",
+                "type": "added"
+              },
+              {
+                "subContent": "Test  ",
+                "type": "unchanged"
+              }
+            ]
+          }
+        }
+    ]
+}
+```
+### Json Body Parameters
+
+* **batchId:** _Optional_. It is used for mapping purposes as it is returned back with the response from the API.
+* **overwrite:** _Required_. Its value (true/false) depends on how the integrator is handling the segment revisions. 
+	- If this is set to true, the whole revision history of a segment should be posted every time the method is called (e.g. when saving a document after review) because it overwrites existing records in our end. 
+	- If set to false, then only the new and un-posted revisions should be sent.
+	- **IMPORTANT!!: Please note that currently only the option TRUE is supported. This means that you need to repost the whole set of revision objects for a segment with any new post.**
+* **revisions:** The core json object. Based on the applied Review Settings, the json content may differ. 
+	- If the review settings are _correction only_, then the errors array should be omitted.
+	- If the review settings are _error annotation only_, the correction object should be omitted. 
+	**Note:** If there is no way to prevent the user from editing a translation (i.e. include the correction object in the API call), the corrections can still be posted but they will be not taken into consideration for reporting purposes. 
+	- If the review settings include the _combined scenario_, **both** error array and correction objects are expected.
+
+**IMPORTANT: A single revision object can contain multiple error annotations but only _one_ correction. Keep this in mind when posting reviewed content.**
+
+Some comments on the other fields that may not be self-explanatory:
+
+* The field _comment_ can be used to submit a comment about the review. This function will have to be supported by the UI first.
+* The fields _charPosStart_ and _charPosEnd_ are zero based indexes. 
+	- They are *both null* when an error annotation applies to the whole segment. 
+	- If the user applies an error to a selected text, then the start and end positions of the selection have to be specified.
+* The field _content_ in the _correction_ object contains the whole text of the segment (**including deletions**). 
+* In the _detailList_, we specify the type of change for each sub-segment item (_subContent_). Sub-segment items can be words or single characters. The allowed types are:
+    * *unchanged*
+    * *added*
+    * *deleted* 
+
+
+**EXAMPLE**
+
+In this example, combined review settings are applied.
+The segment "Test Segment" is being reviewed.
+
+1. The reviewer marks the whole segment with a minor mistranslation error and the word "Segment" with a major fluency error.
+2. Then the reviewer deletes the word "Segment". 
+3. Before moving on to the next segment, the reviewer also leaves a review comment ('Sample review comment').
+4. At a later point, the reviewer notices another error in the already corrected segment.
+5. The reviewer adds the word "Some " at the beginning of the segment. (The text on the UI will now probably read "Some Test _Segment_", with strikethrough applied to the word "Segment"). The correction of the segment took 10 secs. 
+6. Eventually, the reviewer applies a minor inconsistent terminology error to the word "Test ". 
+7. After the second review of this segment, another comment is added ('Another review comment').
+ 
+The series of actions should generate the json in the example below. 
+
+```json
+{
+    "overwrite": true,
+    "batchId": "25980bfd-d909-4d6d-bd35-ecfc30d90db3",
+    "revisions":
+    [
+        {
+          "clientId": "b6a66581-53ae-4cdb-ba3c-5e9b8d8c7464",
+          "comment": "Sample review comment",
+          "errors": [
+            {
+              "errorCategoryId": 11,
               "severityId": 2,
               "charPosStart": null,
               "charPosEnd": null
@@ -407,10 +470,10 @@ The whole procedure took 10 secs. The series of actions should generate the json
 
         {
           "clientId": "8556bed0-084d-4e22-8ad3-0f9a0a42a232",
-          "comment": "This is another review comment",
+          "comment": "Another review comment",
           "errors": [
             {
-              "errorCategoryId": 3,
+              "errorCategoryId": 24,
               "severityId": 2,
               "charPosStart": 5,
               "charPosEnd": 9
@@ -425,7 +488,7 @@ The whole procedure took 10 secs. The series of actions should generate the json
                 "type": "added"
               },
               {
-                "subContent": "Test  ",
+                "subContent": "Test ",
                 "type": "unchanged"
               },
               {
@@ -439,36 +502,22 @@ The whole procedure took 10 secs. The series of actions should generate the json
 }
 ```
 
-The request content should be json serialized which means that key-value pairs should _not_ be used (as in x-www-form-urlencoded or form-data body) but a raw json body instead.
-
-### Json Parameters
-
-* **batchId:** _Optional_. It is used for mapping purposes as it is returned back with the response from the API.
-* **overwrite:** _Required_. Its value (true/false) depends on how the integrator is handling the segment revisions. 
-	- If this is set to true, the whole revision history of a segment should be posted every time the method is called (e.g. when saving a document after review) because it overwrites existing records in our end. 
-	- If set to false, then only the new and un-posted revisions should be sent.
-* **revisions:** The core json object. Based on the applied Review Settings, the json content may differ. 
-	- If the review settings include correction only, then the errors array should be ommited.
-	- If the review settings include error annotation only, the correction object should be ommited. **Note:** If there is no way to prevent the user from editing a translation (i.e. include the correction object in the API call), the corrections can still be posted but they will be not taken into consideration for reporting purposes. 
-	- If the review settings include the combined scenario, both error array and correction object are expected.
-
-**Note:** A single revision object can contain multiple error annotations but only _one_ correction. Keep this in mind when posting reviewed content.
-
-Some comments on the other fields that may not be self-explanatory:
-
-* The fields _charPosStart_ and _charPosEnd_ are zero based indexes. 
-	- They are *both null* when an error annotation applies to the whole segment. 
-	- If the user applies an error to a selected text then the start and end positions of the selection have to be specified.
-* The field _content_ in the _corretion_ object contains the whole text of the segment (**including deletions**). 
-* In the _detailList_, we specify the type of change for each sub-segment item (_subContent_). Sub-segment items can be words or single characters. The allowed types are:
-    * _unchanged
-    * added
-    * deleted_ 
+The body contains two revision objects, identified by the _clientId_. The second revision object is needed because a correction has been submitted for a segment that already contained errors. Note that, in the second revision object, the _content_ parameter is still "Some Test Segment" even though the word "Segment" got deleted. Note also that the character indexes in the second revision object correclty identify the current position of the word "Test " (now preceded by "Some "). 
 
 
+**Note:** The request content should be json serialized which means that key-value pairs should _not_ be used (as in x-www-form-urlencoded or form-data body) but a raw json body instead.
 
-***
-You only have one method to post reviews. However, please be aware of the way the API processes the _revisions_ parameter:
+
+### Guidelines for Revision Objects
+
+You only have one API method to post reviews. Keep in mind that the _overwrite_ parameter is currently always TRUE. Please take a moment to consider some basic rules you need to follow when building your review request body. We will assume a _combined review_ approach. Please note that in order to be able to apply a review to a given segment, the corresponding parent project of type _translation_ will **have to** contain translated content as _editedSegment_.
+
+* **FIRST REVIEW of a SEGMENT**. This means the review is carried out without leaving a given segment.
+	- Segment review with errors only = submit a _revisions_ object with values for the _errors_ array. This _will not_ create a new entry in the database.
+	- Segment review with corrections only = submit a _revisions_ object with values for _correction_. This _will_ create a new entry in the database.
+	- Segment review with both errors and corrections = submit a _revisions_ object with values for both.
+
+However, please be aware of the way the API processes the _revisions_ parameter:
 
 * In the first review of a translated segment, only errors are applied: In the POST/review, the _errors_ array has values AND _correction_ is empty. 
 * In the first review of a translated segment, only correction applies: You should post the values for _correction_ and a first _revision_ will be created for that segment.
@@ -477,11 +526,11 @@ You only have one method to post reviews. However, please be aware of the way th
 * A segment is reviewed a second time. The new review has only corrections AND the latest posted _revision_ **had** errors: A new _revision_ has to be created, which initially does not have any children errors.
 * A segment is reviewed a second time. The new review has only errors: The _errors_ object will apply to the most recent _correction_ object available.
 
-**IMPORTANT:** DQF requires all project segments (reviewed or not) to be posted for any child project that is directly associated with the review activity. 
+**IMPORTANT:** DQF requires all project segments (reviewed or not) to be posted for any child project that is directly associated with (= precedes) the review activity. 
 
 <a name="automatedReview"/>
 
-## Automated Review Projects [_____TO BE REVISED____]
+## Automated Review Projects [_____TO BE REVISED by NIKOS____]
 For convenience reasons we have setted up some extra endpoints to automatically create child review projects in the tree hierarchy.
 * Review settings must exist for the project that we want to perform this procedure. 
 * Review Settings can be posted at any time. 
@@ -504,29 +553,29 @@ Currently, we allow the update of status for Child Projects only. This is accomp
 ## Batch Upload
 Depending on your integration approach and triggers, you can choose among the available POST calls.
 
-**IMPORTANT:** You need to ensure that DQF receives **ALL** source and translated segments for every child project that is associated with the actual translation activity as well as segment info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
+**IMPORTANT:** You need to ensure that DQF receives **ALL** source and translated segments (_targetSegment_ and _editedSegment_) for every child project that is associated with the actual translation activity as well as segment info per file/target language combination. This is particularly important whenever there are e.g. pre-translated segments that do not get edited or reviewed by any user in the tree. 
 
 If you are following [Approach 1](#approach1) for posting translations, you can use two methods for batch upload of segments. The methods differ in that the first expects both _targetSegment_ and _editedSegment_ content whereas the second only requires _targetSegment_ content. Please see [Target Segment Info](#targetSegments) for the difference between the two segment types.
 The maximum allowed number of elements in a batch/array is 100. 
 
-* If you want to batch submit all target segments that have been edited (= for which there is a new target content and/or time information) within a translation type project, you need to use the method:
-[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0)
+* If you want to batch submit all translated segments that have been edited (= for which there is a new translated content and/or time information) within a translation type project, you need to use the method:
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0).
 To check whether a source segment has already a translation assigned you can use the following operation: 
 [GET /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
 
-* If you need to batch submit all remaining target segments that were _not_ edited (e.g. 100% matches, locked segments, etc.) for which there is no additional metadata), you should use this other method:
+* If you need to batch submit all remaining translated segments that were _not_ edited (e.g. 100% matches, locked segments, etc.) for which there is no additional metadata, you should use this other method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. 
 To verify which source segments have target segment content the following method can be used:
-[GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
+[GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language. **This method can in fact be replaced by the method above, which allows for _null_ values for _editedSegment_.**
 
-**Note:** A target segment batch upload can take place at any time during the execution of the translation/review project. You will need to evaluate the available triggers in your tool. The final batch upload can be made e.g when a user is completes his/her part of the job or e.g. after the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
+**Note:** A target segment batch upload can take place at _any time_ during the execution of the translation/review project. You will need to evaluate the available triggers in your tool. A batch upload can be made e.g when a user is completes his/her part of the job or e.g. after the user has submitted the first segment. In this latter case, the edits made to a segment during translation/review will be send via a PUT call. 
 
-**IMPORTANT:** If you are using [Approach 2](#approach2), you will still need to post each segment pair with separate calls.
+**IMPORTANT:** If you are using [Approach 2](#approach2), you will still need to post each segment pair with separate calls until a dedicated batch upload call is implemented.
 
 <a name="templates"/>
 
 ## User/Company Templates
-In order to enhance user experience, DQF attributes can be pre-populated by means of templates. Templates contain user-dependent DQF project attributes which can be called to quickly create new DQF (master) projects. Templates are created by (and associated to) a single user (= TAUS account) but they can be shared among users within the same organization by setting the *isPublic* parameter to *true*. From a UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates. Please note that the API will throw an error if the same user posts two templates with the same _values_ **OR** _name_.
+In order to enhance user experience, DQF attributes can be pre-populated by means of templates. Templates contain user-dependent DQF project attributes which can be called to quickly create new DQF (master) projects. Templates are created by (and associated to) a single user (= TAUS account). Templates can be shared among users within the same organization by setting the *isPublic* parameter to *true*. From a UI perspective, there could be a step before posting a master project where the user creates/selects/edits/deletes templates. Please note that the API will throw an error if the same user posts two templates with the same _values_ **OR** _name_.
 
 There are two types of templates:
 1. Project settings templates
