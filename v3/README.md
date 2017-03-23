@@ -334,7 +334,7 @@ Review projects are created as (direct) children of translation or other review 
 
 **IMPORTANT:** Please note that irrespective of the mapping you adopt, you **must** have at least one child project of type _translation_ in the tree before you can create a project of type _review_.
 
-To create a review project you need to use the method [POST /v3/project/child](https://dqf-api.ta-us.net/#/Project/Child) and select ***Review*** as project type. You will also need to specify the [DQF Review Settings](#reviewSettings). This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
+To create a review project you need to use the method [POST /v3/project/child](http://dqf-api.ta-us.net/#/Project/Child) and select ***Review*** as project type. You will also need to specify the [DQF Review Settings](#reviewSettings). This can be accomplished with [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add).
 By specifying the *templateName* parameter, the posted settings will also be saved as a template associated with the active user (see [User/Company Templates](#templates)). 
 
 A review child project will also need to be assigned to a _type of review_. The sub-type will be automatically defined by the API, based on the optional parameters that are included during the review settings post. Three types of review projects are supported:
@@ -570,9 +570,9 @@ If you are following [Approach 1](#approach1) for posting translations, you can 
 The maximum allowed number of elements in a batch/array is 100. 
 
 * If you want to batch submit all translated segments that have been edited (= for which there is a new translated content and/or time information) within a translation type project, you need to use the method:
-[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0).
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0).
 To check whether a source segment has already a translation assigned you can use the following operation: 
-[GET /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](https://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
+[GET /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all of the source segments of the file and a flag determining if any target content has been posted for the specified target language.
 
 * If you need to batch submit all remaining translated segments that were _not_ edited (e.g. 100% matches, locked segments, etc.) for which there is no additional metadata, you should use this other method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. 
@@ -604,12 +604,12 @@ You may want to avoid using templates for the review type *correction* as no add
 **IMPORTANT:** Please use the term **Error Annotation** on the UI where the API reads *error_typology*
 
 To post a review template use [POST /v3/user/reviewTemplate](http://dqf-api.ta-us.net/#!/Template/add_0). 
-To provide access to the user's and organization templates use [GET /v3/user/reviewTemplate](https://dqf-api.ta-us.net/#!/Template/getAll_0).
+To provide access to the user's and organization templates use [GET /v3/user/reviewTemplate](http://dqf-api.ta-us.net/#!/Template/getAll_0).
 
 **Note:** A Project or Review template can also be created automatically when posting project/review settings by using the _templateName_ parameter available in the methods: 
 
-* [POST /v3/project/master](https://dqf-api.ta-us.net/#!/Project%2FMaster/add)
-* [POST /v3/project/{projectId}/reviewSettings](https://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add)
+* [POST /v3/project/master](http://dqf-api.ta-us.net/#!/Project%2FMaster/add)
+* [POST /v3/project/{projectId}/reviewSettings](http://dqf-api.ta-us.net/#!/Project%2FReviewSettings/add)
 
 <a name="mapping"/>
 
