@@ -406,14 +406,14 @@ The easiest way to explain this method is to display the request raw body data y
 * **overwrite:** _Required_. Its value (true/false) depends on how the integrator is handling the segment revisions. 
 	- If this is set to true, the whole revision history of a segment should be posted every time the method is called (e.g. when saving a document after review) because it overwrites existing records in our end. 
 	- If set to false, then only the new and un-posted revisions should be sent.
-	- **IMPORTANT!!: Please note that currently only the option TRUE is supported. This means that you need to repost the whole set of revision objects for a segment with any new post.**
+	- **IMPORTANT!!: Please note that currently _only_ the option TRUE is supported. This means that you need to repost the whole set of revision objects for a segment with any new post.**
 * **revisions:** The core json object. Based on the applied Review Settings, the json content may differ. 
 	- If the review settings are _correction only_, then the errors array should be omitted.
 	- If the review settings are _error annotation only_, the correction object should be omitted. 
 	**Note:** If there is no way to prevent the user from editing a translation (i.e. include the correction object in the API call), the corrections can still be posted but they will be not taken into consideration for reporting purposes. 
-	- If the review settings include the _combined scenario_, **both** error array and correction objects are expected.
+	- If the review settings include the _combined scenario_, both error array and correction objects are expected.
 
-**IMPORTANT: A single revision object can contain multiple error annotations but only _one_ correction. Keep this in mind when posting reviewed content.**
+**IMPORTANT: A single _revisions_ object can contain multiple error annotations but only _one_ correction. Keep this in mind when posting reviewed content.**
 
 Some comments on the other fields that may not be self-explanatory:
 
@@ -502,45 +502,55 @@ The series of actions should generate the json in the example below.
 }
 ```
 
-The body contains two revision objects, identified by the _clientId_. The second revision object is needed because a correction has been submitted for a segment that already contained errors. Note that, in the second revision object, the _content_ parameter is still "Some Test Segment" even though the word "Segment" got deleted. Note also that the character indexes in the second revision object correclty identify the current position of the word "Test " (now preceded by "Some "). 
+The body contains two revision objects, identified by the _clientId_. The second revision object is needed because a new review has been made for a segment that had already been reviewed once. Note that, in the second revision object, the _content_ parameter is still "Some Test Segment" even though the word "Segment" got deleted. Note also that the character indexes in the second revision object correclty identify the current position of the word "Test " (now preceded by "Some "). 
 
 
 **Note:** The request content should be json serialized which means that key-value pairs should _not_ be used (as in x-www-form-urlencoded or form-data body) but a raw json body instead.
 
 
-### Guidelines for Revision Objects
+### Guidelines for Revisions Objects
 
-You only have one API method to post reviews. Keep in mind that the _overwrite_ parameter is currently always TRUE. Please take a moment to consider some basic rules you need to follow when building your review request body. We will assume a _combined review_ approach. Please note that in order to be able to apply a review to a given segment, the corresponding parent project of type _translation_ will **have to** contain translated content as _editedSegment_.
+You only have one API method to post reviews. Keep in mind that the _overwrite_ parameter is currently always TRUE. Please take a moment to consider some basic rules you need to follow when building your review request body. We will assume a _combined review_ approach. 
 
-* **FIRST REVIEW of a SEGMENT**. This means the review is carried out without leaving a given segment.
-	- Segment review with errors only = submit a _revisions_ object with values for the _errors_ array. This _will not_ create a new entry in the database.
-	- Segment review with corrections only = submit a _revisions_ object with values for _correction_. This _will_ create a new entry in the database.
-	- Segment review with both errors and corrections = submit a _revisions_ object with values for both.
+**IMPORTANT:** Please note that in order to be able to apply a review to a given segment, the corresponding parent project of type _translation_ will **have to** contain translated content as _editedSegment_.
 
-However, please be aware of the way the API processes the _revisions_ parameter:
+There are multiple ways in which you can construct the request body but here we propose the most straightforward one. If you plan to construct your request in a different way, please notify the DQF Team.
 
-* In the first review of a translated segment, only errors are applied: In the POST/review, the _errors_ array has values AND _correction_ is empty. 
-* In the first review of a translated segment, only correction applies: You should post the values for _correction_ and a first _revision_ will be created for that segment.
-* In a review of a segment, a correction precedes an error annotation: The _revisions_ should contain both correction and error parameters.
-* A segment is reviewed a second time. The new review has only corrections AND the latest posted _revision_ had **no** errors: The _correction_ object of the latest _revision_ has to be updated.
-* A segment is reviewed a second time. The new review has only corrections AND the latest posted _revision_ **had** errors: A new _revision_ has to be created, which initially does not have any children errors.
-* A segment is reviewed a second time. The new review has only errors: The _errors_ object will apply to the most recent _correction_ object available.
+Whenever a given user has selected a segment for review all activity (corrections and/or error annotations) taking place while the segment is active should be recorded into a _revisions_ object. If the same user returns to the segment at a later stage and performs additional review activity, a **new** _revisions_ object should be created to track the new changes. 
 
-**IMPORTANT:** DQF requires all project segments (reviewed or not) to be posted for any child project that is directly associated with (= precedes) the review activity. 
+**IMPORTANT:** Please note that since the _overwrite_ parameter is TRUE, you should _not_ remove the existing _revisions_ objects for a given segment. Keep also in mind that a _revisions_ object can contain multiple error annotations but _only one_ correction. 
+
+**Note:** This approach should be adopted whether or not the first review of a segment (_revisions_ object) has already been posted to DQF.
+
 
 <a name="automatedReview"/>
 
-## Automated Review Projects [_____TO BE REVISED by NIKOS____]
-For convenience reasons we have setted up some extra endpoints to automatically create child review projects in the tree hierarchy.
-* Review settings must exist for the project that we want to perform this procedure. 
-* Review Settings can be posted at any time. 
+## Automated Review Child Projects
+DQF can be integrated in cloud-based as well non cloud-based tools. The latter group will likely involve interactions between a Translation Management System and a CAT-tool. In order to facilitate the interactions between multiple tools this method has been devised specifically to support the review cycle. It is currently used to support the interactions between SDL Worldserver and SDL Trados Studio. 
 
-When a Review Cycle is about to begin, you can call [POST /v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net). In this request you must specify an array of fileTargetLangIds. These refer to the file and target language combinations for the project at hand and can be retrieved any time via [GET /v3/project/{projectId}/fileTargetLang](http://dqf-api.ta-us.net) (for both master and child projects). You must also specify the assignee (existing TAUS user email) that will take ownership of the automatically created review projects. The API will detect any appropriate projects and create Review projects as children. The current criteria are:
-* The project’s type cannot be Review with a Review Type of ‘error_typology’. Only ‘correction’ and ‘combined’ Review projects are allowed
-* There must be no direct Review children for the specified user and file/target-language combination
-* The project must be a leaf in the tree hierarchy (after excluding projects that do not meet the criteria above)
+**Note:** We consider this method only applicable to distinct tools where **not** all required information to POST child projects is available. Therefore, this endpoint should _not_ be relevant for cloud-based tools. 
 
-The response will contain a list of all the Review projects that were created and a list of all the leaf projects that did not meet the aforementioned criteria alongside with the reason for that. You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net).
+If your tool is a TMS, needs to interact with a TMS or you believe this endpoint can be relevant for your integration, please contact the DQF Team to discuss the exact implementation.
+
+[___EXTRA INFO (internal)___]
+
+This method is applicable for tools where a review child project needs to be added to the tree but not all required information is available.
+The Review Cycle endpoint should be used on the CAT tool side, i.e. the tool where the actual review will take place. The CAT tool needs to be able to correctly add a Review Child Project for the reviewer to the project tree, should the TMS not be able to support this in advance. 
+
+**Note:** In order to be able to call this method, you need to ensure that [DQF Review Settings](#reviewSettings) exist for the project. Review settings can be posted at any time in the workflow, as long as they are available before this method is used. 
+If you are working with packages, the package coming from the TMS should also be marked as a _review_ package.
+
+When you call [POST /v3/project/{projectId}/reviewCycle](https://dqf-api.ta-us.net/#/Project/ReviewCycle) you need to be able to provide some required parameters:
+* ***apiKeyTms:*** If the review settings were posted from a different tool (e.g. a TMS), you will need the API key of the tool the CAT tool is interacting with. Please note that this is sensitive information so you may not be able to get this parameter. If this is the case, you will not be able to use this endpoint.
+* ***userId:*** This is the ID of the user that posted the [DQF Review Settings](#reviewSettings).
+
+
+
+When a Review Cycle is about to begin, you can call [POST /v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net). In this request you must specify an array of fileTargetLangIds. These refer to the file and target language combinations for the project at hand and can be retrieved any time via [GET /v3/project/{projectId}/fileTargetLang](http://dqf-api.ta-us.net) (for both master and child projects). You must also specify the assignee (existing TAUS user email) that will take ownership of the automatically created review projects. The API will detect any appropriate projects and create Review projects as children. 
+
+The response will contain a list of all the Review projects that were created.
+
+You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net).
 
 <a name="projectStatus"/>
 
