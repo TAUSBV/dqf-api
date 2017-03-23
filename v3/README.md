@@ -23,7 +23,7 @@ For any questions related to the integration, please contact dqfapi@taus.net
 * [Translation](#translation)
 * [Target Segment Info](#targetSegments)
 * [Review](#review)
-* [Automated Review Projects](#automatedReview)
+* [Automated Review Child Projects](#automatedReview)
 * [Project Status](#projectStatus)
 * [Batch Upload](#batchUpload)
 * [User/Company Templates](#templates)
@@ -341,8 +341,8 @@ A review child project will also need to be assigned to a _type of review_. The 
 
 1. **Correction** (_correction_): The existing translation is edited/corrected 
 2. **Error Annotation** (*error_typology*): The identified incorrect part of a translation are marked using one or multiple error categories and severities. The errors can to be applied to:		
-  * Whole segment		
-  * Part of segment	
+  	- Whole segment		
+  	- Part of segment	
 3. **Combined** (_combined_): Combination of the above. The existing translation is corrected and error categories are applied. Here too errors can apply to the whole segment or just a part.
 
 **Note:** Review projects can also have projects of type _translation_ as children. For example, a review project with a type *Error Annotation* is created and completed. The owner of the parent project of this review project (let's assume a translation project)  decides to have the project go through a new translation round. Two options are possible:
@@ -504,7 +504,6 @@ The series of actions should generate the json in the example below.
 
 The body contains two revision objects, identified by the _clientId_. The second revision object is needed because a new review has been made for a segment that had already been reviewed once. Note that, in the second revision object, the _content_ parameter is still "Some Test Segment" even though the word "Segment" got deleted. Note also that the character indexes in the second revision object correclty identify the current position of the word "Test " (now preceded by "Some "). 
 
-
 **Note:** The request content should be json serialized which means that key-value pairs should _not_ be used (as in x-www-form-urlencoded or form-data body) but a raw json body instead.
 
 
@@ -532,7 +531,7 @@ DQF can be integrated in cloud-based as well non cloud-based tools. The latter g
 
 If your tool is a TMS, needs to interact with a TMS or you believe this endpoint can be relevant for your integration, please contact the DQF Team to discuss the exact implementation.
 
-[___EXTRA INFO (internal)___]
+[___EXTRA INFO___]
 
 This method is applicable for tools where a review child project needs to be added to the tree but not all required information is available.
 The Review Cycle endpoint should be used on the CAT tool side, i.e. the tool where the actual review will take place. The CAT tool needs to be able to correctly add a Review Child Project for the reviewer to the project tree, should the TMS not be able to support this in advance. 
@@ -540,23 +539,25 @@ The Review Cycle endpoint should be used on the CAT tool side, i.e. the tool whe
 **Note:** In order to be able to call this method, you need to ensure that [DQF Review Settings](#reviewSettings) exist for the project. Review settings can be posted at any time in the workflow, as long as they are available before this method is used. 
 If you are working with packages, the package coming from the TMS should also be marked as a _review_ package.
 
-When you call [POST /v3/project/{projectId}/reviewCycle](https://dqf-api.ta-us.net/#/Project/ReviewCycle) you need to be able to provide some required parameters:
+When you call [POST /v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net/#/Project/ReviewCycle) you need to be able to provide some required parameters:
 * ***apiKeyTms:*** If the review settings were posted from a different tool (e.g. a TMS), you will need the API key of the tool the CAT tool is interacting with. Please note that this is sensitive information so you may not be able to get this parameter. If this is the case, you will not be able to use this endpoint.
+* ***projectId:*** This is the ID of the project (master or child) where the [DQF Review Settings](#reviewSettings) got posted.
 * ***userId:*** This is the ID of the user that posted the [DQF Review Settings](#reviewSettings).
+* ***fileTargetLangIds[0]:*** This is the ID of the file and target langauge combination that is relevant for the review that is about to be performed. This ID can be retrieved any time via [GET /v3/project/{projectId}/fileTargetLang](http://dqf-api.taus.net/#!/Project%2FFileTargetLang/getAll). You will need to specify an array of _fileTargetLangsIds_ to cover all combinations that are relevant for the review about to begin. 
 
+The API will detect all relevant leaf child projects and create as many leaf review child projects as needed. The response will contain a list of all the review child projects that were created. You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net/#!/Project%2FReviewCycle/get).
 
-
-When a Review Cycle is about to begin, you can call [POST /v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net). In this request you must specify an array of fileTargetLangIds. These refer to the file and target language combinations for the project at hand and can be retrieved any time via [GET /v3/project/{projectId}/fileTargetLang](http://dqf-api.ta-us.net) (for both master and child projects). You must also specify the assignee (existing TAUS user email) that will take ownership of the automatically created review projects. The API will detect any appropriate projects and create Review projects as children. 
-
-The response will contain a list of all the Review projects that were created.
-
-You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net).
+By using this method, you will not need to use the combination of (at least) two calls to post a review child project (see 
+[POST /v3/project/child](http://dqf-api.ta-us.net/#/Project/Child) and 
+[POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language/add)
 
 <a name="projectStatus"/>
 
 ## Project Status
-Currently, we allow the update of status for Child Projects only. This is accomplished through 
-[PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: ‘initialized’, ‘assigned’, ‘inprogress’ and ‘completed’. The only allowed value you can update the status to currently is ‘completed’. You should use this as soon as a translation or a review task (that is mapped to a DQF child project) is done (ex. translator finishes and notifies PM). All the other statuses are automatically assigned through certain events in the API. You can retrieve a project’s current status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). 
+Currently, we allow the update of status for child projects only. This is accomplished through 
+[PUT /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net). The status values are: _initialized_, _assigned_, _inprogress_ and _completed_. The only value you can actively update is _completed_. You should use this as soon as a translation or a review task (that is mapped to a DQF child project) is completed and workflow can move to the next step. You can map this to a UI element in your tool that triggers the completion of a workflow step. All the other statuses are automatically assigned through certain events in the DQF API. You can retrieve the project current status via [GET /v3/project/child/{projectId}/status](http://dqf-api.ta-us.net/#!/Project%2FChild%2FStatus/get). 
+
+**Note:** Updating a project status to _completed_ is **not** binding for initiating a review child project. This means that a review child project can be created while the translation is still ongoing.
 
 <a name="batchUpload"/>
 
