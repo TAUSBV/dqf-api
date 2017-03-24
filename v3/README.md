@@ -531,26 +531,6 @@ DQF can be integrated in cloud-based as well non-cloud-based tools. The latter g
 
 If your tool is a TMS, needs to interact with a TMS or you believe this endpoint can be relevant for your integration, please contact the DQF Team to discuss the exact implementation.
 
-[___EXTRA INFO___]
-
-This method is applicable for tools where a review child project needs to be added to the tree but not all required information is available.
-The Review Cycle endpoint should be used on the CAT tool side, i.e. the tool where the actual review will take place. The CAT tool needs to be able to correctly add a Review Child Project for the reviewer to the project tree, should the TMS not be able to support this in advance. 
-
-**Note:** In order to be able to call this method, you need to ensure that [DQF Review Settings](#reviewSettings) exist for the project. Review settings can be posted at any time in the workflow, as long as they are available before this method is used. 
-If you are working with packages, the package coming from the TMS should also be marked as a _review_ package.
-
-When you call [POST /v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net/#/Project/ReviewCycle) you need to be able to provide some required parameters:
-* ***apiKeyTms:*** If the review settings were posted from a different tool (e.g. a TMS), you will need the API key of the tool the CAT tool is interacting with. Please note that this is sensitive information so you may not be able to get this parameter. If this is the case, you will not be able to use this endpoint.
-* ***projectId:*** This is the ID of the project (master or child) where the [DQF Review Settings](#reviewSettings) got posted.
-* ***userId:*** This is the ID of the user that posted the [DQF Review Settings](#reviewSettings).
-* ***fileTargetLangIds[0]:*** This is the ID of the file and target language combination that is relevant for the review that is about to be performed. This ID can be retrieved any time via [GET /v3/project/{projectId}/fileTargetLang](http://dqf-api.taus.net/#!/Project%2FFileTargetLang/getAll). You will need to specify an array of _fileTargetLangsIds_ to cover all combinations that are relevant for the review about to begin. 
-
-The API will detect all relevant leaf child projects and create as many leaf review child projects as needed. The response will contain a list of all the review child projects that were created. You can retrieve the current Review Cycle projects at any time via [GET/v3/project/{projectId}/reviewCycle](http://dqf-api.ta-us.net/#!/Project%2FReviewCycle/get).
-
-By using this method, you will not need to use the combination of (at least) two calls to post a review child project (see 
-[POST /v3/project/child](http://dqf-api.ta-us.net/#/Project/Child) and 
-[POST /v3/project/child/{projectId}/file/{fileId}/targetLang](http://dqf-api.ta-us.net/#!/Project%2FChild%2FFile%2FTarget_Language/add)
-
 <a name="projectStatus"/>
 
 ## Project Status
