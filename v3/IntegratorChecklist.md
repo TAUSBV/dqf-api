@@ -27,7 +27,7 @@ This check requires that child projects point to the correct parent project, and
 Comments: <input type="text" id="SuccessionCompliance"/>
 
 - [ ] General compliance of integrator to translation and review task<br/>
-This check requires that the integrator has supports translation and/or review tasks ('review only' tasks are not supported in DQF, so for review-only integrators, a translation cycle should be provided by a different tool, or simulated in the review-only tool)<br/>
+This check requires that the integrator supports translation and/or review tasks ('review only' tasks are not supported in DQF, so for review-only integrators, a translation cycle should be provided by a different tool, or simulated in the review-only tool)<br/>
 **Refer to** "DQF API v3.0 Documentation", section "Project/Child"<br/>
 Comments: <input type="text" id="SuccessionCompliance"/>
 
