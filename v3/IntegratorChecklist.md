@@ -115,7 +115,7 @@ This check requires that all segments in a translation job are sent to DQF, and 
 Comments: <input type="text" id="CompleteSegments"/>
 
 - [ ] Integrator sends all correction data for review projects<br/>
-This check requires that all information regarding corrections are passed to DQF, including deletions and additions of sub-segments<br/>
+This check requires that all information regarding corrections is passed to DQF, including deletions and additions of sub-segments<br/>
 **Refer to** "DQF API v3.0 Documentation", section "Review"<br/>
 Comments: <input type="text" id="EditingTimeAccumulation"/>
 
