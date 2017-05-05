@@ -116,10 +116,10 @@ Comments: <input type="text" id="CompleteSegments"/>
 
 - [ ] Integrator sends all correction data for review projects<br/>
 This check requires that all information regarding corrections are passed to DQF, including deletions and additions of sub-segments<br/>
-**Refer to** "DQF API v3.0 Documentation", section "Review"
+**Refer to** "DQF API v3.0 Documentation", section "Review"<br/>
 Comments: <input type="text" id="EditingTimeAccumulation"/>
 
 - [ ] Integrator sends all error annotation data for review projects<br/>
 This check requires that each error annotation is passed to DQF, including all information about the annotation<br/>
-**Refer to** "DQF API v3.0 Documentation", section "Review"
+**Refer to** "DQF API v3.0 Documentation", section "Review"<br/>
 Comments: <input type="text" id="EditingTimeAccumulation"/>
