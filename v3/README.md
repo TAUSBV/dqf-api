@@ -550,7 +550,7 @@ The maximum allowed number of elements in a batch/array is 100.
 
 * If you want to batch submit all translated segments that have been edited (= for which there is a new translated content and/or time information) within a translation type project, you need to use the method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.stag.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0).
-The segmentPairs body parameter should be a Json Array. Example (two source segments):
+The segmentPairs body parameter should be a Json Array. Example (two segments):
 
 ```json
 {
@@ -586,7 +586,7 @@ To check whether a source segment has already a translation assigned you can use
 
 * If you need to batch submit all remaining translated segments that were _not_ edited (e.g. 100% matches, locked segments, etc.) for which there is no additional metadata, you should use this other method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](https://dqf-api.stag.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. 
-The targetSegments body parameter should be a Json Array. Example (two source segments):
+The targetSegments body parameter should be a Json Array. Example (two segments):
 
 ```json
 {
