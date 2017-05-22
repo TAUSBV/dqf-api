@@ -550,11 +550,68 @@ The maximum allowed number of elements in a batch/array is 100.
 
 * If you want to batch submit all translated segments that have been edited (= for which there is a new translated content and/or time information) within a translation type project, you need to use the method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch](https://dqf-api.stag.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0).
+The segmentPairs body parameter should be a Json Array. Example (two source segments):
+
+```json
+{
+   "segmentPairs":[
+      {
+         "sourceSegmentId":1,
+         "clientId":"8ab68bd9-8ae7-4860-be6c-bc9a4b276e37",
+         "targetSegment":"",
+         "editedSegment":"Proin interdum mauris non ligula pellentesque ultrices.",
+         "time":6582,
+         "segmentOriginId":5,
+         "mtEngineId":null,
+         "mtEngineOtherName":null,
+         "matchRate":0
+      },
+      {
+         "sourceSegmentId":2,
+         "clientId":"e5e6f2ae-7811-4d49-89df-d1b18d11f591",
+         "targetSegment":"Duis mattis egestas metus.",
+         "editedSegment":"Duis mattis egostas ligula matus.",
+         "time":5530,
+         "segmentOriginId":2,
+         "mtEngineId":null,
+         "mtEngineOtherName":null,
+         "matchRate":100
+      }
+   ]
+}
+```
+
 To check whether a source segment has already a translation assigned you can use the following operation: 
 [GET /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](https://dqf-api.stag.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all source segments of the file and a flag determining if any target content has been posted for the specified target language.
 
 * If you need to batch submit all remaining translated segments that were _not_ edited (e.g. 100% matches, locked segments, etc.) for which there is no additional metadata, you should use this other method:
 [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch](https://dqf-api.stag.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/add_0_1_2). This is similar to the batch source segments operation. 
+The targetSegments body parameter should be a Json Array. Example (two source segments):
+
+```json
+{
+   "targetSegments":[
+      {
+         "targetSegment":"Proin interdum mauris non ligula pellentesque ultrices.",
+         "sourceSegmentId":1,
+         "segmentOriginId":1,
+         "mtEngineId":40,
+         "mtEngineVersion":"You can optionally specify detailed info about the MT engine",
+         "mtEngineOtherName":"An MT engine not listed in DQF",
+         "segmentOriginDetail":null
+      },
+      {
+         "targetSegment":"Duis mattis egestas metus.",
+         "sourceSegmentId":2,
+         "segmentOriginId":2,
+         "matchRate":100,
+         "segmentOriginDetail":"You can optionally specify detailed info about the segment's origin"
+      }
+   ]
+}
+```
+
+
 To verify which source segments have target segment content the following method can be used:
 [GET v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/batch](https://dqf-api.stag.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language%2FSegment/get). This request will return all source segments of the file and a flag determining if any target content has been posted for the specified target language. **This method can in fact be replaced by the method above, which allows for _null_ values for _editedSegment_.**
 
