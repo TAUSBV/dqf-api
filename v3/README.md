@@ -39,7 +39,7 @@ During your development process, you **must** use the DQF Staging Server:
 * Quality Dashboard: https://qd.stag.taus.net/
 
 The staging server is dedicated to integrators only. All new features and/or fixes are deployed here before going to the DQF production server. 
-In order to use the staging server, you first need to create an account. TAUS does will provide test accounts for integration.  
+In order to use the staging server, you first need to create an account. TAUS will provide test accounts for integration.  
 If you want to access the Quality Dashboard with your staging account, you may need to request some credits to the DQF Team.
 Please write to dqfapi@taus.net
 
