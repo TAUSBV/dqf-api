@@ -110,12 +110,12 @@ Comments: <input type="text" id="EditingTimeAccumulation"/>
 Data sent to DQF should be complete.
 
 - [ ] Integrator sends all segments in a translation task<br/>
-All segments in a translation job are sent to DQF, and not only segments that were edited or 'touched' during translation.<br/>
+All segments in a translation job is sent to DQF, and not only segments that were edited or 'touched' during translation.<br/>
 **Refer to** "DQF API v3.0 Documentation", section "Translation"<br/>
 Comments: <input type="text" id="CompleteSegments"/>
 
 - [ ] Integrator sends all correction data for review projects<br/>
-All information regarding corrections are passed to DQF, including deletions and additions of sub-segments.<br/>
+All information regarding corrections is passed to DQF, including deletions and additions of sub-segments.<br/>
 **Refer to** "DQF API v3.0 Documentation", section "Review"<br/>
 Comments: <input type="text" id="EditingTimeAccumulation"/>
 
