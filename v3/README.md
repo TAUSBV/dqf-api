@@ -10,6 +10,8 @@ Before reading the documentation consider the following:
 
 The documentation will explain in greater detail the hierarchical tree structure DQF relies on. Before scoping out other details of the integration, you need to make sure you understand how the DQF tree maps onto your workflow options (e.g. split projects, workflow sequence). Please refer to the provided [overview schema](https://drive.google.com/file/d/0B5gqwLeATMtuZm8tR183OHFKQlE/view?usp=sharing) as an initial example. 
 
+TAUS encourages and actively supports DQF integration in translation technology in every way, and as much as possible. However, the quality of data sent to DQF is of essential concern to any appliance of the database by any of its users. TAUS therefore must insist on data quality and the proper use of the DQF API, even to the point of fencing off the API from integrations, that do not adhere to the proper use of the DQF API. The TAUS team uses a checklist to evaluate DQF integrations. The integration checklist is public, and can be found [here] (https://github.com/TAUSBV/dqf-api/blob/master/v3/IntegratorChecklist.md).
+
 For any questions related to the integration, please contact dqfapi@taus.net
 
 ## Getting started
