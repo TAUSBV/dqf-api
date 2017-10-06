@@ -7,7 +7,7 @@ For integrations of DQF in CAT tools, the TAUS team uses a checklist to make sur
 Conceptually correct refers to the goals and the possibilities of the CAT tool. These need to be in accordance with what DQF is aiming for. General concepts such as workflow, type of tasks, project ownership, etcetera are checked in this part.
 
 - [ ] General compliance of integrator to customer/vendor workflow as presupposed in DQF<br/>
-This check requires that the integrator has or can simulate a workflow in which a customer outsources translation and possibly reviews jobs to vendors.<br/>
+This check requires that the integrator has or can simulate a workflow in which a customer outsources translation and possibly review jobs to vendors.<br/>
 **Refer to** "DQF API v3.0 Documentation", sections "Project/Master" and "Project/Child"<br/>
 Comments: <input type="text" id="GeneralWorkflowCompliance"/>
 
@@ -47,7 +47,7 @@ Comments: <input type="text" id="TaskCompliance"/>
 ## Checks on meaningful data
 Meaningful data refers to the same or similar ways in which different integrators collect DQF data. Where it involves user data configured by certain user interfaces, this means that technical and non-technical accessibility of these user interfaces are comparable among the integrators. Other data should conform to the intended types and standards of DQF. 
 
-- [ ] Integrator allows user to customize the project settings when creating master projects. The selection method is clear and easily accessible/easy to access<br/>
+- [ ] Integrator allows user to customize the project settings when creating master projects. The selection method is clear and easily accessible<br/>
 The integrator posts meaningful project settings (content type, sector, process and quality level of the translation project). When the user needs to select these settings, the selection method is transparent.<br/>
 **Refer to** "DQF API V3.0 Documentation", section "Basic Attributes"<br/>
 Comments: <input type="text" id="ProjectsettingsAccess"/>
