@@ -22,7 +22,7 @@ The integrator assigns the correct DQF account to each (child) project.<br/>
 Comments: <input type="text" id="OwnershipCompliance"/>
 
 - [ ] Integrator posts projects correctly with regards to project succession<br>
-child projects point to the correct parent project, and get the proper 'is_return' flag.<br/>
+child projects point to the correct parent for following the succession of edits in the segments, and use the correct owner_id ('assigner') for indicating the customer. Old: child projects point to the correct parent project, and get the proper 'is_return' flag (is_return flag is deprecated for integrators; this will be automatically set when the owner of a childproject also owns a ancestor project).<br/>
 **Refer to** "DQF API v3.0 Documentation", section "Project/Child"<br/>
 Comments: <input type="text" id="SuccessionCompliance"/>
 
@@ -46,6 +46,11 @@ Comments: <input type="text" id="TaskCompliance"/>
 
 ## Checks on meaningful data
 Meaningful data refers to the same or similar ways in which different integrators collect DQF data. Where it involves user data configured by certain user interfaces, this means that technical and non-technical accessibility of these user interfaces are comparable among the integrators. Other data should conform to the intended types and standards of DQF. 
+
+- [ ] Integrator allows user to log in correctly and easy<br/>
+The integrator has a clear login screen, or a clear setting/preference in the user profile where the user can manage his DQF credentials (DQF credentials should be kept save, in an encrypted environment, as per the legal agreement).<br/>
+**Refer to** "DQF API V3.0 Documentation", section "Basic Attributes"<br/>
+Comments: <input type="text" id="ProjectsettingsAccess"/>
 
 - [ ] Integrator allows user to customize the project settings when creating master projects. The selection method is clear and easily accessible<br/>
 The integrator posts meaningful project settings (content type, sector, process and quality level of the translation project). When the user needs to select these settings, the selection method is transparent.<br/>
