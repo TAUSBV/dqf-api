@@ -380,7 +380,8 @@ The easiest way to explain this method is to display the request raw body data y
               "errorCategoryId": 11,
               "severityId": 2,
               "charPosStart": null,
-              "charPosEnd": null
+              "charPosEnd": null,
+	      "isRepeated": false
             }
           ],
           "correction": {
@@ -422,6 +423,7 @@ Some comments on the other fields that may not be self-explanatory:
 * The fields _charPosStart_ and _charPosEnd_ are zero based indexes. 
 	- They are *both null* when an error annotation applies to the whole segment. 
 	- If the user applies an error to a selected text, then the start and end positions of the selection have to be specified.
+* The field _isRepeated_ is an optional boolean flag (set to false if ommited) that marks the annotation as a repeated occurence. In such a case the penalty points for the error's severity will not be taken into consideration.
 * The field _content_ in the _correction_ object contains the whole text of the segment (**including deletions**). 
 * In the _detailList_, we specify the type of change for each sub-segment item (_subContent_). Sub-segment items can be words or single characters. The allowed types are:
     * *unchanged*
