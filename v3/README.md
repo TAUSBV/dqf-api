@@ -298,7 +298,7 @@ When posting target segment content, DQF distinguishes between two parameters:
 * **Target Segment:** This represents the pre-existing content of a target segment that was pre-populated e.g. by machine translation or  a previous translation round. You should consider _targetSegment_ any content that makes a target segment field _not empty_. 
 * **Edited Segment:** This represents the _newer_ content produced by human intervention (most likely). This does not necessarily mean that the content of the _editedSegment_ has to be different than that of the _targetSegment_. 
 
-**Note:** DQF expects _target segment_ and _edited segment_ content with every POST call. There can be situation where _either_ parameter is null. _targetSegment_ can be null if no pre-translation existed for a given segment (i.e. the translation takes place from scratch). _editedSegment_ can be null if the user enters with the cursor in a segment that has no content and then moves away from that segment without adding any content. In this case, only the time value will be _not null_.
+**Note:** DQF expects _target segment_ and _edited segment_ content with every POST call. There can be situation where _either_ parameter is null. _targetSegment_ can be null if no pre-translation existed for a given segment (i.e. the translation takes place from scratch). _editedSegment_ can be null if the user enters with the cursor in a segment that has no content and then moves away from that segment without adding any content.
 
 DQF offers you the possibility to map index numbers between your tool and DQF. For this you will need to use the _clientId_ parameter. For more information on this feature, see the section [Mapping](#mapping).
 
