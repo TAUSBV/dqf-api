@@ -234,6 +234,8 @@ The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](https://dqf-ap
 
 **NOTE:** A child project can declare any combination of files/targetLangs that are a **subset** of the *file/targetLang* pairs of their **parent**. Building on the example above, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
 
+**NOTE:** A translation project can be marked as 'dummy' by using the optional *isDummy* parameter. By setting this to _true_, time spent in translation will not be taken into consideration. This is typically used by integrators who want to support **review only** workflows and/or do not have the means to track time spent per segment.
+
 <a name="translation"/>
 
 ## Translation
