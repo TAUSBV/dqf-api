@@ -38,17 +38,17 @@ For any questions related to the integration, please contact dqfapi@taus.net
 ## Server Info
 During your development process, you **must** use the DQF Staging Server: 
 * API: https://dqf-api.stag.taus.net/
-* Quality Dashboard: https://qd.stag.taus.net/
+* DQF Dashboard: https://qd.stag.taus.net/
 
 The staging server is dedicated to integrators only. All new features and/or fixes are deployed here before going to the DQF production server. 
 In order to use the staging server, you first need to create an account. TAUS will provide test accounts for integration.  
-If you want to access the Quality Dashboard with your staging account, you may need to request some credits to the DQF Team.
+If you want to access the DQF Dashboard with your staging account, you may need to request some credits to the DQF Team.
 Please write to dqfapi@taus.net
 
 Once your integration is completed, you must contact the DQF team in order to enable your application on the production server. After this, you should switch your base URLs to our official ones:
 * Site: https://taus.net
 * API: https://dqf-api.taus.net
-* Quality Dashboard: https://qd.taus.net
+* DQF Dashboard: https://qd.taus.net
 
 <a name="authentication"/>
 
