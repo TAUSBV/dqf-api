@@ -122,7 +122,7 @@ Integrators can now use a single TAUS generic account to perform the authenticat
 
 **IMPORTANT:** There is an extra header parameter required when using session ids that derive from generic accounts. In every such request, you should include the user's email as the value of the **email** header.
 
-**Note:** Although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [Quality Dashboard](https://qd.stag.taus.net/). 
+**Note:** Although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [DQF Dashboard](https://qd.stag.taus.net/). 
 
 <a name="attributes"/>
 
@@ -640,7 +640,7 @@ This request includes all of the parameters that are required during a master pr
 You can show the user a list of project templates he/she has access to through [GET /v3/user/projectTemplate](https://dqf-api.stag.taus.net/#!/Template/getAll). This request should fetch all user’s templates plus any shared template within the organization. 
 
 ### Templates/Review
-The same principle applies to Review templates. In addition to the *error category ids* and *severity* attributes specified in [DQF Review Settings](#reviewSettings), Review template also require the *review type* and, where applicable, *pass/fail threshold* and *severity weights*. Please note that the *sampling* attribute is not used in the Quality Dashboard.
+The same principle applies to Review templates. In addition to the *error category ids* and *severity* attributes specified in [DQF Review Settings](#reviewSettings), Review template also require the *review type* and, where applicable, *pass/fail threshold* and *severity weights*. Please note that the *sampling* attribute is not used in the DQF Dashboard.
 You may want to avoid using templates for the review type *correction* as no additional attributed are actually required.
 
 **IMPORTANT:** Please use the term **Error Annotation** on the UI where the API reads *error_typology*
