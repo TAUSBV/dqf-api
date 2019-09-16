@@ -25,6 +25,7 @@ For any questions related to the integration, please contact dqfapi@taus.net
 * [Translation](#translation)
 * [Target Segment Info](#targetSegments)
 * [Review](#review)
+* [Meta-Data Only](#metaDataOnly)
 * [Automated Review Child Projects](#automatedReview)
 * [Project Status](#projectStatus)
 * [Batch Upload](#batchUpload)
@@ -526,6 +527,106 @@ Whenever a given user has selected a segment for review all activity (correction
 
 **Note:** This approach should be adopted whether or not the first review of a segment (_revisions_ object) has already been posted to DQF.
 
+<a name="metaDataOnly"/>
+
+## Meta-Data Only
+If sharing the actual content (source, target or edited) is a restriciting factor for the integration, you can use one of the meta-data only endpoints:
+
+* [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add) Add a review for a segment using only meta-data
+* [PUT /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/update) Update the translation of a source segment providing only meta-data
+* [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0) Batch upload meta-data for translations
+* [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1) Upload meta-data for the remaining target segments
+* [POST /v3/project/master/{projectId}/file/{fileId}/sourceSegment/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1_2) Add meta-data only for source segments
+
+All the endpoints above behave the same way as the normal ones (with content) with the only difference being that you have to specify the **word** and **character** counts and in some cases the **edit distance** as well.
+
+Here is a json body example for batch source segment meta-data only post:
+```json
+[
+  {
+    "index": 1,
+    "clientId": "ca6d8b8e-9eea-4994-9447-1441493f11d6",
+    "wordCount": 49,
+    "characterCount": 180
+  },
+  {
+    "index": 2,
+    "clientId": "68482232-75b6-4255-93fd-e27625a5536f",
+    "wordCount": 34,
+    "characterCount": 267
+  },
+  {
+    "index": 3,
+    "clientId": "2c6b0899-269a-4e46-b57a-e909546fc823",
+    "wordCount": 20,
+    "characterCount": 483
+  }
+]
+```
+Here is a json body example for batch translation meta-data only post:
+```json
+[
+	{
+		"sourceSegmentId": 1,
+		"clientId": "8ab68bd9-8ae7-4860-be6c-bc9a4b276e37",
+		"targetWordCount": 1,
+		"targetCharacterCount": 10,
+		"editedWordCount": 2,
+		"editedCharacterCount": 20,
+		"editDistance": 10,
+		"time": 6582,
+		"segmentOriginId": 5,
+		"mtEngineId": null,
+		"mtEngineOtherName": null,
+		"matchRate": 0
+	},
+	{
+		"sourceSegmentId": 2,
+		"clientId": "e5e6f2ae-7811-4d49-89df-d1b18d11f591",
+		"targetWordCount": 1,
+		"targetCharacterCount": 10,
+		"editedWordCount": 2,
+		"editedCharacterCount": 20,
+		"editDistance": 10,
+		"time": 5530,
+		"segmentOriginId": 2,
+		"mtEngineId": null,
+		"mtEngineOtherName": null,
+		"matchRate": 100
+	},
+	{
+		"sourceSegmentId": 3,
+		"clientId": "e3e618e9-b228-4dc6-95b8-c1605147330d",
+		"targetWordCount": 1,
+		"targetCharacterCount": 10,
+		"editedWordCount": 2,
+		"editedCharacterCount": 20,
+		"editDistance": 10,
+		"time": 1000,
+		"segmentOriginId": 1,
+		"mtEngineId": 1,
+		"mtEngineOtherName": null,
+		"matchRate": 90
+	},
+	{
+		"sourceSegmentId": 4,
+		"clientId": "3083a16c-2b56-42ae-8238-4d88f8a28c5e",
+		"targetWordCount": 1,
+		"targetCharacterCount": 10,
+		"editedWordCount": 2,
+		"editedCharacterCount": 20,
+		"editDistance": 10,
+		"time": 1000,
+		"segmentOriginId": 1,
+		"mtEngineId": 40,
+		"mtEngineOtherName": "An MT engine",
+		"matchRate": 80
+	}
+]
+```
+**Calculations:** TODO - Provide information for word and character counts, edit distance calculation and if possible our own service
+
+**Note:** You cannot update/overwrite a source/target/edited segment with meta-data only if it's content is already posted. The reverse operation is allowed though.
 
 <a name="automatedReview"/>
 
