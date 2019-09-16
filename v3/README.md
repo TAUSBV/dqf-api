@@ -38,17 +38,17 @@ For any questions related to the integration, please contact dqfapi@taus.net
 ## Server Info
 During your development process, you **must** use the DQF Staging Server: 
 * API: https://dqf-api.stag.taus.net/
-* Quality Dashboard: https://qd.stag.taus.net/
+* DQF Dashboard: https://qd.stag.taus.net/
 
 The staging server is dedicated to integrators only. All new features and/or fixes are deployed here before going to the DQF production server. 
 In order to use the staging server, you first need to create an account. TAUS will provide test accounts for integration.  
-If you want to access the Quality Dashboard with your staging account, you may need to request some credits to the DQF Team.
+If you want to access the DQF Dashboard with your staging account, you may need to request some credits to the DQF Team.
 Please write to dqfapi@taus.net
 
 Once your integration is completed, you must contact the DQF team in order to enable your application on the production server. After this, you should switch your base URLs to our official ones:
 * Site: https://taus.net
 * API: https://dqf-api.taus.net
-* Quality Dashboard: https://qd.taus.net
+* DQF Dashboard: https://qd.taus.net
 
 <a name="authentication"/>
 
@@ -122,7 +122,7 @@ Integrators can now use a single TAUS generic account to perform the authenticat
 
 **IMPORTANT:** There is an extra header parameter required when using session ids that derive from generic accounts. In every such request, you should include the user's email as the value of the **email** header.
 
-**Note:** Although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [Quality Dashboard](https://qd.stag.taus.net/). 
+**Note:** Although users will be able to seamlessly use the DQF API with this approach, they will still need to create a TAUS account providing **the same email** used in the header in order to be able to view their reports in the [DQF Dashboard](https://qd.stag.taus.net/). 
 
 <a name="attributes"/>
 
@@ -220,7 +220,7 @@ You should post a DQF child project every time _at least_ one of these condition
 * _There is a change in workflow step_ (if applicable, as seen from the perspective of the translation tool in use)
 * _There is a change in the user who is working on the project._ "User" should be understood from a DQF perspective as the TAUS account or email address associated with the requests. This can map 1:1 with the users shown in your system, but it may also not be the case. This condition also includes the scenario in which a Project Manager receives a project back and sends it to someone else, which would count as three different users, hence child projects.
 
-Every child project has an associated _owner_. Generally speaking, the _owner_ is the TAUS account that is in use when making the request. You also have the possibility of declaring a different owner for a child project by specifying an email in the *assignee* parameter. This email must belong to an existing **TAUS account**. This is the case when the individual assignee is known at the moment of the POST request. Please note that for the purposes of the DQF hierarchy, an assignee does not have to actually perform the translation/review task. It could also just be a project manager who receives the assignment from their customer. This satisfies the second condition for posting a child project.
+Generally speaking and by default, the user that opened the session in which the child project is created, is the assignee. The user associated with the parent project is the assigner (or customer) by implication, which is relevant for customer/vendor relations on the DQF Dashboard. You also have the possibility to specify the assigner in an explicit way, when it is not the user associated with the parent project. This is done by setting the assigner parameter when creating a child project. For example, this might be useful when a translation job goes from a first translator to a second translator, but both have the same assigner as their direct customer. Without the assigner parameter set to the customer's email, the child project of the second translator would have the first translator as its customer by implication. Another variant to this is to declare the assignee parameter using the customer's session (or email header when using generic authentication).
 
 **IMPORTANT:** Depending on your mapping, you can have child projects that match the translation/review activity and other child projects that match e.g. some job distribution tasks performed by PMs. DQF requires posting of translation/review content, **whenever there is some trackable activity at editor level**, e.g. the editor gets opened and a few segments are modified or just made "active", irrespective of the specific role of the user (PM/translator/reviewer etc.).
 
@@ -233,6 +233,8 @@ When posting the request, there is no need to declare files, as child projects h
 The [POST /v3/project/child/{projectId}/file/{fileId}/targetLang](https://dqf-api.stag.taus.net/#!/Project%2FChild%2FFile%2FTarget_Language/add) will be used next to declare the target language(s) of the child project.
 
 **NOTE:** A child project can declare any combination of files/targetLangs that are a **subset** of the *file/targetLang* pairs of their **parent**. Building on the example above, *child1* can declare *nl-NL* for file1 but not *nl-NL* for file2.
+
+**NOTE:** A translation project can be marked as 'dummy' by using the optional *isDummy* parameter. By setting this to _true_, time spent in translation will not be taken into consideration. This is typically used by integrators who want to support **review only** workflows and/or do not have the means to track time spent per segment.
 
 <a name="translation"/>
 
@@ -296,7 +298,7 @@ When posting target segment content, DQF distinguishes between two parameters:
 * **Target Segment:** This represents the pre-existing content of a target segment that was pre-populated e.g. by machine translation or  a previous translation round. You should consider _targetSegment_ any content that makes a target segment field _not empty_. 
 * **Edited Segment:** This represents the _newer_ content produced by human intervention (most likely). This does not necessarily mean that the content of the _editedSegment_ has to be different than that of the _targetSegment_. 
 
-**Note:** DQF expects _target segment_ and _edited segment_ content with every POST call. There can be situation where _either_ parameter is null. _targetSegment_ can be null if no pre-translation existed for a given segment (i.e. the translation takes place from scratch). _editedSegment_ can be null if the user enters with the cursor in a segment that has no content and then moves away from that segment without adding any content. In this case, only the time value will be _not null_.
+**Note:** DQF expects _target segment_ and _edited segment_ content with every POST call. There can be situation where _either_ parameter is null. _targetSegment_ can be null if no pre-translation existed for a given segment (i.e. the translation takes place from scratch). _editedSegment_ can be null if the user enters with the cursor in a segment that has no content and then moves away from that segment without adding any content.
 
 DQF offers you the possibility to map index numbers between your tool and DQF. For this you will need to use the _clientId_ parameter. For more information on this feature, see the section [Mapping](#mapping).
 
@@ -380,7 +382,8 @@ The easiest way to explain this method is to display the request raw body data y
               "errorCategoryId": 11,
               "severityId": 2,
               "charPosStart": null,
-              "charPosEnd": null
+              "charPosEnd": null,
+	      "isRepeated": false
             }
           ],
           "correction": {
@@ -422,6 +425,7 @@ Some comments on the other fields that may not be self-explanatory:
 * The fields _charPosStart_ and _charPosEnd_ are zero based indexes. 
 	- They are *both null* when an error annotation applies to the whole segment. 
 	- If the user applies an error to a selected text, then the start and end positions of the selection have to be specified.
+* The field _isRepeated_ is an optional boolean flag (set to false if ommited) that marks the annotation as a repeated occurence. In such a case the penalty points for the error's severity will not be taken into consideration.
 * The field _content_ in the _correction_ object contains the whole text of the segment (**including deletions**). 
 * In the _detailList_, we specify the type of change for each sub-segment item (_subContent_). Sub-segment items can be words or single characters. The allowed types are:
     * *unchanged*
@@ -636,7 +640,7 @@ This request includes all of the parameters that are required during a master pr
 You can show the user a list of project templates he/she has access to through [GET /v3/user/projectTemplate](https://dqf-api.stag.taus.net/#!/Template/getAll). This request should fetch all user’s templates plus any shared template within the organization. 
 
 ### Templates/Review
-The same principle applies to Review templates. In addition to the *error category ids* and *severity* attributes specified in [DQF Review Settings](#reviewSettings), Review template also require the *review type* and, where applicable, *pass/fail threshold* and *severity weights*. Please note that the *sampling* attribute is not used in the Quality Dashboard.
+The same principle applies to Review templates. In addition to the *error category ids* and *severity* attributes specified in [DQF Review Settings](#reviewSettings), Review template also require the *review type* and, where applicable, *pass/fail threshold* and *severity weights*. Please note that the *sampling* attribute is not used in the DQF Dashboard.
 You may want to avoid using templates for the review type *correction* as no additional attributed are actually required.
 
 **IMPORTANT:** Please use the term **Error Annotation** on the UI where the API reads *error_typology*
