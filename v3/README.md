@@ -570,15 +570,15 @@ Here is a json body example for batch translation meta-data only post:
 		"sourceSegmentId": 1,
 		"clientId": "8ab68bd9-8ae7-4860-be6c-bc9a4b276e37",
 		"targetWordCount": 1,
-		"targetCharacterCount": 10,
-		"editedWordCount": 2,
+		"targetCharacterCount": 0,
+		"editedWordCount": 0,
 		"editedCharacterCount": 20,
-		"editDistance": 10,
-		"time": 6582,
+		"editDistance": 20,
+		"time": 16582,
 		"segmentOriginId": 5,
 		"mtEngineId": null,
 		"mtEngineOtherName": null,
-		"matchRate": 0
+		"matchRate": null
 	},
 	{
 		"sourceSegmentId": 2,
@@ -587,12 +587,12 @@ Here is a json body example for batch translation meta-data only post:
 		"targetCharacterCount": 10,
 		"editedWordCount": 2,
 		"editedCharacterCount": 20,
-		"editDistance": 10,
+		"editDistance": 12,
 		"time": 5530,
 		"segmentOriginId": 2,
 		"mtEngineId": null,
 		"mtEngineOtherName": null,
-		"matchRate": 100
+		"matchRate": 86
 	},
 	{
 		"sourceSegmentId": 3,
@@ -602,11 +602,11 @@ Here is a json body example for batch translation meta-data only post:
 		"editedWordCount": 2,
 		"editedCharacterCount": 20,
 		"editDistance": 10,
-		"time": 1000,
+		"time": 4200,
 		"segmentOriginId": 1,
 		"mtEngineId": 1,
 		"mtEngineOtherName": null,
-		"matchRate": 90
+		"matchRate": null
 	},
 	{
 		"sourceSegmentId": 4,
@@ -615,12 +615,12 @@ Here is a json body example for batch translation meta-data only post:
 		"targetCharacterCount": 10,
 		"editedWordCount": 2,
 		"editedCharacterCount": 20,
-		"editDistance": 10,
-		"time": 1000,
+		"editDistance": 11,
+		"time": 3900,
 		"segmentOriginId": 1,
 		"mtEngineId": 40,
 		"mtEngineOtherName": "An MT engine",
-		"matchRate": 80
+		"matchRate": null
 	}
 ]
 ```
