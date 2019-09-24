@@ -624,6 +624,37 @@ Here is a json body example for batch translation meta-data only post:
 	}
 ]
 ```
+
+Here is a json body example for a segment's review meta-data only post:
+```json
+{
+	"overwrite": true,
+	"batchId": "25980bfd-d909-4d6d-bd35-ecfc30d90db3",
+	"revisions": [
+		{
+			"clientId": "b6a66581-53ae-4cdb-ba3c-5e9b8d8c7464",
+			"comment": "Sample review comment",
+			"errors": [
+				{
+					"errorCategoryId": 1,
+					"severityId": 1,
+					"charPosStart": 3,
+					"charPosEnd": 5,
+					"isRepeated": false
+				}
+			],
+			"correction": {
+				"wordCount": 2,
+				"characterCount": 10,
+				"editDistance": 3,
+				"time": 10000
+			}
+		}
+	]
+}
+```
+
+
 **Calculations:** TODO - Provide information for word and character counts, edit distance calculation and if possible our own service
 
 **Note:** You cannot update/overwrite a source/target/edited segment with meta-data only if it's content is already posted. The reverse operation is allowed though.
