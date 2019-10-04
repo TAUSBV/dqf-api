@@ -655,7 +655,37 @@ Here is a json body example for a segment's review meta-data only post:
 ```
 
 
-**Calculations:** TODO - Provide information for word and character counts, edit distance calculation and if possible our own service
+**Calculations:** In order for our data to be concise, we require the integrators to use one of our libraries to perform word/character counts and edit distance calculations. We currently serve artifacts for java and .net through our private repositories:
+
+TAUS repository for maven artifact: http://artifactory.stag.taus.net:8081/artifactory/taus-dqf-repo/
+
+You can add the dependency in maven:
+```xml
+<dependency>
+    <groupId>net.taus.dqf</groupId>
+    <artifactId>service-metrics</artifactId>
+    <version>x.x.x</version>
+</dependency>
+```
+
+Or sbt etc.: libraryDependencies += "net.taus.dqf" % "service-metrics" % "x.x.x"
+
+TAUS repository for NuGet package: https://pro.dev.taus.net/artifactory/taus-net-repo/
+
+The package is "dqf-metrics.x.x.x.nupkg"
+
+Please note that if you are using Visual Studio then you need to add "/api/nuget/" before the repository name: https://pro.dev.taus.net/artifactory/api/nuget/taus-net-repo
+
+The nuget package also contains 3 more IKVM libraries that are required.
+
+If you need credentials for accessing the repo please contact the TAUS team.
+
+The usage is rather simple as the library currently contains only three methods in under one package/namespace. Here's a .net example for calculating word counts:
+  ```csharp
+net.taus.dqf.service.metrics.Segment.getWordCount("A simple sentence", "en-US");
+```
+
+Please always use the latest available versions.
 
 **Note:** You cannot update/overwrite a source/target/edited segment with meta-data only if it's content is already posted. The reverse operation is allowed though.
 
