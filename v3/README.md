@@ -532,11 +532,12 @@ Whenever a given user has selected a segment for review all activity (correction
 ## Meta-Data Only
 If sharing the actual content (source, target or edited) is a restriciting factor for the integration, you can use one of the meta-data only endpoints:
 
-* [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add) Add a review for a segment using only meta-data
-* [PUT /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/update) Update the translation of a source segment providing only meta-data
+* [POST /v3/project/master/{projectId}/file/{fileId}/sourceSegment/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add) Add meta-data only for source segments
 * [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/translation/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0) Batch upload meta-data for translations
-* [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1) Upload meta-data for the remaining target segments
-* [POST /v3/project/master/{projectId}/file/{fileId}/sourceSegment/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1_2) Add meta-data only for source segments
+* [POST /v3/project/child/:projectId/file/:fileId/targetLang/:targetLangCode/segment/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1) Add meta-data only for a complete translation (source/target/edited)
+* [PUT /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/update) Update the translation of a source segment providing only meta-data
+* [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1_2) Add a review for a segment using only meta-data
+* [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1_2_3) Upload meta-data for the remaining target segments
 
 All the endpoints above behave the same way as the normal ones (with content) with the only difference being that you have to specify the **word** and **character** counts and in some cases the **edit distance** as well.
 
