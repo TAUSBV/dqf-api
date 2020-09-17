@@ -538,6 +538,7 @@ If sharing the actual content (source, target or edited) is a restriciting facto
 * [PUT /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/sourceSegment/{sourceSegmentId}/translation/{translationId}/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/update) Update the translation of a source segment providing only meta-data
 * [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/translation/{translationId}/batchReview/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1_2) Add a review for a segment using only meta-data
 * [POST /v3/project/child/{projectId}/file/{fileId}/targetLang/{targetLangCode}/targetSegment/batch/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/add_0_1_2_3) Upload meta-data for the remaining target segments
+* [PUT /v3/project/child/:projectId/file/:fileId/targetLang/:targetLangCode/segment/:translationId/meta](https://dqf-api.stag.taus.net/#!/Meta-Data_Only/update_0) Update meta-data only for a complete translation (source/target/edited)
 
 All the endpoints above behave the same way as the normal ones (with content) with the only difference being that you have to specify the **word** and **character** counts and in some cases the **edit distance** as well.
 
